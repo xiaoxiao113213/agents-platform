@@ -1,0 +1,26 @@
+name: Verify release tag
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  verify-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.1.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Check tag and package version
+        run: test "v$(node -p "require('./package.json').version")" = "${GITHUB_REF_NAME}"
+      - run: pnpm package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: agents-platform-site-${{ github.ref_name }}
+          path: package/*.tar.gz

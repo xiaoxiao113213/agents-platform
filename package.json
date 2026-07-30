@@ -1,0 +1,29 @@
+{
+  "name": "agents-platform-site",
+  "private": true,
+  "version": "0.0.5",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5175",
+    "build": "tsc -b && vite build",
+    "lint": "tsc -b --pretty false",
+    "preview": "vite preview --host 0.0.0.0 --port 5175",
+    "package": "pnpm build && node scripts/package-site.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "tar": "^7.4.3",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11"
+  },
+  "packageManager": "pnpm@11.1.2"
+}
