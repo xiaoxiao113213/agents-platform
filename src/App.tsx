@@ -127,30 +127,53 @@ function HomePage() {
     {
       icon: <Bot />,
       index: '01',
-      title: 'Agent 工程化交付',
-      body: '通用、视频、PPT、Grafana 与 Issue Agent 以固定版本镜像交付，同一种 Agent 可创建多个隔离实例。',
-      tags: ['Docker Agent', '远程 Agent', '工作区持久化'],
+      title: '拿来就能做专业工作',
+      body: '不是交付一个空容器。通用开发、带旁白视频、PPT、Grafana 大盘和 Issue 处理 Agent 都带着工程规范与工具链到场。',
+      tags: ['5 个专业 Agent', '固定版本镜像', '工作区持久化'],
     },
     {
       icon: <Network />,
       index: '02',
-      title: 'MCP 与 Skill 能力层',
-      body: '内置 MCP 只读维护，实例按项目配置。必填值不设假默认值，密钥加密保存并注入运行环境。',
-      tags: ['17+ MCP', '项目级实例', '离线制品'],
+      title: '接进真实业务，而不止会聊天',
+      body: 'MCP、Skill 和项目配置把 Agent 接入数据库、Grafana、Issue 与研发工具。必填值不放假默认值，密钥加密保存。',
+      tags: ['17+ 内置 MCP', '项目级配置', '密钥隔离'],
     },
     {
       icon: <Workflow />,
       index: '03',
-      title: 'Workflow 与上下文',
-      body: '会话、任务、产物、上下文压缩和动态 Workflow 统一进入可追踪的执行链路。',
-      tags: ['SSE / WebSocket', '会话持久化', '运行中心'],
+      title: '长任务也有清晰的运行轨迹',
+      body: '会话、任务、产物、上下文压缩与 Dynamic Workflow 统一追踪。用户知道 Agent 正在做什么，也找得到历史结果。',
+      tags: ['实时状态', '历史产物', '上下文管理'],
     },
     {
       icon: <MessageSquareText />,
       index: '04',
-      title: 'Issue 驱动协作',
-      body: '人提交需求与附件，Agent 串行领取、澄清和处理，最终由用户验证关闭，完整保留评论和状态轨迹。',
-      tags: ['父子 Issue', 'AI 状态机', '客户授权'],
+      title: 'AI 执行，人保留最终决定权',
+      body: 'Issue 按优先级进入队列，Agent 一次领取一条；不清楚就提问，完成后交回验收，关闭权始终留给用户。',
+      tags: ['串行领取', '澄清闭环', '人工验收'],
+    },
+  ]
+
+  const advantages = [
+    {
+      icon: <Boxes />,
+      title: '专业 Agent 已工程化',
+      body: '视频、PPT、监控大盘和研发 Issue 都有独立镜像、默认工程、质量规范与验收链路。',
+    },
+    {
+      icon: <Route />,
+      title: '能力可以自由组合',
+      body: '同一个 MCP 可按项目多次配置并自定义 Server 名称，Agent 能连接不同客户和不同业务环境。',
+    },
+    {
+      icon: <Users />,
+      title: '团队与客户真正协作',
+      body: '按用户或组授权 Agent 和 Issue 项目，共享会话与处理记录，后台与客户工作台完全分离。',
+    },
+    {
+      icon: <RefreshCcw />,
+      title: '每个客户都能持续升级',
+      body: '新客户直接安装最新版，老客户从任意历史正式版累计直升；现场配置和 Nginx 修改不被覆盖。',
     },
   ]
 
@@ -165,11 +188,14 @@ function HomePage() {
               <span className="live-dot" />
               最新正式版 {latestRelease.version}
               <span className="kicker-divider" />
-              Linux
+              生产可用
             </div>
             <h1>Agents Platform</h1>
+            <p className="hero-value">
+              把企业 AI 从一次对话，变成可交付、可运营的生产能力。
+            </p>
             <p className="hero-lead">
-              面向企业交付的 AI Agent 工程与协作平台。把 Agent、MCP、Skill、Workflow、Issue 和客户授权放进一套可部署、可升级、可审计的系统。
+              内置专业 Agent、MCP、Skill、Workflow、Issue 和客户授权。部署一套平台，就能持续创建、交付和治理真正参与业务的数字员工。
             </p>
             <div className="hero-actions">
               <Link className="button button-primary" to="/guide">
@@ -179,10 +205,11 @@ function HomePage() {
                 <CloudDownload size={17} /> 下载 {latestRelease.version}
               </a>
             </div>
-            <div className="hero-meta">
-              <span><ShieldCheck size={16} /> 累计升级</span>
-              <span><PackageCheck size={16} /> 离线交付</span>
-              <span><Server size={16} /> Java 21 + Docker</span>
+            <div className="hero-proof" aria-label="平台核心规模">
+              <span><strong>05</strong><small>专业 Agent</small></span>
+              <span><strong>17+</strong><small>内置 MCP</small></span>
+              <span><strong>02</strong><small>运行形态</small></span>
+              <span><strong>01</strong><small>累计升级包</small></span>
             </div>
           </div>
           <button
@@ -197,14 +224,32 @@ function HomePage() {
         </div>
       </section>
 
+      <section className="advantage-band">
+        <div className="shell advantage-heading">
+          <span className="eyebrow">Why Agents Platform</span>
+          <h2>真正拉开差距的，<br />不是再多一个聊天框。</h2>
+          <p>企业需要的是能进入业务、受权限约束、留下过程证据，并且可以长期升级的 Agent 系统。</p>
+        </div>
+        <div className="shell advantage-grid">
+          {advantages.map((item, index) => (
+            <article className="advantage-item" key={item.title}>
+              <span className="advantage-number">0{index + 1}</span>
+              <span className="advantage-icon">{item.icon}</span>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="platform-band" id="platform">
         <div className="shell section-heading two-column-heading">
           <div>
             <span className="eyebrow">One operating surface</span>
-            <h2>不是聊天窗口，<br />是一套运行系统。</h2>
+            <h2>一个工作台，管住<br />Agent 的完整生命周期。</h2>
           </div>
           <div className="section-intro">
-            <p>平台负责 Agent 的创建、运行、升级与授权，也负责把真实业务问题组织成 Agent 可以持续处理的工作队列。</p>
+            <p>从镜像选择、API Key、MCP 和 Skill，到运行状态、任务产物、客户授权与异常诊断，管理员在同一处完成交付。</p>
             <Link className="text-link" to="/guide">查看部署与使用流程 <ArrowRight size={16} /></Link>
           </div>
         </div>
@@ -225,8 +270,8 @@ function HomePage() {
       <section className="capabilities-section">
         <div className="shell">
           <div className="section-heading compact-heading">
-            <span className="eyebrow">Built for real work</span>
-            <h2>从能力到业务结果，链路完整。</h2>
+            <span className="eyebrow">From capability to outcome</span>
+            <h2>从一句需求，到可验收结果。</h2>
           </div>
           <div className="capability-list">
             {capabilityRows.map((item) => (
@@ -241,6 +286,33 @@ function HomePage() {
                   {item.tags.map((tag) => <span key={tag}>{tag}</span>)}
                 </div>
               </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="difference-section">
+        <div className="shell difference-layout">
+          <div className="difference-copy">
+            <span className="eyebrow eyebrow-light">Delivery, not a demo</span>
+            <h2>交付之后，<br />平台仍然能向前走。</h2>
+            <p>版本、数据库迁移、运行时镜像和现场配置都有明确边界。第一个客户与后来接入的客户，都能走到同一个稳定版本。</p>
+          </div>
+          <div className="difference-table" role="table" aria-label="平台交付能力对比">
+            <div className="difference-head" role="row">
+              <span role="columnheader">常见 Agent 项目</span>
+              <span role="columnheader">Agents Platform</span>
+            </div>
+            {[
+              ['从空白环境开始拼工具', '专业 Agent 与 MCP 目录直接选择'],
+              ['一次部署，后续人工覆盖', '版本固化、累计升级、配置保护'],
+              ['只有聊天记录', '会话、任务、产物与 Issue 状态全留痕'],
+              ['所有人共用一套权限', '后台、客户、用户组和项目级授权'],
+            ].map(([usual, platform]) => (
+              <div className="difference-row" role="row" key={usual}>
+                <span role="cell">{usual}</span>
+                <strong role="cell"><Check size={17} />{platform}</strong>
+              </div>
             ))}
           </div>
         </div>
@@ -315,14 +387,14 @@ const installSteps = [
   {
     id: '04',
     title: '执行中文上线预检',
-    body: 'check 会检查操作系统、Java、配置、目录、MySQL、Docker、离线镜像、Nginx 和端口归属。失败项会给出具体修改位置和处理命令。',
+    body: 'check 会检查操作系统、Java、配置、目录、MySQL、Docker、远端镜像、Nginx 和端口归属。失败项会给出具体修改位置和处理命令。',
     code: './devops.sh check',
     icon: <FileCheck2 />,
   },
   {
     id: '05',
     title: '启动并确认健康',
-    body: '首次启动会自动导入缺失的固定版本 Agent 镜像，Flyway 自动初始化或升级数据库。确认服务为 UP 后再配置 Nginx。',
+    body: '首次启动会按清单自动拉取固定版本 Agent 镜像，Flyway 自动初始化或升级数据库。确认服务为 UP 后再配置 Nginx。',
     code: './devops.sh start\n./devops.sh status',
     icon: <Play />,
   },

@@ -34,12 +34,12 @@ pnpm package
 
 ```powershell
 $env:GITHUB_TOKEN = '<具有仓库写权限的 Token>'
-./scripts/release/publish.ps1 -Version v0.0.5 -SourceRoot ..
+./scripts/release/publish.ps1 -Version v0.0.6 -SourceRoot ..
 ```
 
 ```bash
 export GITHUB_TOKEN='<具有仓库写权限的 Token>'
-./scripts/release/publish.sh v0.0.5 ..
+./scripts/release/publish.sh v0.0.6 ..
 ```
 
 发布脚本会校验主仓库正式包和版本说明、构建官网、创建提交、更新 `master`、创建不可复用的 Tag 与 GitHub Release，并上传 Linux 正式包和官网静态包。脚本不生成或比较 SHA256。

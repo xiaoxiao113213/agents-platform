@@ -15,9 +15,25 @@ export const repositoryUrl = 'https://github.com/xiaoxiao113213/agents-platform'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v0.0.6',
+    date: '2026-07-31',
+    status: 'stable',
+    title: '轻量发布与远程镜像交付',
+    summary: '把五个专业 Agent 镜像迁移到远端固定版本交付，让正式包更轻，同时保留完整安装、累计升级和现场配置保护能力。',
+    highlights: [
+      '五个 Linux x64 Agent 镜像完成固定 tag 构建、推送、远端回拉和本地镜像校验。',
+      '正式包不再携带数 GiB Docker 镜像归档，启动和正式升级按 runtime-images.txt 自动拉取。',
+      'check 与 upgrade --check 只读验证远端镜像、端口归属、配置和环境，并输出中文修复指引。',
+      '为 v0.0.5 及更早客户提供一次性过渡脚本，现场 application.properties 与 nginx/devops.conf 继续保留。',
+      '视频 Agent 固化专业旁白规范、神经语音链路和经过完整渲染验证的中国象棋教学案例。',
+    ],
+    metrics: ['5 个远端固定镜像', '137 项 Runtime 测试通过', '正式包约 373 MiB'],
+    assetName: 'devops-v0.0.6-linux-x64.tar.gz',
+  },
+  {
     version: 'v0.0.5',
     date: '2026-07-29',
-    status: 'stable',
+    status: 'archived',
     title: 'Agent 与 Issue 协作闭环',
     summary: '把专业 Agent、MCP、Issue 队列、客户授权和双端工作台收敛为可直接交付的完整版本。',
     highlights: [
@@ -97,4 +113,3 @@ export function getReleaseDownloadUrl(release: PlatformRelease) {
 export function getReleasePageUrl(version: string) {
   return `${repositoryUrl}/releases/tag/${version}`
 }
-
