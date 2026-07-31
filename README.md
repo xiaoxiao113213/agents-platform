@@ -29,7 +29,7 @@
   <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v0.0.6">版本说明</a>
 </p>
 
-> 本仓库包含官网源码、公开部署说明、版本数据和 Release 发布脚本，不包含主平台后端与双前端源码。可运行的主平台由 [GitHub Releases](https://github.com/xiaoxiao113213/agents-platform/releases) 以 Linux 正式包交付；包名中的 `devops` 是现有发行标识，产品名称仍为 Agents Platform。
+> Agents Platform 正式版本统一由 [GitHub Releases](https://github.com/xiaoxiao113213/agents-platform/releases) 以 Linux 安装包交付。包名中的 `devops` 是现有发行标识，产品名称仍为 Agents Platform。
 
 ## 为什么需要 Agents Platform
 
@@ -138,66 +138,6 @@ sudo systemctl reload nginx
 - Agent 镜像使用与正式版本匹配的固定 tag；部署脚本按清单自动 `docker pull`，发布包不再携带数 GiB 镜像归档。
 
 查看全部版本：[GitHub Releases](https://github.com/xiaoxiao113213/agents-platform/releases)
-
-## 官网开发
-
-官网是独立的 React + TypeScript + Vite 纯前端项目。
-
-```powershell
-corepack enable
-pnpm install
-powershell -ExecutionPolicy Bypass -File scripts/local/service.ps1 start
-```
-
-默认访问地址：<http://localhost:5175>
-
-Linux/macOS：
-
-```bash
-corepack enable
-pnpm install --frozen-lockfile
-./scripts/local/service.sh start
-```
-
-生命周期脚本支持 `start`、`restart`、`stop`、`status`、`health`、`logs` 和 `-h`。生产构建与静态站点打包：
-
-```bash
-pnpm build
-pnpm package
-```
-
-`pnpm package` 会在 `package/` 生成可直接交给 Nginx 的 `agents-platform-site-vX.Y.Z.tar.gz`。
-
-<details>
-<summary><strong>正式发布维护流程</strong></summary>
-
-正式发布由主平台仓库中已经冻结的发布物驱动。脚本会校验版本和资产、构建官网、更新 `master`、创建不可复用的 Tag 与 GitHub Release，并上传 Linux 正式包和官网静态包。
-
-```powershell
-$env:GITHUB_TOKEN = '<具有仓库写权限的 Token>'
-./scripts/release/publish.ps1 -Version v0.0.6 -SourceRoot ..
-```
-
-```bash
-export GITHUB_TOKEN='<具有仓库写权限的 Token>'
-./scripts/release/publish.sh v0.0.6 ..
-```
-
-发布前必须保证目标 Tag 和 Release 尚不存在、主平台正式包及版本说明已经冻结、`src/content/releases.ts` 已将目标版本登记为正式版本。
-
-</details>
-
-## 仓库结构
-
-```text
-agents-platform/
-├── public/                 # 官网图标与真实产品截图
-├── src/                    # React 页面、版本数据与样式
-├── scripts/local/          # 本地服务生命周期脚本
-├── scripts/release/        # 正式 Tag、Release 与附件发布脚本
-├── package/                # 官网静态发布包，本地生成且不提交
-└── README.md
-```
 
 ---
 
