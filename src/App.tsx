@@ -368,31 +368,31 @@ function HomePage() {
 const deploySteps = [
   {
     id: '01',
-    title: '确认服务器与访问权限',
-    body: '生产环境使用 Linux x64。准备一个可执行 sudo 的账号，并确认服务器可以访问 GitHub、运行时镜像仓库和模型 API。Windows 仅用于开发。',
-    code: 'uname -s\nuname -m\njava -version\ndocker version',
-    icon: <Server />,
-  },
-  {
-    id: '02',
     title: '下载并解压正式包',
-    body: '新客户直接安装最新正式版本，不需要从 v0.0.1 逐版安装。建议解压到固定目录，并让运行账号拥有该目录。',
+    body: '新客户直接安装最新正式版本，不需要从 v0.0.1 逐版安装。把发布目录放在固定位置，并使用可执行 sudo 的普通账号运行。',
     code: `curl -fL -o ${latestRelease.assetName} ${getReleaseDownloadUrl(latestRelease)}\ntar -xzf ${latestRelease.assetName}\ncd devops-${latestRelease.version}\nchmod 755 devops.sh`,
     icon: <PackageCheck />,
   },
   {
+    id: '02',
+    title: '运行首次安装向导',
+    body: '向导先检查再询问。缺少 Java、Docker、MySQL 客户端、Nginx 或基础工具时，只有你确认后才会使用 sudo 和系统包管理器安装。',
+    code: './devops.sh install',
+    icon: <Sparkles />,
+  },
+  {
     id: '03',
-    title: '创建 MySQL 数据库与专用账号',
-    body: '平台不会创建 MySQL 服务，但第一次启动会用 Flyway 初始化空的 devops 数据库。不要让应用长期使用 root 账号。',
-    code: "CREATE DATABASE devops CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\nCREATE USER 'devops_app'@'127.0.0.1' IDENTIFIED BY 'CHANGE_ME_STRONG_PASSWORD';\nGRANT ALL PRIVILEGES ON devops.* TO 'devops_app'@'127.0.0.1';\nFLUSH PRIVILEGES;",
-    icon: <Database />,
+    title: '按中文问题确认现场配置',
+    body: '填写 MySQL、数据目录和站点端口。向导自动生成 SECRET_KEY；本机 MySQL 可自动建库授权，Nginx 只接入已经启用的 include 目录。',
+    code: '# 每一步都可以输入 y / n\n# 密码使用隐藏输入，不进入 Shell 历史\n# 已完成的配置可在下次运行时直接保留',
+    icon: <KeyRound />,
   },
   {
     id: '04',
-    title: '填写 application.properties',
-    body: '按相邻中文注释填写 JDBC、数据目录、SECRET_KEY、远程 Agent 地址和可选 Java 路径。真实配置会在升级时保留，密码和 Token 不要写进 Shell 命令历史。',
-    code: 'cp application.properties.example application.properties\nchmod 600 application.properties\nopenssl rand -hex 32\nvi application.properties',
-    icon: <KeyRound />,
+    title: '复检并选择是否立即启动',
+    body: '向导最后自动执行只读 check。全部必需项通过后，可以直接拉取固定版本镜像并启动，也可以稍后手工启动。',
+    code: './devops.sh status\n\n# 选择暂不启动时\n./devops.sh start\n./devops.sh status',
+    icon: <Play />,
   },
 ]
 
@@ -434,7 +434,7 @@ function DeployPage() {
             <span className="eyebrow">Linux production</span>
             <h1>部署指南</h1>
           </div>
-          <p>面向第一次部署平台的用户，从拿到正式包开始，完成数据库、外置配置、Nginx、上线检查、启动和首次登录。</p>
+          <p>面向第一次部署平台的用户。解压后运行一个交互向导，缺少什么就先询问、再自动安装和配置，直到可以启动。</p>
         </div>
       </section>
 
@@ -455,15 +455,15 @@ function DeployPage() {
               <div className="guide-title">
                 <span>Before you begin</span>
                 <h2>开始之前</h2>
-                <p>主应用只部署在 Linux 宿主机。正式包不包含 MySQL、Nginx 或 Docker 安装程序，也不携带数 GiB 的镜像文件。</p>
+                <p>主应用只部署在 Linux 宿主机。正式包保持轻量，系统依赖由首次安装向导检测，并在你确认后通过发行版包管理器安装。</p>
               </div>
               <div className="requirement-list">
                 {[
                   ['Linux x64', '生产服务器；运行账号可使用 sudo，安装目录建议位于 /opt。'],
-                  ['Java 21+', '主服务直接运行在宿主机，可通过 java -version 检查。'],
-                  ['MySQL 8', '提前创建空的 devops 数据库和具有 DDL/DML 权限的专用账号。'],
-                  ['Docker Engine', '运行 Agent 容器；运行账号必须能执行 docker info 和 docker pull。'],
-                  ['Nginx', '提供后台与客户两个独立入口；未安装和已安装的处理方式见下文。'],
+                  ['Java 21+', '缺少时，向导询问后自动安装宿主机运行环境。'],
+                  ['MySQL 8', '可使用远程数据库；本机缺少时可自动安装、建库并创建专用账号。'],
+                  ['Docker Engine', '缺少时可自动安装和启动，并检查当前账号是否具有访问权限。'],
+                  ['Nginx', '缺少时可自动安装；已有配置会保留，只接入平台自己的站点文件。'],
                   ['网络与域名', '服务器可访问镜像仓库和模型服务；准备后台、客户入口的域名或端口。'],
                 ].map(([name, description]) => (
                   <div key={name}><strong>{name}</strong><span>{description}</span></div>
@@ -471,15 +471,15 @@ function DeployPage() {
               </div>
               <div className="callout">
                 <FileCheck2 />
-                <p><strong>不知道环境是否齐全也可以继续。</strong> 解压后先执行 <code>./devops.sh check</code>，脚本只读取状态，不会安装软件或修改系统，会按失败项给出中文处理方式。</p>
+                <p><strong>不知道环境是否齐全也可以直接开始。</strong> 执行 <code>./devops.sh install</code>，每项自动操作都会先询问。拒绝后不会修改对应系统项，最后仍会给出完整中文检查结果。</p>
               </div>
             </section>
 
             <section id="install" className="guide-block">
               <div className="guide-title">
                 <span>Install</span>
-                <h2>下载、数据库与外置配置</h2>
-                <p>以下步骤从当前最新正式版本开始。命令中的密码、路径、域名都要替换为客户现场的真实值。</p>
+                <h2>解压后，只运行一个安装命令</h2>
+                <p>默认流程不需要先写 SQL 或编辑 Nginx。向导会收集现场值、隐藏读取密码、先备份再修改，并且可以重复执行。</p>
               </div>
               <div className="install-steps">
                 {deploySteps.map((step) => (
@@ -499,8 +499,8 @@ function DeployPage() {
             <section id="nginx" className="guide-block">
               <div className="guide-title">
                 <span>Reverse proxy</span>
-                <h2>按机器现状接入 Nginx</h2>
-                <p>后台与客户工作台是两个独立站点，默认端口为 80 和 8080。实际端口可以修改，但二者不能相同，也不能与 Java 的 server.port 冲突。</p>
+                <h2>Nginx 自动接入与手工兜底</h2>
+                <p><code>install</code> 会自动处理常规机器。它不覆盖 nginx.conf，只识别当前 http 上下文已启用的 include 目录；以下路径用于特殊布局或自动安装失败时排查。</p>
               </div>
               <div className="guide-facts">
                 <div><PanelTop /><strong>后台管理</strong><span>web/ · 管理 Agent、MCP、Issue、客户与授权</span></div>
@@ -509,7 +509,7 @@ function DeployPage() {
               <div className="nginx-paths">
                 <article>
                   <div className="scenario-heading"><span>路径 A</span><h3>机器没有安装 Nginx</h3></div>
-                  <p>先让 <code>check</code> 识别发行版并给出安装命令，也可以按常见系统执行以下命令。</p>
+                  <p>先在向导中同意自动安装。包管理器失败时，保留完整错误输出，再按常见系统手工执行以下命令。</p>
                   <CopyCode value={'# Debian / Ubuntu\nsudo apt-get update && sudo apt-get install -y nginx\n\n# RHEL / Rocky / AlmaLinux\nsudo dnf install -y nginx'} />
                   <p>编辑平台自己的 <code>nginx/devops.conf</code>。不要用它覆盖系统 <code>/etc/nginx/nginx.conf</code>，只在现有 <code>http {'{ }'}</code> 中增加一条绝对路径 include。</p>
                   <CopyCode value={'# 写在现有 /etc/nginx/nginx.conf 的 http { } 内\ninclude /opt/devops/nginx/devops.conf;\n\nsudo nginx -t\nsudo systemctl enable --now nginx\nsudo systemctl reload nginx'} />
@@ -532,7 +532,7 @@ function DeployPage() {
               <div className="guide-title">
                 <span>Preflight</span>
                 <h2>执行中文上线预检</h2>
-                <p>在启动前运行检查，逐项处理所有“失败”。警告不会阻止启动，但应在正式开放前确认影响。</p>
+                <p><code>install</code> 结束前会自动运行一次。也可以随时单独执行；独立 <code>check</code> 始终只读，不安装软件、不改配置、不拉镜像。</p>
               </div>
               <CopyCode value={'./devops.sh check'} />
               <div className="check-matrix">
@@ -587,6 +587,7 @@ function DeployPage() {
               <div className="command-table">
                 {[
                   ['./devops.sh check', '完整上线预检；按失败项给出中文修复指引。'],
+                  ['./devops.sh install', '可重复运行的首次安装向导；每项系统修改都先询问。'],
                   ['./devops.sh status', '显示版本、PID、端口归属与健康状态。'],
                   ['./devops.sh logs', '持续查看配置的应用日志。'],
                   ['./devops.sh foreground', '前台运行 Java，直接观察启动错误。'],
