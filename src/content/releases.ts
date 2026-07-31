@@ -17,9 +17,26 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
-    version: 'v0.0.6',
+    version: 'v0.0.7',
     date: '2026-07-31',
     status: 'stable',
+    title: '交互式安装与官网在线升级',
+    summary: '把 Linux 首次部署、依赖检查、Nginx 接入、启动器更新和后续累计升级收敛为中文交互流程，让非运维用户也能完成正式安装与升级。',
+    highlights: [
+      '新增 ./devops.sh install 中文安装向导，逐项检查并在用户确认后自动安装缺失依赖。',
+      '自动识别已有 Nginx 和 include 目录，保护系统 nginx.conf 与现场 server_name、端口和证书配置。',
+      '新增 update --check 与 update，直接从官网检查、下载并累计升级到最新正式版本。',
+      '启动器独立版本化；v0.0.6 及更早客户可用一条命令安全备份并替换旧 devops.sh。',
+      '五个专业 Agent 镜像统一升级到 v0.0.7 固定 tag，并由部署脚本从远端自动拉取。',
+    ],
+    metrics: ['5 个远端固定镜像', '完整 Linux 启动器契约', '一条命令升级旧启动器'],
+    assetName: 'devops-v0.0.7-linux-x64.tar.gz',
+    guidedInstall: true,
+  },
+  {
+    version: 'v0.0.6',
+    date: '2026-07-31',
+    status: 'archived',
     title: '轻量发布与远程镜像交付',
     summary: '把五个专业 Agent 镜像迁移到远端固定版本交付，让正式包更轻，同时保留完整安装、累计升级和现场配置保护能力。',
     highlights: [

@@ -381,6 +381,8 @@ function HomePage() {
   )
 }
 
+const launcherBootstrapCommand = 'curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash'
+
 const guidedDeploySteps = [
   {
     id: '01',
@@ -634,7 +636,15 @@ function DeployPage() {
               <div className="guide-title">
                 <span>Upgrade</span>
                 <h2>累计升级与回滚</h2>
-                <p>目标正式包包含全部历史 Flyway 迁移。老客户可逐版升级，也可直接从任意更早正式版本升级到目标版本。</p>
+                <p>目标正式包包含全部历史 Flyway 迁移。产品包和启动器分别维护版本，老客户先把旧启动器一次性过渡到官网版本，之后即可长期使用在线累计升级。</p>
+              </div>
+              <div className="launcher-transition">
+                <div className="launcher-transition__copy">
+                  <span>Launcher v1 · introduced in v0.0.7</span>
+                  <h3>旧版本只需先更新一次启动器</h3>
+                  <p><code>v0.0.6</code> 及更早的 <code>devops.sh</code> 不认识在线升级命令。进入现有安装目录执行右侧一条命令，脚本会校验下载内容、备份旧启动器并原子替换；运行中的 Java 服务和现场配置完全不动。</p>
+                </div>
+                <CopyCode value={`${launcherBootstrapCommand}\n./devops.sh launcher-version\n./devops.sh update --check`} />
               </div>
               <CopyCode value={`./devops.sh upgrade --check /tmp/${latestRelease.assetName}\n./devops.sh stop\n./devops.sh upgrade /tmp/${latestRelease.assetName}\ndiff -u nginx/devops.conf nginx/devops.conf.example\n./devops.sh check\n./devops.sh start\n./devops.sh status`} />
               <div className="warning-callout">
@@ -978,6 +988,14 @@ function ReleasesPage() {
 
       <section className="release-history">
         <div className="shell">
+          <div className="launcher-transition launcher-transition--release">
+            <div className="launcher-transition__copy">
+              <span>Compatibility notice</span>
+              <h3>启动器从 v0.0.7 开始独立升级</h3>
+              <p>已经部署 <code>v0.0.1 - v0.0.6</code> 的客户无需重新安装。先在原安装目录执行一次引导命令，后续正式版本都可以由 <code>./devops.sh update</code> 自动检查、下载和累计升级。</p>
+            </div>
+            <CopyCode value={launcherBootstrapCommand} />
+          </div>
           <div className="history-heading"><span>版本</span><span>正式发布记录</span><span>下载</span></div>
           {releases.map((release, index) => (
             <article className="release-row" key={release.version}>

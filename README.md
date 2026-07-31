@@ -34,9 +34,9 @@
 </p>
 
 <p align="center">
-  <a href="https://mmmqaz.cn/releases/devops-v0.0.6-linux-x64.tar.gz"><strong>官网下载 v0.0.6</strong></a>
+  <a href="https://mmmqaz.cn/releases/devops-v0.0.7-linux-x64.tar.gz"><strong>官网下载 v0.0.7</strong></a>
   ·
-  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v0.0.6">版本说明</a>
+  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v0.0.7">版本说明</a>
 </p>
 
 > Agents Platform 正式 Linux 包可从官网直接下载；GitHub Releases 同步保存不可覆盖的 Tag、版本说明和发布归档。包名中的 `devops` 是现有发行标识，产品名称仍为 Agents Platform。
@@ -99,9 +99,9 @@ Issue 场景形成了更严格的人机闭环：待 AI 处理的 Issue 按优先
 
 ## 快速部署
 
-最新正式版本为 **v0.0.6**，生产环境仅支持 Linux x64。
+最新正式版本为 **v0.0.7**，生产环境仅支持 Linux x64。
 
-第一次部署或不熟悉 Linux/Nginx 时，请严格按[官方部署指南](https://mmmqaz.cn/#/deploy)操作。当前正式版 `v0.0.6` 尚不包含交互式 `install` 命令，需要按指南完成环境、数据库、配置和 Nginx 接入；当前 `master` 的 `v0.0.7` 开发版已实现交互安装向导，待正式发布后官网会自动切换为一键流程。部署后的 API Key、Agent、MCP、Skill、授权与 Issue 操作见[使用指南](https://mmmqaz.cn/#/guide)。
+第一次部署或不熟悉 Linux/Nginx 时，请严格按[官方部署指南](https://mmmqaz.cn/#/deploy)操作。`v0.0.7` 已提供中文交互安装向导：它会先检查环境，缺少依赖时逐项询问，并在用户确认后自动安装和配置。部署后的 API Key、Agent、MCP、Skill、授权与 Issue 操作见[使用指南](https://mmmqaz.cn/#/guide)。
 
 部署前准备：
 
@@ -115,26 +115,19 @@ Issue 场景形成了更严格的人机闭环：待 AI 处理的 Issue 按优先
 
 ```bash
 curl -fL \
-  -o devops-v0.0.6-linux-x64.tar.gz \
-  https://mmmqaz.cn/releases/devops-v0.0.6-linux-x64.tar.gz
+  -o devops-v0.0.7-linux-x64.tar.gz \
+  https://mmmqaz.cn/releases/devops-v0.0.7-linux-x64.tar.gz
 
-tar -xzf devops-v0.0.6-linux-x64.tar.gz
-cd devops-v0.0.6
+tar -xzf devops-v0.0.7-linux-x64.tar.gz
+cd devops-v0.0.7
+chmod 755 devops.sh
 
-# v0.0.6 按中文注释填写 MySQL、工作目录、SECRET_KEY 等必填配置
-vi application.properties
-
-# 修改平台站点文件，再接入 Nginx 已启用的 http include 目录
-vi nginx/devops.conf
-sudo nginx -t
-sudo systemctl reload nginx
-
-./devops.sh check
-./devops.sh start
+# 中文向导检查环境、询问配置并按确认结果自动安装依赖
+./devops.sh install
 ./devops.sh status
 ```
 
-`check` 始终只读，会检查 Linux/CPU、Java、MySQL、Docker、远端镜像、Nginx、配置权限和端口归属，并针对失败项给出中文修复指引。首次启动由 Flyway 自动初始化数据库，后续版本自动执行累计迁移。`v0.0.7` 发布后，交互向导会在每项确认后自动处理这些步骤，并保持不覆盖系统 `nginx.conf`、不停止未知进程的安全边界。
+`check` 始终只读，会检查 Linux/CPU、Java、MySQL、Docker、远端镜像、Nginx、配置权限和端口归属，并针对失败项给出中文修复指引。首次启动由 Flyway 自动初始化数据库，后续版本自动执行累计迁移。交互向导只在每项获得确认后执行安装或配置，并保持不覆盖系统 `nginx.conf`、不停止未知进程的安全边界。
 
 首次初始化会创建后台管理员 `admin`，初始密码为 `111111`。只允许先从受控管理网络登录，并立即在“个人信息 → 修改密码”中更换客户专用强密码；完成改密前不要开放公网入口。后台与客户工作台的访问地址以 `nginx/devops.conf` 中两个独立站点的 `server_name` 和 `listen` 为准。
 
@@ -144,7 +137,7 @@ sudo systemctl reload nginx
 
 - 新客户直接安装接入时的最新正式版本，不需要补装历史版本。
 - 老客户可以从任意更早正式版本累计直升，逐版升级不是前置条件；`v0.0.5` 及更早客户首次切换到远程镜像交付时，使用新包内的 `upgrade-from-offline-release.sh`，后续版本再使用标准 `devops.sh upgrade`。
-- 从包含在线升级能力的版本开始，`./devops.sh update --check` 只读检查官网正式版本，`./devops.sh update` 自动下载并直接累计升级；`v0.0.6` 及更早版本首次过渡仍需手工下载一次目标包。
+- 从 `v0.0.7` 开始，`./devops.sh update --check` 只读检查官网正式版本，`./devops.sh update` 自动下载并直接累计升级。`v0.0.6` 及更早客户先在原安装目录执行一次 `curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash`，即可独立升级启动器，无需先手工下载整个目标包。
 - 正式升级前先备份 MySQL、`application.properties` 和 `nginx/devops.conf`，再执行只读的 `upgrade --check`。
 - Tag、Release、版本说明、Flyway 迁移和发布归档一经正式发布即冻结，不覆盖历史记录。
 - Agent 镜像使用与正式版本匹配的固定 tag；部署脚本按清单自动 `docker pull`，发布包不再携带数 GiB 镜像归档。

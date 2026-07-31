@@ -21,9 +21,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm build
-      - run: pnpm package
       - uses: actions/upload-artifact@v4
         with:
-          name: agents-platform-site
-          path: package/*.tar.gz
-
+          name: agents-platform-site-static
+          path: dist/

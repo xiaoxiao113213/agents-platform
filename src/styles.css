@@ -1872,6 +1872,57 @@ button {
   background: #ffffff;
 }
 
+.launcher-transition {
+  display: grid;
+  margin: 24px 0 26px;
+  padding: 28px;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(360px, 1.2fr);
+  align-items: center;
+  gap: 36px;
+  border: 1px solid var(--line);
+  border-left: 4px solid #010120;
+  border-radius: 4px;
+  background: #f7f7fb;
+  box-shadow: rgba(1, 1, 32, 0.1) 0 4px 10px;
+}
+
+.launcher-transition--release {
+  margin: 0 0 64px;
+}
+
+.launcher-transition__copy > span {
+  color: var(--faint);
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.launcher-transition__copy h3 {
+  margin: 10px 0 8px;
+  color: #000000;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.launcher-transition__copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.launcher-transition__copy code {
+  color: #000000;
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+}
+
+.launcher-transition > .code-block {
+  width: 100%;
+  margin-top: 0;
+}
+
 .history-heading,
 .release-row {
   display: grid;
@@ -2313,6 +2364,11 @@ button {
   .latest-release-grid {
     grid-template-columns: 1fr;
     gap: 34px;
+  }
+
+  .launcher-transition {
+    grid-template-columns: 1fr;
+    gap: 22px;
   }
 
   .latest-actions {
