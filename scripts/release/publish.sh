@@ -35,7 +35,7 @@ fi
 cd "$ROOT"
 [[ "$(git branch --show-current)" == master ]] || { printf '错误：正式发布必须在 master 分支执行。\n' >&2; exit 1; }
 pnpm install --frozen-lockfile
-pnpm package
+AGENTS_PLATFORM_SOURCE_ROOT="$SOURCE" pnpm package
 [[ -f "$SITE_ARCHIVE" ]] || { printf '错误：官网发布包未生成。\n' >&2; exit 1; }
 
 git add -A

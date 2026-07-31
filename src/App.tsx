@@ -35,6 +35,13 @@ import {
 } from 'lucide-react'
 import { Link, NavLink, Route as RouterRoute, Routes, useLocation } from 'react-router-dom'
 import {
+  builtinAgents,
+  builtinMcps,
+  enterpriseScenarios,
+  mcpCategoryLabels,
+  type BuiltinMcp,
+} from './content/capabilities'
+import {
   getReleaseDownloadUrl,
   getReleasePageUrl,
   latestRelease,
@@ -44,6 +51,7 @@ import {
 
 const navItems = [
   { to: '/', label: '平台' },
+  { to: '/capabilities', label: '能力目录' },
   { to: '/deploy', label: '部署指南' },
   { to: '/guide', label: '使用指南' },
   { to: '/releases', label: '版本与下载' },
@@ -106,6 +114,7 @@ function SiteFooter() {
         </div>
         <div className="footer-links">
           <span>产品</span>
+          <Link to="/capabilities">能力目录</Link>
           <Link to="/deploy">部署指南</Link>
           <Link to="/guide">使用指南</Link>
           <Link to="/releases">版本下载</Link>
@@ -209,7 +218,7 @@ function HomePage() {
             </div>
             <div className="hero-proof" aria-label="平台核心规模">
               <span><strong>05</strong><small>专业 Agent</small></span>
-              <span><strong>17+</strong><small>内置 MCP</small></span>
+              <span><strong>18</strong><small>内置 MCP</small></span>
               <span><strong>02</strong><small>运行形态</small></span>
               <span><strong>01</strong><small>累计升级包</small></span>
             </div>
@@ -289,6 +298,13 @@ function HomePage() {
                 </div>
               </article>
             ))}
+          </div>
+          <div className="capability-directory-link">
+            <div>
+              <span>05 个专业 Agent · 18 个内置 MCP</span>
+              <strong>看看平台部署后，企业可以立刻交付哪些工作。</strong>
+            </div>
+            <Link className="button button-primary" to="/capabilities">打开能力目录 <ArrowRight size={17} /></Link>
           </div>
         </div>
       </section>
@@ -787,6 +803,143 @@ function GuidePage() {
   )
 }
 
+function CapabilitiesPage() {
+  const [activeCategory, setActiveCategory] = useState<BuiltinMcp['category'] | 'all'>('all')
+  const visibleMcps = activeCategory === 'all'
+    ? builtinMcps
+    : builtinMcps.filter((item) => item.category === activeCategory)
+  const agentIcons: Record<string, ReactNode> = {
+    default: <Code2 />,
+    'ai-video': <Play />,
+    'ai-ppt': <PanelTop />,
+    'grafana-dashboard': <Database />,
+    'issue-resolution': <MessageSquareText />,
+  }
+  const categoryIcons: Record<BuiltinMcp['category'], ReactNode> = {
+    scm: <GitBranch />,
+    artifact: <PackageCheck />,
+    data: <Database />,
+    infrastructure: <Server />,
+    quality: <ShieldCheck />,
+    observability: <PanelTop />,
+    collaboration: <MessageSquareText />,
+  }
+
+  return (
+    <main className="subpage capability-page">
+      <section className="capability-hero">
+        <div className="shell capability-hero-grid">
+          <div>
+            <span className="eyebrow">Built in, ready for work</span>
+            <h1>开箱即用的企业 Agent 能力</h1>
+            <p>平台交付的不是一个空白聊天框。专业 Agent 已经带着工程、规则和产物链路；MCP 把它们接入企业现有系统。</p>
+            <div className="capability-hero-actions">
+              <Link className="button button-primary" to="/deploy">部署平台 <ArrowRight size={17} /></Link>
+              <Link className="button button-secondary" to="/guide">查看使用流程</Link>
+            </div>
+          </div>
+          <div className="capability-hero-metrics" aria-label="内置能力规模">
+            <div><strong>05</strong><span>专业 Agent 工程</span></div>
+            <div><strong>18</strong><span>内置 JavaScript MCP</span></div>
+            <div><strong>07</strong><span>企业系统类别</span></div>
+            <div><strong>01</strong><span>统一治理工作台</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section className="agent-catalog-section">
+        <div className="shell section-heading two-column-heading">
+          <div>
+            <span className="eyebrow">Professional agents</span>
+            <h2>选择一个角色，<br />直接开始交付。</h2>
+          </div>
+          <p>每个 Agent 都基于同一受控运行时构建，但拥有独立工程、规则、工具链和验收标准。同一种 Agent 可以创建多个隔离实例。</p>
+        </div>
+        <div className="shell agent-catalog-list">
+          {builtinAgents.map((agent, index) => (
+            <article className="agent-catalog-row" key={agent.code}>
+              <div className="agent-catalog-identity">
+                <span className="agent-catalog-index">0{index + 1}</span>
+                <span className="agent-catalog-icon">{agentIcons[agent.code]}</span>
+                <div><small>{agent.category}</small><h3>{agent.name}</h3></div>
+              </div>
+              <div className="agent-catalog-description">
+                <p>{agent.summary}</p>
+                <div className="agent-catalog-io">
+                  <span><b>输入</b>{agent.input}</span>
+                  <span><b>交付</b>{agent.output}</span>
+                  <span><b>适合</b>{agent.audience}</span>
+                </div>
+              </div>
+              <div className="agent-catalog-tags">
+                {agent.capabilities.map((item) => <span key={item}>{item}</span>)}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mcp-catalog-section">
+        <div className="shell section-heading two-column-heading">
+          <div>
+            <span className="eyebrow">Enterprise connectors</span>
+            <h2>把 Agent 接进<br />正在运行的企业系统。</h2>
+          </div>
+          <p>所有内置 MCP 都是可直接安装的 JavaScript npm 工程。必填连接参数没有虚假默认值，同一个 MCP 可以多次配置并连接不同项目或环境。</p>
+        </div>
+        <div className="shell mcp-filter" role="tablist" aria-label="MCP 分类">
+          <button type="button" className={activeCategory === 'all' ? 'is-active' : ''} onClick={() => setActiveCategory('all')}>全部 <span>{builtinMcps.length}</span></button>
+          {(Object.entries(mcpCategoryLabels) as [BuiltinMcp['category'], string][]).map(([key, label]) => (
+            <button key={key} type="button" className={activeCategory === key ? 'is-active' : ''} onClick={() => setActiveCategory(key)}>
+              {label} <span>{builtinMcps.filter((item) => item.category === key).length}</span>
+            </button>
+          ))}
+        </div>
+        <div className="shell mcp-catalog-grid">
+          {visibleMcps.map((mcp) => (
+            <article className="mcp-catalog-item" key={mcp.code}>
+              <div className="mcp-catalog-head">
+                <span>{categoryIcons[mcp.category]}</span>
+                <div><small>{mcpCategoryLabels[mcp.category]}</small><h3>{mcp.name}</h3></div>
+                <code>{mcp.code}</code>
+              </div>
+              <p>{mcp.description}</p>
+              <div className="mcp-capability-list">
+                {mcp.capabilities.map((item) => <span key={item}>{item}</span>)}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="enterprise-scenarios-section">
+        <div className="shell enterprise-scenarios-layout">
+          <div className="enterprise-scenarios-copy">
+            <span className="eyebrow eyebrow-light">Composable outcomes</span>
+            <h2>不是 18 个孤立工具，<br />而是可组合的业务链路。</h2>
+            <p>把专业 Agent、MCP、Skill、Workflow 和权限组合起来，企业可以从一个小场景开始，再逐步扩展到跨系统流程。</p>
+          </div>
+          <div className="enterprise-scenario-list">
+            {enterpriseScenarios.map((scenario) => (
+              <article key={scenario.index}>
+                <span>{scenario.index}</span>
+                <div><h3>{scenario.title}</h3><code>{scenario.path}</code><p>{scenario.description}</p></div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="capability-final-cta">
+        <div className="shell">
+          <div><span className="eyebrow">Start with one workflow</span><h2>先交付一个能验收的 Agent，<br />再把能力复制给更多团队。</h2></div>
+          <div><p>下载当前 Linux 正式包，按部署指南完成安装。Agent 镜像由脚本从远端固定版本仓库自动拉取。</p><Link className="button button-primary" to="/deploy">查看完整部署流程 <ArrowRight size={17} /></Link></div>
+        </div>
+      </section>
+    </main>
+  )
+}
+
 function ReleasesPage() {
   return (
     <main className="subpage releases-page">
@@ -916,6 +1069,7 @@ export default function App() {
       <SiteHeader />
       <Routes>
         <RouterRoute path="/" element={<HomePage />} />
+        <RouterRoute path="/capabilities" element={<CapabilitiesPage />} />
         <RouterRoute path="/deploy" element={<DeployPage />} />
         <RouterRoute path="/guide" element={<GuidePage />} />
         <RouterRoute path="/releases" element={<ReleasesPage />} />

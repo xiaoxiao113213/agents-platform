@@ -47,6 +47,7 @@ try {
 
     pnpm install --frozen-lockfile
     if ($LASTEXITCODE -ne 0) { throw 'pnpm install 失败。' }
+    $env:AGENTS_PLATFORM_SOURCE_ROOT = $source
     pnpm package
     if ($LASTEXITCODE -ne 0) { throw '官网构建或 package 失败。' }
     if (-not (Test-Path -LiteralPath $siteArchive)) { throw "官网发布包未生成：$siteArchive" }

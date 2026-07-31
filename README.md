@@ -18,11 +18,13 @@
   <img src="https://img.shields.io/badge/production-Linux%20x64-111111?style=flat-square" alt="生产平台 Linux x64" />
   <img src="https://img.shields.io/badge/runtime-Java%2021-111111?style=flat-square" alt="Java 21" />
   <img src="https://img.shields.io/badge/Agent-5%20built--in-111111?style=flat-square" alt="5 个内置 Agent" />
-  <img src="https://img.shields.io/badge/MCP-17%2B-111111?style=flat-square" alt="17 个以上内置 MCP" />
+  <img src="https://img.shields.io/badge/MCP-18-111111?style=flat-square" alt="18 个内置 MCP" />
 </p>
 
 <p align="center">
   <a href="https://mmmqaz.cn/"><strong>官方网站</strong></a>
+  ·
+  <a href="https://mmmqaz.cn/#/capabilities">能力目录</a>
   ·
   <a href="https://mmmqaz.cn/#/deploy">部署指南</a>
   ·
@@ -32,12 +34,12 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/download/v0.0.6/devops-v0.0.6-linux-x64.tar.gz"><strong>下载 v0.0.6</strong></a>
+  <a href="https://mmmqaz.cn/releases/devops-v0.0.6-linux-x64.tar.gz"><strong>官网下载 v0.0.6</strong></a>
   ·
   <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v0.0.6">版本说明</a>
 </p>
 
-> Agents Platform 正式版本统一由 [GitHub Releases](https://github.com/xiaoxiao113213/agents-platform/releases) 以 Linux 安装包交付。包名中的 `devops` 是现有发行标识，产品名称仍为 Agents Platform。
+> Agents Platform 正式 Linux 包可从官网直接下载；GitHub Releases 同步保存不可覆盖的 Tag、版本说明和发布归档。包名中的 `devops` 是现有发行标识，产品名称仍为 Agents Platform。
 
 ## 为什么需要 Agents Platform
 
@@ -51,7 +53,7 @@
 | 团队权限需要另行集成 | Agent 与 Issue 原生支持按客户、用户和组授权 |
 | 版本与现场配置保护需要自行建设 | 版本冻结、累计升级，并保护真实配置与 Nginx 修改 |
 
-| `5` 个专业 Agent | `17+` 个内置 MCP | `2` 种运行形态 | `1` 套累计升级链路 |
+| `5` 个专业 Agent | `18` 个内置 MCP | `2` 种运行形态 | `1` 套累计升级链路 |
 | ---: | ---: | ---: | ---: |
 | 开箱即用的工程能力 | 接入数据库、监控与研发流程 | Docker Agent + 远程 Agent | 新装与跨版本升级使用同一正式包 |
 
@@ -114,7 +116,7 @@ Issue 场景形成了更严格的人机闭环：待 AI 处理的 Issue 按优先
 ```bash
 curl -fL \
   -o devops-v0.0.6-linux-x64.tar.gz \
-  https://github.com/xiaoxiao113213/agents-platform/releases/download/v0.0.6/devops-v0.0.6-linux-x64.tar.gz
+  https://mmmqaz.cn/releases/devops-v0.0.6-linux-x64.tar.gz
 
 tar -xzf devops-v0.0.6-linux-x64.tar.gz
 cd devops-v0.0.6
@@ -142,6 +144,7 @@ sudo systemctl reload nginx
 
 - 新客户直接安装接入时的最新正式版本，不需要补装历史版本。
 - 老客户可以从任意更早正式版本累计直升，逐版升级不是前置条件；`v0.0.5` 及更早客户首次切换到远程镜像交付时，使用新包内的 `upgrade-from-offline-release.sh`，后续版本再使用标准 `devops.sh upgrade`。
+- 从包含在线升级能力的版本开始，`./devops.sh update --check` 只读检查官网正式版本，`./devops.sh update` 自动下载并直接累计升级；`v0.0.6` 及更早版本首次过渡仍需手工下载一次目标包。
 - 正式升级前先备份 MySQL、`application.properties` 和 `nginx/devops.conf`，再执行只读的 `upgrade --check`。
 - Tag、Release、版本说明、Flyway 迁移和发布归档一经正式发布即冻结，不覆盖历史记录。
 - Agent 镜像使用与正式版本匹配的固定 tag；部署脚本按清单自动 `docker pull`，发布包不再携带数 GiB 镜像归档。

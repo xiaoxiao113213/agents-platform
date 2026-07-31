@@ -13,6 +13,7 @@ export interface PlatformRelease {
 }
 
 export const repositoryUrl = 'https://github.com/xiaoxiao113213/agents-platform'
+export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
@@ -114,7 +115,7 @@ export const releases: PlatformRelease[] = [
 export const latestRelease = releases[0]
 
 export function getReleaseDownloadUrl(release: PlatformRelease) {
-  return `${repositoryUrl}/releases/download/${release.version}/${release.assetName}`
+  return `${officialSiteUrl}/releases/${release.assetName}`
 }
 
 export function getReleasePageUrl(version: string) {
