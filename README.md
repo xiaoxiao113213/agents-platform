@@ -22,9 +22,17 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/download/v0.0.6/devops-v0.0.6-linux-x64.tar.gz"><strong>下载 v0.0.6</strong></a>
+  <a href="https://mmmqaz.cn/"><strong>官方网站</strong></a>
   ·
-  <a href="#快速部署">快速部署</a>
+  <a href="https://mmmqaz.cn/#/deploy">部署指南</a>
+  ·
+  <a href="https://mmmqaz.cn/#/guide">使用指南</a>
+  ·
+  <a href="https://mmmqaz.cn/#/releases">版本与下载</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/download/v0.0.6/devops-v0.0.6-linux-x64.tar.gz"><strong>下载 v0.0.6</strong></a>
   ·
   <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v0.0.6">版本说明</a>
 </p>
@@ -90,6 +98,8 @@ Issue 场景形成了更严格的人机闭环：待 AI 处理的 Issue 按优先
 ## 快速部署
 
 最新正式版本为 **v0.0.6**，生产环境仅支持 Linux x64。
+
+第一次部署或不熟悉 Linux/Nginx 时，请直接按照[官方部署指南](https://mmmqaz.cn/#/deploy)操作。指南分别说明了“机器未安装 Nginx”和“已有 Nginx 业务配置”两种现场，避免覆盖现有站点。部署完成后的 API Key、Agent、MCP、Skill、授权与 Issue 操作见[使用指南](https://mmmqaz.cn/#/guide)。
 
 部署前准备：
 

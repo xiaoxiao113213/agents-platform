@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import {
   ArrowDown,
   ArrowRight,
@@ -44,6 +44,7 @@ import {
 
 const navItems = [
   { to: '/', label: '平台' },
+  { to: '/deploy', label: '部署指南' },
   { to: '/guide', label: '使用指南' },
   { to: '/releases', label: '版本与下载' },
 ]
@@ -105,7 +106,8 @@ function SiteFooter() {
         </div>
         <div className="footer-links">
           <span>产品</span>
-          <Link to="/guide">部署指南</Link>
+          <Link to="/deploy">部署指南</Link>
+          <Link to="/guide">使用指南</Link>
           <Link to="/releases">版本下载</Link>
         </div>
         <div className="footer-links">
@@ -250,7 +252,7 @@ function HomePage() {
           </div>
           <div className="section-intro">
             <p>从镜像选择、API Key、MCP 和 Skill，到运行状态、任务产物、客户授权与异常诊断，管理员在同一处完成交付。</p>
-            <Link className="text-link" to="/guide">查看部署与使用流程 <ArrowRight size={16} /></Link>
+            <Link className="text-link" to="/guide">查看平台使用流程 <ArrowRight size={16} /></Link>
           </div>
         </div>
 
@@ -324,7 +326,7 @@ function HomePage() {
             <span className="eyebrow">Human in the loop</span>
             <h2>AI 负责处理，<br />人负责验收。</h2>
             <p>Issue 进入待 AI 队列后，Agent 按优先级和时间顺序一次领取一条。信息不足就发起澄清，处理完成交回用户验证，用户才拥有最终关闭权。</p>
-            <Link className="button button-secondary" to="/guide#issue-workflow">查看 Issue 工作流 <ArrowRight size={17} /></Link>
+            <RouteAnchor className="button button-secondary" to="/guide#issue-workflow">查看 Issue 工作流 <ArrowRight size={17} /></RouteAnchor>
           </div>
           <div className="flow-rail" aria-label="Issue AI 处理流程">
             {[
@@ -363,40 +365,34 @@ function HomePage() {
   )
 }
 
-const installSteps = [
+const deploySteps = [
   {
     id: '01',
-    title: '准备 Linux 运行环境',
-    body: '准备 Java 21+、MySQL 8、Docker Engine、Docker CLI 和 Nginx。在 MySQL 中创建空的 devops 数据库和具有该库 DDL/DML 权限的专用账号。',
+    title: '确认服务器与访问权限',
+    body: '生产环境使用 Linux x64。准备一个可执行 sudo 的账号，并确认服务器可以访问 GitHub、运行时镜像仓库和模型 API。Windows 仅用于开发。',
+    code: 'uname -s\nuname -m\njava -version\ndocker version',
     icon: <Server />,
   },
   {
     id: '02',
     title: '下载并解压正式包',
-    body: '每个正式包既是完整安装包，也是累计升级包。新客户直接安装目标版本，不需要先安装历史版本。',
-    code: `tar -xzf ${latestRelease.assetName}\ncd devops-${latestRelease.version}`,
+    body: '新客户直接安装最新正式版本，不需要从 v0.0.1 逐版安装。建议解压到固定目录，并让运行账号拥有该目录。',
+    code: `curl -fL -o ${latestRelease.assetName} ${getReleaseDownloadUrl(latestRelease)}\ntar -xzf ${latestRelease.assetName}\ncd devops-${latestRelease.version}\nchmod 755 devops.sh`,
     icon: <PackageCheck />,
   },
   {
     id: '03',
-    title: '填写外置配置',
-    body: '编辑 application.properties，配置 MySQL、绝对数据目录、SECRET_KEY、远程 Agent 公网地址和可选 Java 路径。真实密钥不要通过命令参数写入。',
-    code: 'cp application.properties.example application.properties\nchmod 600 application.properties',
-    icon: <KeyRound />,
+    title: '创建 MySQL 数据库与专用账号',
+    body: '平台不会创建 MySQL 服务，但第一次启动会用 Flyway 初始化空的 devops 数据库。不要让应用长期使用 root 账号。',
+    code: "CREATE DATABASE devops CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\nCREATE USER 'devops_app'@'127.0.0.1' IDENTIFIED BY 'CHANGE_ME_STRONG_PASSWORD';\nGRANT ALL PRIVILEGES ON devops.* TO 'devops_app'@'127.0.0.1';\nFLUSH PRIVILEGES;",
+    icon: <Database />,
   },
   {
     id: '04',
-    title: '执行中文上线预检',
-    body: 'check 会检查操作系统、Java、配置、目录、MySQL、Docker、远端镜像、Nginx 和端口归属。失败项会给出具体修改位置和处理命令。',
-    code: './devops.sh check',
-    icon: <FileCheck2 />,
-  },
-  {
-    id: '05',
-    title: '启动并确认健康',
-    body: '首次启动会按清单自动拉取固定版本 Agent 镜像，Flyway 自动初始化或升级数据库。确认服务为 UP 后再配置 Nginx。',
-    code: './devops.sh start\n./devops.sh status',
-    icon: <Play />,
+    title: '填写 application.properties',
+    body: '按相邻中文注释填写 JDBC、数据目录、SECRET_KEY、远程 Agent 地址和可选 Java 路径。真实配置会在升级时保留，密码和 Token 不要写进 Shell 命令历史。',
+    code: 'cp application.properties.example application.properties\nchmod 600 application.properties\nopenssl rand -hex 32\nvi application.properties',
+    icon: <KeyRound />,
   },
 ]
 
@@ -419,16 +415,26 @@ function CopyCode({ value }: { value: string }) {
   )
 }
 
-function GuidePage() {
+function RouteAnchor({ to, children, className }: { to: string; children: ReactNode; className?: string }) {
+  const anchorId = to.split('#')[1]
+  const scrollToAnchor = () => {
+    if (!anchorId) return
+    window.setTimeout(() => document.getElementById(anchorId)?.scrollIntoView({ block: 'start', behavior: 'instant' }), 100)
+  }
+
+  return <Link className={className} to={to} onClick={scrollToAnchor}>{children}</Link>
+}
+
+function DeployPage() {
   return (
     <main className="subpage">
       <section className="page-intro">
         <div className="shell page-intro-grid">
           <div>
-            <span className="eyebrow">Documentation</span>
-            <h1>部署与使用指南</h1>
+            <span className="eyebrow">Linux production</span>
+            <h1>部署指南</h1>
           </div>
-          <p>从一台干净的 Linux 服务器开始，完成主服务、双前端、数据库和 Agent 运行时的正式部署。所有正式版本都支持累计升级。</p>
+          <p>面向第一次部署平台的用户，从拿到正式包开始，完成数据库、外置配置、Nginx、上线检查、启动和首次登录。</p>
         </div>
       </section>
 
@@ -436,22 +442,47 @@ function GuidePage() {
         <div className="shell guide-layout">
           <aside className="guide-nav">
             <span>本页目录</span>
-            <a href="#/guide#install">首次安装</a>
-            <a href="#/guide#nginx">Nginx 与双端</a>
-            <a href="#/guide#agent">创建 Agent</a>
-            <a href="#/guide#issue-workflow">Issue 工作流</a>
-            <a href="#/guide#upgrade">版本升级</a>
-            <a href="#/guide#diagnosis">诊断命令</a>
+            <RouteAnchor to="/deploy#prepare">开始之前</RouteAnchor>
+            <RouteAnchor to="/deploy#install">下载与配置</RouteAnchor>
+            <RouteAnchor to="/deploy#nginx">接入 Nginx</RouteAnchor>
+            <RouteAnchor to="/deploy#preflight">上线预检</RouteAnchor>
+            <RouteAnchor to="/deploy#launch">启动与登录</RouteAnchor>
+            <RouteAnchor to="/deploy#upgrade">升级与回滚</RouteAnchor>
+            <RouteAnchor to="/deploy#diagnosis">故障定位</RouteAnchor>
           </aside>
           <div className="guide-content">
+            <section id="prepare" className="guide-block">
+              <div className="guide-title">
+                <span>Before you begin</span>
+                <h2>开始之前</h2>
+                <p>主应用只部署在 Linux 宿主机。正式包不包含 MySQL、Nginx 或 Docker 安装程序，也不携带数 GiB 的镜像文件。</p>
+              </div>
+              <div className="requirement-list">
+                {[
+                  ['Linux x64', '生产服务器；运行账号可使用 sudo，安装目录建议位于 /opt。'],
+                  ['Java 21+', '主服务直接运行在宿主机，可通过 java -version 检查。'],
+                  ['MySQL 8', '提前创建空的 devops 数据库和具有 DDL/DML 权限的专用账号。'],
+                  ['Docker Engine', '运行 Agent 容器；运行账号必须能执行 docker info 和 docker pull。'],
+                  ['Nginx', '提供后台与客户两个独立入口；未安装和已安装的处理方式见下文。'],
+                  ['网络与域名', '服务器可访问镜像仓库和模型服务；准备后台、客户入口的域名或端口。'],
+                ].map(([name, description]) => (
+                  <div key={name}><strong>{name}</strong><span>{description}</span></div>
+                ))}
+              </div>
+              <div className="callout">
+                <FileCheck2 />
+                <p><strong>不知道环境是否齐全也可以继续。</strong> 解压后先执行 <code>./devops.sh check</code>，脚本只读取状态，不会安装软件或修改系统，会按失败项给出中文处理方式。</p>
+              </div>
+            </section>
+
             <section id="install" className="guide-block">
               <div className="guide-title">
                 <span>Install</span>
-                <h2>首次安装</h2>
-                <p>生产环境只支持 Linux。Windows 是开发和构建环境，不是客户部署平台。</p>
+                <h2>下载、数据库与外置配置</h2>
+                <p>以下步骤从当前最新正式版本开始。命令中的密码、路径、域名都要替换为客户现场的真实值。</p>
               </div>
               <div className="install-steps">
-                {installSteps.map((step) => (
+                {deploySteps.map((step) => (
                   <article className="install-step" key={step.id}>
                     <span className="step-number">{step.id}</span>
                     <span className="step-icon">{step.icon}</span>
@@ -467,53 +498,72 @@ function GuidePage() {
 
             <section id="nginx" className="guide-block">
               <div className="guide-title">
-                <span>Access</span>
-                <h2>Nginx 与双端入口</h2>
-                <p>后台和客户工作台是两个独立站点，必须使用不同端口。默认后台为 80，客户工作台为 8080。</p>
+                <span>Reverse proxy</span>
+                <h2>按机器现状接入 Nginx</h2>
+                <p>后台与客户工作台是两个独立站点，默认端口为 80 和 8080。实际端口可以修改，但二者不能相同，也不能与 Java 的 server.port 冲突。</p>
               </div>
               <div className="guide-facts">
-                <div><PanelTop /><strong>后台管理</strong><span>web/ · 管理 Agent、MCP、Issue 与客户授权</span></div>
-                <div><Users /><strong>客户工作台</strong><span>client/ · 只访问已授权 Agent 与 Issue 项目</span></div>
+                <div><PanelTop /><strong>后台管理</strong><span>web/ · 管理 Agent、MCP、Issue、客户与授权</span></div>
+                <div><Users /><strong>客户工作台</strong><span>client/ · 只访问已经授权的 Agent 与 Issue 项目</span></div>
+              </div>
+              <div className="nginx-paths">
+                <article>
+                  <div className="scenario-heading"><span>路径 A</span><h3>机器没有安装 Nginx</h3></div>
+                  <p>先让 <code>check</code> 识别发行版并给出安装命令，也可以按常见系统执行以下命令。</p>
+                  <CopyCode value={'# Debian / Ubuntu\nsudo apt-get update && sudo apt-get install -y nginx\n\n# RHEL / Rocky / AlmaLinux\nsudo dnf install -y nginx'} />
+                  <p>编辑平台自己的 <code>nginx/devops.conf</code>。不要用它覆盖系统 <code>/etc/nginx/nginx.conf</code>，只在现有 <code>http {'{ }'}</code> 中增加一条绝对路径 include。</p>
+                  <CopyCode value={'# 写在现有 /etc/nginx/nginx.conf 的 http { } 内\ninclude /opt/devops/nginx/devops.conf;\n\nsudo nginx -t\nsudo systemctl enable --now nginx\nsudo systemctl reload nginx'} />
+                </article>
+                <article>
+                  <div className="scenario-heading"><span>路径 B</span><h3>机器已经有 Nginx</h3></div>
+                  <p>保留现有主配置、证书和其他业务站点。先查看生效配置与端口，再决定使用直接 include 或已有的 <code>conf.d/sites-enabled</code> 目录。</p>
+                  <CopyCode value={'sudo nginx -T\nsudo ss -ltnp\n\n# 编辑平台配置，不修改已有业务站点\nvi /opt/devops/nginx/devops.conf'} />
+                  <p>只有 <code>sudo nginx -T</code> 确认某个目录已经被 include 时，才能把平台配置链接进去。若 80/8080 已占用，修改平台两个 <code>listen</code>，不要停止不明服务。</p>
+                  <CopyCode value={'sudo ln -s /opt/devops/nginx/devops.conf /etc/nginx/conf.d/agents-platform.conf\nsudo nginx -t && sudo systemctl reload nginx\nsudo nginx -T'} />
+                </article>
               </div>
               <div className="callout">
                 <ShieldCheck />
-                <p><strong>现场配置不会被升级覆盖。</strong> 实际使用的 <code>nginx/devops.conf</code> 和 <code>application.properties</code> 始终保留；新模板写入 <code>.example</code>，由运维按差异合并。</p>
+                <p><strong>现场配置不会被升级覆盖。</strong> 实际使用的 <code>nginx/devops.conf</code> 和 <code>application.properties</code> 始终保留；新模板只写入 <code>.example</code>。首次接入和后续升级都不要覆盖系统主配置。</p>
               </div>
             </section>
 
-            <section id="agent" className="guide-block">
+            <section id="preflight" className="guide-block">
               <div className="guide-title">
-                <span>Operate</span>
-                <h2>创建并交付 Agent</h2>
+                <span>Preflight</span>
+                <h2>执行中文上线预检</h2>
+                <p>在启动前运行检查，逐项处理所有“失败”。警告不会阻止启动，但应在正式开放前确认影响。</p>
               </div>
-              <div className="guide-grid">
+              <CopyCode value={'./devops.sh check'} />
+              <div className="check-matrix">
                 {[
-                  [<Boxes />, '选择内置 Agent', '从通用、视频、PPT、Grafana 或 Issue Resolution Agent 中选择。同一类型可以创建多个实例。'],
-                  [<KeyRound />, '绑定 API Key', 'API Key 独立管理，可在平台 Agent 或客户授权实例间切换；模型范围和默认模型随 Key 配置。'],
-                  [<Network />, '配置 MCP', '选择目标项目、自定义 Server 名称并填写环境变量。同一 MCP 可按不同 Server 名称添加多次。'],
-                  [<Users />, '授权客户', '按客户账号或客户组授权。组成员动态继承访问权，共享项目中的对话对组内成员可见。'],
-                ].map(([icon, title, text]) => (
-                  <article key={String(title)}>
-                    <span>{icon}</span>
-                    <h3>{title}</h3>
-                    <p>{text}</p>
-                  </article>
+                  ['Nginx程序', '未安装', '按输出中的 apt/dnf/yum/zypper/apk 命令安装。'],
+                  ['Nginx配置', '语法错误', '执行 sudo nginx -t，根据准确文件和行号修复。'],
+                  ['Nginx站点接入', '未加载平台配置', '在现有 http { } 中 include；不要覆盖 nginx.conf。'],
+                  ['Nginx监听端口', '端口冲突', '用 sudo ss -ltnp 查归属，修改平台 listen 或 Java 端口。'],
+                  ['Nginx监听端口', '由 Nginx 占用', '正常，说明当前 Nginx 已在监听该端口。'],
+                ].map(([name, state, action]) => (
+                  <div key={`${name}-${state}`}><strong>{name}</strong><span>{state}</span><p>{action}</p></div>
                 ))}
               </div>
             </section>
 
-            <section id="issue-workflow" className="guide-block">
+            <section id="launch" className="guide-block">
               <div className="guide-title">
-                <span>Issue loop</span>
-                <h2>让 Agent 连续处理 Issue</h2>
-                <p>把项目级 DevOps Issue MCP 和 issue-resolution Skill 安装到 Agent 后，即可形成持续工作队列。</p>
+                <span>Launch</span>
+                <h2>启动、验证与首次登录</h2>
+                <p>第一次启动会从远端仓库拉取固定版本 Agent 镜像，并由 Flyway 初始化空数据库。下载时间取决于服务器网络。</p>
               </div>
-              <ol className="workflow-list">
-                <li><span>1</span><div><strong>创建项目并取得令牌</strong><p>在 Issue 管理中创建项目，复制项目标识与令牌；令牌可在项目管理中再次获取或轮换。</p></div></li>
-                <li><span>2</span><div><strong>给 Agent 添加 DevOps Issue MCP</strong><p>选择 Agent 项目，填写服务地址、项目标识和项目令牌，并为 Server 设置唯一名称。</p></div></li>
-                <li><span>3</span><div><strong>安装 issue-resolution Skill</strong><p>Skill 按优先级降序、创建时间正序领取“待 AI 处理”的 Issue，一次只处理一条。</p></div></li>
-                <li><span>4</span><div><strong>澄清或交付</strong><p>信息不足时转为“待用户澄清”并继续下一条；完成后转为“AI 处理完毕”，等待用户验证关闭。</p></div></li>
-              </ol>
+              <CopyCode value={'./devops.sh start\n./devops.sh status\n\n# 如果启动失败\n./devops.sh logs\n./devops.sh foreground'} />
+              <div className="first-login-strip">
+                <div><span>后台地址</span><strong>http://&lt;后台域名或 IP&gt;:&lt;后台端口&gt;/</strong></div>
+                <div><span>首次账号</span><strong>admin</strong></div>
+                <div><span>初始密码</span><strong>111111</strong></div>
+              </div>
+              <div className="warning-callout">
+                <ShieldCheck />
+                <p><strong>先改密码，再开放公网。</strong> 只从受控管理网络首次登录，在“个人信息 → 修改密码”中设置客户专用强密码。客户工作台地址使用另一个 Nginx 站点端口。</p>
+              </div>
             </section>
 
             <section id="upgrade" className="guide-block">
@@ -540,11 +590,146 @@ function GuidePage() {
                   ['./devops.sh status', '显示版本、PID、端口归属与健康状态。'],
                   ['./devops.sh logs', '持续查看配置的应用日志。'],
                   ['./devops.sh foreground', '前台运行 Java，直接观察启动错误。'],
+                  ['sudo nginx -T', '查看 Nginx 最终生效配置，确认平台站点确实被 include。'],
+                  ['sudo ss -ltnp', '查看监听端口、PID 和进程归属，不要盲目停止未知服务。'],
                   ['./devops.sh -h', '查看完整中文命令、升级策略与故障处理。'],
                 ].map(([command, description]) => (
                   <div key={command}><code>{command}</code><span>{description}</span></div>
                 ))}
               </div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+function GuidePage() {
+  return (
+    <main className="subpage">
+      <section className="page-intro">
+        <div className="shell page-intro-grid">
+          <div>
+            <span className="eyebrow">Product guide</span>
+            <h1>使用指南</h1>
+          </div>
+          <p>完成部署后，从首次安全设置开始，配置模型、创建 Agent、组合 MCP 与 Skill，并把能力授权给客户和 Issue 项目。</p>
+        </div>
+      </section>
+
+      <section className="guide-section">
+        <div className="shell guide-layout">
+          <aside className="guide-nav">
+            <span>本页目录</span>
+            <RouteAnchor to="/guide#first-login">首次设置</RouteAnchor>
+            <RouteAnchor to="/guide#api-key">模型 API Key</RouteAnchor>
+            <RouteAnchor to="/guide#agent">创建 Agent</RouteAnchor>
+            <RouteAnchor to="/guide#mcp-skill">MCP 与 Skill</RouteAnchor>
+            <RouteAnchor to="/guide#authorization">客户授权</RouteAnchor>
+            <RouteAnchor to="/guide#issue-workflow">Issue 工作流</RouteAnchor>
+            <RouteAnchor to="/guide#sessions">会话与产物</RouteAnchor>
+          </aside>
+          <div className="guide-content">
+            <section id="first-login" className="guide-block">
+              <div className="guide-title">
+                <span>First run</span>
+                <h2>首次登录后的安全设置</h2>
+                <p>首次管理员账号只用于初始化。修改密码后再创建客户、客户组和日常管理员账号，避免多人共享 admin。</p>
+              </div>
+              <ol className="workflow-list">
+                <li><span>1</span><div><strong>立即修改初始密码</strong><p>进入“个人信息 → 修改密码”，设置客户专用强密码，不把初始密码留在交付工单中。</p></div></li>
+                <li><span>2</span><div><strong>创建日常管理员与角色</strong><p>按职责分配菜单和操作权限，保留最小必要权限。</p></div></li>
+                <li><span>3</span><div><strong>创建客户与客户组</strong><p>客户工作台与后台入口分离；后续 Agent 和 Issue 可以授权到用户或组。</p></div></li>
+              </ol>
+            </section>
+
+            <section id="api-key" className="guide-block">
+              <div className="guide-title">
+                <span>Model access</span>
+                <h2>配置模型 API Key</h2>
+                <p>先在 AI Agent 的 API Key 管理中录入有效凭据，再创建 Agent。Key 可独立维护、切换并绑定不同模型，不需要重建 Agent。</p>
+              </div>
+              <div className="guide-grid">
+                <article><span><KeyRound /></span><h3>录入凭据</h3><p>填写供应商、API Key、可用模型和默认模型。真实密钥由服务端加密保存，不展示完整明文。</p></article>
+                <article><span><RefreshCcw /></span><h3>切换与验证</h3><p>在后台 Agent 或客户授权实例中切换 Key，发送一条最小对话确认模型、额度和网络均可用。</p></article>
+              </div>
+            </section>
+
+            <section id="agent" className="guide-block">
+              <div className="guide-title">
+                <span>Agent</span>
+                <h2>创建并验证专业 Agent</h2>
+                <p>同一种内置 Agent 可以创建多个独立实例。每个实例都有自己的镜像、项目工作区、API Key、MCP、Skill、会话和产物。</p>
+              </div>
+              <div className="guide-grid">
+                {[
+                  [<Boxes />, '选择内置工程', '按任务选择通用、视频、PPT、Grafana 或 Issue Resolution Agent，填写唯一名称。'],
+                  [<KeyRound />, '绑定 API Key', '选择已经验证的 Key 与默认模型；需要时可在管理页切换。'],
+                  [<Play />, '启动并检查状态', '创建后等待容器或远程节点就绪。异常状态可打开详情查看具体错误。'],
+                  [<MessageSquareText />, '完成最小验收', '发送一条与该 Agent 能力匹配的任务，确认回答、工具调用和产物都能正常返回。'],
+                ].map(([icon, title, text]) => (
+                  <article key={String(title)}><span>{icon}</span><h3>{title}</h3><p>{text}</p></article>
+                ))}
+              </div>
+            </section>
+
+            <section id="mcp-skill" className="guide-block">
+              <div className="guide-title">
+                <span>Tools and rules</span>
+                <h2>按项目组合 MCP 与 Skill</h2>
+                <p>MCP 提供外部系统工具，Skill 规定处理流程。先选目标 Agent 项目，再安装和填写现场参数。</p>
+              </div>
+              <ol className="workflow-list">
+                <li><span>1</span><div><strong>选择目标项目</strong><p>同一 Agent 下可能有多个项目，添加 MCP 前必须明确安装到哪个项目。</p></div></li>
+                <li><span>2</span><div><strong>自定义 Server 名称</strong><p>同一个 MCP 可以添加多次，例如分别连接测试和生产 Grafana；每个 Server 名称必须唯一。</p></div></li>
+                <li><span>3</span><div><strong>填写必填环境变量</strong><p>数据库地址、Token、项目标识等没有虚假的默认值。非必填项才使用产品默认值。</p></div></li>
+                <li><span>4</span><div><strong>安装 Skill 并实测工具</strong><p>安装与业务匹配的 Skill，重新打开会话后让 Agent 执行只读查询，确认连接和权限范围正确。</p></div></li>
+              </ol>
+            </section>
+
+            <section id="authorization" className="guide-block">
+              <div className="guide-title">
+                <span>Delivery</span>
+                <h2>授权给客户用户或组</h2>
+                <p>授权决定客户工作台能看到什么。组内成员共享已授权 Agent 和项目会话，未授权资源保持不可见。</p>
+              </div>
+              <div className="guide-facts">
+                <div><Users /><strong>按用户授权</strong><span>适合少量固定人员或需要单独隔离的 Agent 与 Issue 项目。</span></div>
+                <div><Network /><strong>按组授权</strong><span>适合团队共用；新增组成员后自动继承该组已有访问权。</span></div>
+              </div>
+              <div className="callout"><ShieldCheck /><p><strong>授权后要用客户账号回归。</strong> 在客户工作台确认 Agent、共享会话和 Issue 可见，同时验证未授权资源确实不可访问。</p></div>
+            </section>
+
+            <section id="issue-workflow" className="guide-block">
+              <div className="guide-title">
+                <span>Issue loop</span>
+                <h2>让 Agent 连续处理 Issue</h2>
+                <p>把项目级 DevOps Issue MCP 和 issue-resolution Skill 安装到 Agent 后，形成从领取、澄清、处理到人工验收的闭环。</p>
+              </div>
+              <ol className="workflow-list">
+                <li><span>1</span><div><strong>创建项目并取得令牌</strong><p>在 Issue 管理中创建项目，复制项目标识与令牌；令牌可在项目管理中再次复制或轮换。</p></div></li>
+                <li><span>2</span><div><strong>添加 DevOps Issue MCP</strong><p>选择 Agent 项目，填写平台地址、项目标识和令牌，并设置唯一 Server 名称。</p></div></li>
+                <li><span>3</span><div><strong>安装 issue-resolution Skill</strong><p>Agent 按优先级降序、创建时间正序领取“待 AI 处理”的 Issue，一次只处理一条。</p></div></li>
+                <li><span>4</span><div><strong>澄清或交付</strong><p>信息不足时评论并转为“待用户澄清”；完成后转为“AI 处理完毕”，最终由用户验证并关闭。</p></div></li>
+              </ol>
+            </section>
+
+            <section id="sessions" className="guide-block">
+              <div className="guide-title">
+                <span>Daily work</span>
+                <h2>会话、任务与产物</h2>
+                <p>会话用于持续协作，任务记录后台执行过程，产物保存 Agent 生成的文件。不要只根据聊天气泡判断任务是否完成。</p>
+              </div>
+              <div className="command-table">
+                {[
+                  ['上下文与压缩', '关注上下文比例；接近上限时主动压缩，再继续长任务。'],
+                  ['任务状态', '任务仍在执行时等待完成；异常时打开详情查看运行错误和工具输出。'],
+                  ['历史产物', '从产物列表访问本次及历史文件，下载后完成实际验收。'],
+                  ['附件发送', '发送完成后输入区应清空；敏感附件只上传到明确授权的项目。'],
+                ].map(([name, description]) => <div key={name}><code>{name}</code><span>{description}</span></div>)}
+              </div>
+              <div className="guide-next"><span>还没有完成安装？</span><Link to="/deploy">前往部署指南 <ArrowRight size={16} /></Link></div>
             </section>
           </div>
         </div>
@@ -650,15 +835,27 @@ function NotFoundPage() {
 }
 
 function ScrollToTop() {
-  const location = useLocation()
-
   useEffect(() => {
-    if (location.hash) {
-      window.setTimeout(() => document.querySelector(location.hash)?.scrollIntoView(), 0)
-      return
+    let scrollTimer: number | undefined
+    const scrollForCurrentRoute = () => {
+      if (scrollTimer !== undefined) window.clearTimeout(scrollTimer)
+      const anchorId = window.location.hash.match(/^#\/[^#]*#(.+)$/)?.[1]
+      if (!anchorId) {
+        window.scrollTo({ top: 0, behavior: 'instant' })
+        return
+      }
+      scrollTimer = window.setTimeout(() => {
+        document.getElementById(decodeURIComponent(anchorId))?.scrollIntoView({ block: 'start', behavior: 'instant' })
+      }, 80)
     }
-    window.scrollTo({ top: 0, behavior: 'instant' })
-  }, [location.pathname, location.hash])
+
+    window.addEventListener('hashchange', scrollForCurrentRoute)
+    scrollForCurrentRoute()
+    return () => {
+      window.removeEventListener('hashchange', scrollForCurrentRoute)
+      if (scrollTimer !== undefined) window.clearTimeout(scrollTimer)
+    }
+  }, [])
 
   return null
 }
@@ -670,6 +867,7 @@ export default function App() {
       <SiteHeader />
       <Routes>
         <RouterRoute path="/" element={<HomePage />} />
+        <RouterRoute path="/deploy" element={<DeployPage />} />
         <RouterRoute path="/guide" element={<GuidePage />} />
         <RouterRoute path="/releases" element={<ReleasesPage />} />
         <RouterRoute path="*" element={<NotFoundPage />} />

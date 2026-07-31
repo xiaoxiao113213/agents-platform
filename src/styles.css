@@ -1020,6 +1020,37 @@ button {
   line-height: 1.75;
 }
 
+.requirement-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid #000000;
+}
+
+.requirement-list > div {
+  display: grid;
+  min-height: 98px;
+  padding: 20px 22px;
+  grid-template-columns: 128px 1fr;
+  align-items: start;
+  gap: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.requirement-list > div:nth-child(odd) {
+  border-right: 1px solid var(--line);
+}
+
+.requirement-list strong {
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.requirement-list span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
 .install-steps {
   border-top: 1px solid #000000;
 }
@@ -1135,6 +1166,54 @@ button {
   line-height: 1.7;
 }
 
+.nginx-paths {
+  display: grid;
+  margin-top: 28px;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.nginx-paths article {
+  min-width: 0;
+  padding: 28px;
+  background: #ffffff;
+}
+
+.scenario-heading {
+  min-height: 78px;
+  border-bottom: 1px solid var(--line);
+}
+
+.scenario-heading span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--faint);
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.scenario-heading h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 650;
+}
+
+.nginx-paths article > p {
+  margin: 20px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+.nginx-paths article > p code {
+  color: #000000;
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+}
+
 .callout,
 .warning-callout {
   display: grid;
@@ -1235,6 +1314,73 @@ button {
   background: #fff1ee;
 }
 
+.check-matrix {
+  margin-top: 28px;
+  border-top: 1px solid #000000;
+}
+
+.check-matrix > div {
+  display: grid;
+  min-height: 70px;
+  grid-template-columns: 160px 150px 1fr;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.check-matrix strong {
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+}
+
+.check-matrix span {
+  color: #8d360c;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.check-matrix p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.first-login-strip {
+  display: grid;
+  margin-top: 28px;
+  grid-template-columns: minmax(0, 1.7fr) 0.65fr 0.65fr;
+  border: 1px solid var(--line);
+}
+
+.first-login-strip > div {
+  display: flex;
+  min-width: 0;
+  min-height: 104px;
+  padding: 20px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  border-right: 1px solid var(--line);
+}
+
+.first-login-strip > div:last-child {
+  border-right: 0;
+}
+
+.first-login-strip span {
+  color: var(--faint);
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.first-login-strip strong {
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  font-weight: 650;
+}
+
 .command-table {
   border-top: 1px solid #000000;
 }
@@ -1256,6 +1402,26 @@ button {
 .command-table span {
   color: var(--muted);
   font-size: 13px;
+}
+
+.guide-next {
+  display: flex;
+  margin-top: 28px;
+  padding-top: 20px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.guide-next a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #000000;
+  font-weight: 650;
 }
 
 .release-intro .text-link {
@@ -1702,6 +1868,10 @@ button {
     grid-column: 1 / -1;
   }
 
+  .nginx-paths {
+    grid-template-columns: 1fr;
+  }
+
   .history-heading,
   .release-row {
     grid-template-columns: 120px minmax(0, 1fr) 92px;
@@ -1936,14 +2106,47 @@ button {
   }
 
   .guide-facts,
-  .guide-grid {
+  .guide-grid,
+  .requirement-list,
+  .first-login-strip {
     grid-template-columns: 1fr;
+  }
+
+  .requirement-list > div {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    border-right: 0;
+  }
+
+  .requirement-list > div:nth-child(odd) {
+    border-right: 0;
+  }
+
+  .first-login-strip > div {
+    min-height: 86px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .first-login-strip > div:last-child {
+    border-bottom: 0;
+  }
+
+  .check-matrix > div {
+    padding: 16px 0;
+    grid-template-columns: 1fr;
+    gap: 7px;
   }
 
   .command-table > div {
     padding: 16px 0;
     grid-template-columns: 1fr;
     gap: 8px;
+  }
+
+  .guide-next {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .history-heading {
