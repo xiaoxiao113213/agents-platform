@@ -1,36 +1,177 @@
-# Agents Platform 官网
+<p align="center">
+  <img src="./public/favicon.svg" width="76" height="76" alt="Agents Platform 标志" />
+</p>
 
-Agents Platform 的独立纯前端官网，包含平台介绍、部署使用指南和正式版本下载记录。
+<h1 align="center">Agents Platform</h1>
 
-## 本地开发
+<p align="center">
+  <strong>把企业 AI 从一次对话，变成可交付、可运营的生产能力。</strong>
+</p>
+
+<p align="center">
+  内置专业 Agent、MCP、Skill、Workflow、Issue 和客户授权，<br />
+  用一套平台持续创建、交付和治理真正参与业务的数字员工。
+</p>
+
+<p align="center">
+  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/latest"><img src="https://img.shields.io/github/v/release/xiaoxiao113213/agents-platform?display_name=tag&style=flat-square&color=111111" alt="最新正式版本" /></a>
+  <img src="https://img.shields.io/badge/production-Linux%20x64-111111?style=flat-square" alt="生产平台 Linux x64" />
+  <img src="https://img.shields.io/badge/runtime-Java%2021-111111?style=flat-square" alt="Java 21" />
+  <img src="https://img.shields.io/badge/Agent-5%20built--in-111111?style=flat-square" alt="5 个内置 Agent" />
+  <img src="https://img.shields.io/badge/MCP-17%2B-111111?style=flat-square" alt="17 个以上内置 MCP" />
+</p>
+
+<p align="center">
+  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/download/v0.0.6/devops-v0.0.6-linux-x64.tar.gz"><strong>下载 v0.0.6</strong></a>
+  ·
+  <a href="#快速部署">快速部署</a>
+  ·
+  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v0.0.6">版本说明</a>
+</p>
+
+> 本仓库包含官网源码、公开部署说明、版本数据和 Release 发布脚本，不包含主平台后端与双前端源码。可运行的主平台由 [GitHub Releases](https://github.com/xiaoxiao113213/agents-platform/releases) 以 Linux 正式包交付；包名中的 `devops` 是现有发行标识，产品名称仍为 Agents Platform。
+
+## 为什么需要 Agents Platform
+
+企业真正需要的不是再多一个聊天框，而是能够进入业务、受到权限约束、留下过程证据并持续升级的 Agent 系统。
+
+| 常见的单体 Agent 项目 | Agents Platform |
+| --- | --- |
+| 通常需要自行安装工具、沉淀提示词 | 专业 Agent、MCP 与 Skill 目录直接选择 |
+| 多业务环境需要额外维护配置映射 | MCP 可按项目多次添加并自定义 Server 名称 |
+| 执行证据往往分散在聊天与工作目录 | 会话、任务、产物、容器状态和 Issue 统一留痕 |
+| 团队权限需要另行集成 | Agent 与 Issue 原生支持按客户、用户和组授权 |
+| 版本与现场配置保护需要自行建设 | 版本冻结、累计升级，并保护真实配置与 Nginx 修改 |
+
+| `5` 个专业 Agent | `17+` 个内置 MCP | `2` 种运行形态 | `1` 套累计升级链路 |
+| ---: | ---: | ---: | ---: |
+| 开箱即用的工程能力 | 接入数据库、监控与研发流程 | Docker Agent + 远程 Agent | 新装与跨版本升级使用同一正式包 |
+
+## 平台工作台
+
+![Agents Platform AI Agent 管理工作台](./public/images/platform-ai-agent.png)
+
+从镜像选择、API Key、MCP 和 Skill，到运行状态、任务产物、客户授权与异常诊断，管理员都可以在同一个工作台完成。后台管理端与客户工作台使用独立入口和端口，客户只能访问已授权的 Agent 与 Issue 项目。
+
+## 内置专业 Agent
+
+| Agent | 面向场景 | 交付能力 |
+| --- | --- | --- |
+| 通用开发 Agent | 研发、分析、文档与自动化 | 持久化工作区、工具调用、任务产物和完整会话 |
+| AI 视频制作 Agent | 教学、产品介绍与知识传播 | 脚本、分镜、神经语音旁白、Remotion 渲染和成片验收 |
+| AI PPT Agent | 汇报、方案与培训材料 | 内容结构、页面设计、图表素材和可编辑演示文稿 |
+| Grafana Dashboard Agent | 监控体系与运营大盘 | 连接 MySQL/Grafana，生成查询、面板与完整 Dashboard |
+| Issue Resolution Agent | 需求、Bug 与研发任务处理 | 按优先级串行领取、下载上下文、澄清、处理并交回人工验收 |
+
+内置 Agent 使用固定版本镜像和受管工程规范。必填连接信息不提供虚假的演示默认值，密码与 Token 由服务端加密保存；同一种 Agent 可以按团队或项目创建多个独立实例。实际使用时仍需提供有效的模型 API Key，以及目标业务所需的 MySQL、Grafana、Issue 项目或其他第三方凭据；视频 Agent 的在线语音生成还需要访问对应语音服务。
+
+## 从需求到验收
+
+```mermaid
+flowchart LR
+    A[用户提出需求] --> B[选择专业 Agent]
+    B --> C[组合 MCP 与 Skill]
+    C --> D[Agent 执行任务]
+    D --> E[沉淀会话与产物]
+    E --> F[用户验收或继续协作]
+```
+
+Issue 场景形成了更严格的人机闭环：待 AI 处理的 Issue 按优先级降序、创建时间正序进入队列；Agent 一次只领取一条。信息不足时主动评论并转为待用户澄清，处理完成后转为 AI 处理完毕，最终关闭权始终留给用户。
+
+## 核心能力
+
+- **Agent 工程化**：每种专业能力都有独立镜像、默认工程、质量规范、工具链和验收方式。
+- **MCP 目录**：内置 MySQL、Grafana、Docker、Kubernetes、Jenkins、GitHub、GitLab、SonarQube、Kafka、S3、DevOps Issue 等 JavaScript MCP 制品；同一 MCP 可以连接多个项目或客户环境。
+- **运行时治理**：区分容器生命周期与 Agent 执行状态，支持错误诊断、API Key 切换、上下文压缩和任务产物管理。
+- **团队协作**：按客户、用户和组授权 Agent 与 Issue，共享会话和处理记录，同时隔离未授权资源。
+- **Issue 闭环**：父子 Issue、类型、优先级、状态流转、评论、附件、项目令牌、MCP 与标准 Skill 形成完整链路。
+- **可持续交付**：每个正式版本同时支持空库安装和累计升级，现场 `application.properties` 与 `nginx/devops.conf` 不被覆盖。
+
+## 快速部署
+
+最新正式版本为 **v0.0.6**，生产环境仅支持 Linux x64。
+
+部署前准备：
+
+- Java 21 或更高版本
+- MySQL 8，并创建空的 `devops` 数据库
+- Docker Engine 与 Docker CLI，服务运行账号具备操作 Docker 的权限
+- 部署服务器能够访问发布清单中的镜像仓库；私有仓库需提前完成 `docker login`
+- Nginx，用于提供后台与客户工作台并代理 API、SSE 和 WebSocket
+
+如需接入远程 Agent，目标机还要安装 Node.js 24+ 和当前用户可执行的 Claude CLI。创建 Agent 前需在后台配置可用的模型 API Key；Grafana、数据库和 Issue 等能力按实际项目填写对应凭据。
+
+```bash
+curl -fL \
+  -o devops-v0.0.6-linux-x64.tar.gz \
+  https://github.com/xiaoxiao113213/agents-platform/releases/download/v0.0.6/devops-v0.0.6-linux-x64.tar.gz
+
+tar -xzf devops-v0.0.6-linux-x64.tar.gz
+cd devops-v0.0.6
+
+# 按中文注释填写 MySQL、工作目录、SECRET_KEY 和 Agent 运行时等必填配置
+vi application.properties
+
+# 修改实际站点文件中的安装目录、server_name 和两个独立监听端口，
+# 再把 nginx/devops.conf include 或复制到 Nginx 配置中
+vi nginx/devops.conf
+sudo nginx -t
+sudo systemctl reload nginx
+
+./devops.sh check
+./devops.sh start
+./devops.sh status
+```
+
+`check` 会检查 Linux/CPU、Java、MySQL、Docker、远端镜像、Nginx、配置权限和端口归属，并针对失败项给出中文修复指引。首次启动由 Flyway 自动初始化数据库，后续版本自动执行累计迁移。
+
+首次初始化会创建后台管理员 `admin`，初始密码为 `111111`。只允许先从受控管理网络登录，并立即在“个人信息 → 修改密码”中更换客户专用强密码；完成改密前不要开放公网入口。后台与客户工作台的访问地址以 `nginx/devops.conf` 中两个独立站点的 `server_name` 和 `listen` 为准。
+
+> 首次部署编辑并启用的是实际文件 `nginx/devops.conf`；`nginx/devops.conf.example` 是当前版本模板，仅用于后续升级时对比和合并新增路由。完整配置、升级和回滚说明随发布包提供。
+
+## 版本与升级策略
+
+- 新客户直接安装接入时的最新正式版本，不需要补装历史版本。
+- 老客户可以从任意更早正式版本累计直升，逐版升级不是前置条件；`v0.0.5` 及更早客户首次切换到远程镜像交付时，使用新包内的 `upgrade-from-offline-release.sh`，后续版本再使用标准 `devops.sh upgrade`。
+- 正式升级前先备份 MySQL、`application.properties` 和 `nginx/devops.conf`，再执行只读的 `upgrade --check`。
+- Tag、Release、版本说明、Flyway 迁移和发布归档一经正式发布即冻结，不覆盖历史记录。
+- Agent 镜像使用与正式版本匹配的固定 tag；部署脚本按清单自动 `docker pull`，发布包不再携带数 GiB 镜像归档。
+
+查看全部版本：[GitHub Releases](https://github.com/xiaoxiao113213/agents-platform/releases)
+
+## 官网开发
+
+官网是独立的 React + TypeScript + Vite 纯前端项目。
 
 ```powershell
+corepack enable
 pnpm install
 powershell -ExecutionPolicy Bypass -File scripts/local/service.ps1 start
 ```
 
-默认地址：<http://localhost:5175>
+默认访问地址：<http://localhost:5175>
 
-Linux/macOS 可使用：
+Linux/macOS：
 
 ```bash
+corepack enable
+pnpm install --frozen-lockfile
 ./scripts/local/service.sh start
 ```
 
-本地脚本支持 `start`、`restart`、`stop`、`status`、`health`、`logs` 和 `-h`。
-
-## 构建与站点打包
+生命周期脚本支持 `start`、`restart`、`stop`、`status`、`health`、`logs` 和 `-h`。生产构建与静态站点打包：
 
 ```bash
 pnpm build
 pnpm package
 ```
 
-`pnpm package` 会先构建，再在 `package/` 生成可直接交给 Nginx 等静态服务器的 `agents-platform-site-vX.Y.Z.tar.gz`。
+`pnpm package` 会在 `package/` 生成可直接交给 Nginx 的 `agents-platform-site-vX.Y.Z.tar.gz`。
 
-## 正式发布
+<details>
+<summary><strong>正式发布维护流程</strong></summary>
 
-正式发布由主平台仓库的冻结发布物驱动，禁止用开发版本临时打包：
+正式发布由主平台仓库中已经冻结的发布物驱动。脚本会校验版本和资产、构建官网、更新 `master`、创建不可复用的 Tag 与 GitHub Release，并上传 Linux 正式包和官网静态包。
 
 ```powershell
 $env:GITHUB_TOKEN = '<具有仓库写权限的 Token>'
@@ -42,15 +183,25 @@ export GITHUB_TOKEN='<具有仓库写权限的 Token>'
 ./scripts/release/publish.sh v0.0.6 ..
 ```
 
-发布脚本会校验主仓库正式包和版本说明、构建官网、创建提交、更新 `master`、创建不可复用的 Tag 与 GitHub Release，并上传 Linux 正式包和官网静态包。脚本不生成或比较 SHA256。
+发布前必须保证目标 Tag 和 Release 尚不存在、主平台正式包及版本说明已经冻结、`src/content/releases.ts` 已将目标版本登记为正式版本。
 
-发布前必须保证：
+</details>
 
-- 当前分支为 `master`
-- 工作区无未提交修改
-- `src/content/releases.ts` 已把目标版本标记为正式版本
-- 主仓库存在 `dist/releases/<version>/devops-<version>-linux-x64.tar.gz`
-- 主仓库存在 `docs/releases/<version>.md`
-- 目标 Tag 和 GitHub Release 尚不存在
+## 仓库结构
 
-GitHub Release 单个附件上限为 2 GiB。脚本会在上传前检查文件大小并给出明确错误，不做哈希校验。
+```text
+agents-platform/
+├── public/                 # 官网图标与真实产品截图
+├── src/                    # React 页面、版本数据与样式
+├── scripts/local/          # 本地服务生命周期脚本
+├── scripts/release/        # 正式 Tag、Release 与附件发布脚本
+├── package/                # 官网静态发布包，本地生成且不提交
+└── README.md
+```
+
+---
+
+<p align="center">
+  <strong>Agents Platform</strong><br />
+  让 Agent 真正进入业务，并对每一次执行结果负责。
+</p>
