@@ -58,7 +58,7 @@ try {
     }
 
     Invoke-Git @('push', '--force-with-lease', 'origin', 'master')
-    $remoteTag = (& git ls-remote --tags origin "refs/tags/$Version").Trim()
+    $remoteTag = (@(& git ls-remote --tags origin "refs/tags/$Version") -join "`n").Trim()
     if ($remoteTag -and -not $Resume) {
         throw "远端 Tag $Version 已存在。正式 Tag 不允许覆盖；仅补传附件时请使用 -Resume。"
     }
