@@ -9,6 +9,7 @@ export interface PlatformRelease {
   highlights: string[]
   metrics: string[]
   assetName: string
+  guidedInstall: boolean
 }
 
 export const repositoryUrl = 'https://github.com/xiaoxiao113213/agents-platform'
@@ -29,6 +30,7 @@ export const releases: PlatformRelease[] = [
     ],
     metrics: ['5 个远端固定镜像', '137 项 Runtime 测试通过', '正式包约 373 MiB'],
     assetName: 'devops-v0.0.6-linux-x64.tar.gz',
+    guidedInstall: false,
   },
   {
     version: 'v0.0.5',
@@ -45,6 +47,7 @@ export const releases: PlatformRelease[] = [
     ],
     metrics: ['5 个固定 Agent 镜像', '194 项后端测试', '135 项 Runtime 测试通过'],
     assetName: 'devops-v0.0.5-linux-x64.tar.gz',
+    guidedInstall: false,
   },
   {
     version: 'v0.0.4',
@@ -59,6 +62,7 @@ export const releases: PlatformRelease[] = [
     ],
     metrics: ['166 项后端测试', '4 个固定 Agent 镜像'],
     assetName: 'devops-v0.0.4-linux-x64.tar.gz',
+    guidedInstall: false,
   },
   {
     version: 'v0.0.3',
@@ -73,6 +77,7 @@ export const releases: PlatformRelease[] = [
     ],
     metrics: ['162 项后端测试', '4 个固定 Agent 镜像'],
     assetName: 'devops-v0.0.3-linux-x64.tar.gz',
+    guidedInstall: false,
   },
   {
     version: 'v0.0.2',
@@ -87,6 +92,7 @@ export const releases: PlatformRelease[] = [
     ],
     metrics: ['4 种内置 Agent', '161 项后端测试'],
     assetName: 'devops-v0.0.2-linux-x64.tar.gz',
+    guidedInstall: false,
   },
   {
     version: 'v0.0.1',
@@ -101,6 +107,7 @@ export const releases: PlatformRelease[] = [
     ],
     metrics: ['17 个内置 MCP', '147 项后端测试'],
     assetName: 'devops-v0.0.1-linux-x64.tar.gz',
+    guidedInstall: false,
   },
 ]
 

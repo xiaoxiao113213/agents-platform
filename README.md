@@ -99,13 +99,13 @@ Issue 场景形成了更严格的人机闭环：待 AI 处理的 Issue 按优先
 
 最新正式版本为 **v0.0.6**，生产环境仅支持 Linux x64。
 
-第一次部署或不熟悉 Linux/Nginx 时，解压正式包后直接运行 `./devops.sh install`。交互向导会检测缺失依赖，每项先询问，再使用 `sudo` 和当前发行版包管理器自动安装；随后引导填写应用配置、配置本机 MySQL、接入 Nginx、执行复检并可直接启动。完整说明见[官方部署指南](https://mmmqaz.cn/#/deploy)，部署后的 API Key、Agent、MCP、Skill、授权与 Issue 操作见[使用指南](https://mmmqaz.cn/#/guide)。
+第一次部署或不熟悉 Linux/Nginx 时，请严格按[官方部署指南](https://mmmqaz.cn/#/deploy)操作。当前正式版 `v0.0.6` 尚不包含交互式 `install` 命令，需要按指南完成环境、数据库、配置和 Nginx 接入；当前 `master` 的 `v0.0.7` 开发版已实现交互安装向导，待正式发布后官网会自动切换为一键流程。部署后的 API Key、Agent、MCP、Skill、授权与 Issue 操作见[使用指南](https://mmmqaz.cn/#/guide)。
 
-向导会检查并可协助安装：
+部署前准备：
 
 - Java 21 或更高版本
-- MySQL 8；本机可自动安装、创建 `devops` 数据库和专用账号
-- Docker Engine 与 Docker CLI，并检查服务运行账号权限
+- MySQL 8，并创建空的 `devops` 数据库
+- Docker Engine 与 Docker CLI，服务运行账号具备操作 Docker 的权限
 - 部署服务器能够访问发布清单中的镜像仓库；私有仓库需提前完成 `docker login`
 - Nginx，用于提供后台与客户工作台并代理 API、SSE 和 WebSocket
 
@@ -119,14 +119,20 @@ curl -fL \
 tar -xzf devops-v0.0.6-linux-x64.tar.gz
 cd devops-v0.0.6
 
-# 奶妈模式：逐项检测、询问、安装、配置、复检，并可直接启动
-./devops.sh install
+# v0.0.6 按中文注释填写 MySQL、工作目录、SECRET_KEY 等必填配置
+vi application.properties
 
-# 随时查看状态；若向导中选择暂不启动，再手工执行 start
+# 修改平台站点文件，再接入 Nginx 已启用的 http include 目录
+vi nginx/devops.conf
+sudo nginx -t
+sudo systemctl reload nginx
+
+./devops.sh check
+./devops.sh start
 ./devops.sh status
 ```
 
-`install` 可以重复执行，已经完成的配置会先询问是否保留。它只修改发布目录内的应用配置和平台 Nginx 配置，不覆盖 `/etc/nginx/nginx.conf`，不删除已有站点，不停止未知端口进程；Nginx 语法失败会撤销本轮新建链接。独立执行的 `check` 始终只读，会检查 Linux/CPU、Java、MySQL、Docker、远端镜像、Nginx、配置权限和端口归属，并针对失败项给出中文修复指引。首次启动由 Flyway 自动初始化数据库，后续版本自动执行累计迁移。
+`check` 始终只读，会检查 Linux/CPU、Java、MySQL、Docker、远端镜像、Nginx、配置权限和端口归属，并针对失败项给出中文修复指引。首次启动由 Flyway 自动初始化数据库，后续版本自动执行累计迁移。`v0.0.7` 发布后，交互向导会在每项确认后自动处理这些步骤，并保持不覆盖系统 `nginx.conf`、不停止未知进程的安全边界。
 
 首次初始化会创建后台管理员 `admin`，初始密码为 `111111`。只允许先从受控管理网络登录，并立即在“个人信息 → 修改密码”中更换客户专用强密码；完成改密前不要开放公网入口。后台与客户工作台的访问地址以 `nginx/devops.conf` 中两个独立站点的 `server_name` 和 `listen` 为准。
 
