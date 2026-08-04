@@ -34,9 +34,9 @@
 </p>
 
 <p align="center">
-  <a href="https://mmmqaz.cn/releases/devops-v0.0.7-linux-x64.tar.gz"><strong>官网下载 v0.0.7</strong></a>
+  <a href="https://mmmqaz.cn/releases/devops-v0.0.8-linux-x64.tar.gz"><strong>官网下载 v0.0.8</strong></a>
   ·
-  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v0.0.7">版本说明</a>
+  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v0.0.8">版本说明</a>
 </p>
 
 > Agents Platform 正式 Linux 包可从官网直接下载；GitHub Releases 同步保存不可覆盖的 Tag、版本说明和发布归档。包名中的 `devops` 是现有发行标识，产品名称仍为 Agents Platform。
@@ -99,9 +99,9 @@ Issue 场景形成了更严格的人机闭环：待 AI 处理的 Issue 按优先
 
 ## 快速部署
 
-最新正式版本为 **v0.0.7**，生产环境仅支持 Linux x64。
+最新正式版本为 **v0.0.8**，生产环境仅支持 Linux x64。
 
-第一次部署或不熟悉 Linux/Nginx 时，请严格按[官方部署指南](https://mmmqaz.cn/#/deploy)操作。`v0.0.7` 已提供中文交互安装向导：它会先检查环境，缺少依赖时逐项询问，并在用户确认后自动安装和配置。部署后的 API Key、Agent、MCP、Skill、授权与 Issue 操作见[使用指南](https://mmmqaz.cn/#/guide)。
+第一次部署或不熟悉 Linux/Nginx 时，请严格按[官方部署指南](https://mmmqaz.cn/#/deploy)操作。`v0.0.8` 延续中文交互安装向导：它会先检查环境，缺少依赖时逐项询问，并在用户确认后自动安装和配置。部署后的 API Key、Agent、MCP、Skill、授权与 Issue 操作见[使用指南](https://mmmqaz.cn/#/guide)。
 
 部署前准备：
 
@@ -115,11 +115,11 @@ Issue 场景形成了更严格的人机闭环：待 AI 处理的 Issue 按优先
 
 ```bash
 curl -fL \
-  -o devops-v0.0.7-linux-x64.tar.gz \
-  https://mmmqaz.cn/releases/devops-v0.0.7-linux-x64.tar.gz
+  -o devops-v0.0.8-linux-x64.tar.gz \
+  https://mmmqaz.cn/releases/devops-v0.0.8-linux-x64.tar.gz
 
-tar -xzf devops-v0.0.7-linux-x64.tar.gz
-cd devops-v0.0.7
+tar -xzf devops-v0.0.8-linux-x64.tar.gz
+cd devops-v0.0.8
 chmod 755 devops.sh
 
 # 中文向导检查环境、询问配置并按确认结果自动安装依赖
@@ -136,8 +136,8 @@ chmod 755 devops.sh
 ## 版本与升级策略
 
 - 新客户直接安装接入时的最新正式版本，不需要补装历史版本。
-- 老客户可以从任意更早正式版本累计直升，逐版升级不是前置条件；`v0.0.5` 及更早客户首次切换到远程镜像交付时，使用新包内的 `upgrade-from-offline-release.sh`，后续版本再使用标准 `devops.sh upgrade`。
-- 从 `v0.0.7` 开始，`./devops.sh update --check` 只读检查官网正式版本，`./devops.sh update` 自动下载并直接累计升级。`v0.0.6` 及更早客户先在原安装目录执行一次 `curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash`，即可独立升级启动器，无需先手工下载整个目标包。
+- 已确认全部存量客户至少处于 `v0.0.7`；受支持的现场升级从 `v0.0.7` 直接进入当前或后续正式版本，逐版升级不是前置条件。
+- 从 `v0.0.7` 开始，`./devops.sh update --check` 只读检查官网正式版本，`./devops.sh update` 自动下载并直接累计升级。官网与 GitHub 只保留 `v0.0.7` 及之后的正式发布物。
 - 正式升级前先备份 MySQL、`application.properties` 和 `nginx/devops.conf`，再执行只读的 `upgrade --check`。
 - Tag、Release、版本说明、Flyway 迁移和发布归档一经正式发布即冻结，不覆盖历史记录。
 - Agent 镜像使用与正式版本匹配的固定 tag；部署脚本按清单自动 `docker pull`，发布包不再携带数 GiB 镜像归档。

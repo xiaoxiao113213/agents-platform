@@ -381,13 +381,11 @@ function HomePage() {
   )
 }
 
-const launcherBootstrapCommand = 'curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash'
-
 const guidedDeploySteps = [
   {
     id: '01',
     title: '下载并解压正式包',
-    body: '新客户直接安装最新正式版本，不需要从 v0.0.1 逐版安装。把发布目录放在固定位置，并使用可执行 sudo 的普通账号运行。',
+    body: '新客户直接安装最新正式版本，不需要逐版安装。把发布目录放在固定位置，并使用可执行 sudo 的普通账号运行。',
     code: `curl -fL -o ${latestRelease.assetName} ${getReleaseDownloadUrl(latestRelease)}\ntar -xzf ${latestRelease.assetName}\ncd devops-${latestRelease.version}\nchmod 755 devops.sh`,
     icon: <PackageCheck />,
   },
@@ -425,7 +423,7 @@ const manualDeploySteps = [
   {
     id: '02',
     title: '下载并解压正式包',
-    body: '新客户直接安装最新正式版本，不需要从 v0.0.1 逐版安装。建议解压到固定目录，并让运行账号拥有该目录。',
+    body: '新客户直接安装最新正式版本，不需要逐版安装。建议解压到固定目录，并让运行账号拥有该目录。',
     code: `curl -fL -o ${latestRelease.assetName} ${getReleaseDownloadUrl(latestRelease)}\ntar -xzf ${latestRelease.assetName}\ncd devops-${latestRelease.version}\nchmod 755 devops.sh`,
     icon: <PackageCheck />,
   },
@@ -636,15 +634,15 @@ function DeployPage() {
               <div className="guide-title">
                 <span>Upgrade</span>
                 <h2>累计升级与回滚</h2>
-                <p>目标正式包包含全部历史 Flyway 迁移。产品包和启动器分别维护版本，老客户先把旧启动器一次性过渡到官网版本，之后即可长期使用在线累计升级。</p>
+                <p>目标正式包包含全部历史 Flyway 迁移。现存客户均已升级到 v0.0.7，可直接使用启动器在线检查、下载并累计升级。</p>
               </div>
               <div className="launcher-transition">
                 <div className="launcher-transition__copy">
                   <span>Launcher v1 · introduced in v0.0.7</span>
-                  <h3>旧版本只需先更新一次启动器</h3>
-                  <p><code>v0.0.6</code> 及更早的 <code>devops.sh</code> 不认识在线升级命令。进入现有安装目录执行右侧一条命令，脚本会校验下载内容、备份旧启动器并原子替换；运行中的 Java 服务和现场配置完全不动。</p>
+                  <h3>v0.0.7 及之后直接在线升级</h3>
+                  <p>进入现有安装目录先执行只读检查，确认目标版本、配置差异和运行时镜像均可用后，再执行正式升级。现场配置、Nginx 和运行数据不会被覆盖。</p>
                 </div>
-                <CopyCode value={`${launcherBootstrapCommand}\n./devops.sh launcher-version\n./devops.sh update --check`} />
+                <CopyCode value={'./devops.sh launcher-version\n./devops.sh update --check\n./devops.sh update'} />
               </div>
               <CopyCode value={`./devops.sh upgrade --check /tmp/${latestRelease.assetName}\n./devops.sh stop\n./devops.sh upgrade /tmp/${latestRelease.assetName}\ndiff -u nginx/devops.conf nginx/devops.conf.example\n./devops.sh check\n./devops.sh start\n./devops.sh status`} />
               <div className="warning-callout">
@@ -991,10 +989,10 @@ function ReleasesPage() {
           <div className="launcher-transition launcher-transition--release">
             <div className="launcher-transition__copy">
               <span>Compatibility notice</span>
-              <h3>启动器从 v0.0.7 开始独立升级</h3>
-              <p>已经部署 <code>v0.0.1 - v0.0.6</code> 的客户无需重新安装。先在原安装目录执行一次引导命令，后续正式版本都可以由 <code>./devops.sh update</code> 自动检查、下载和累计升级。</p>
+              <h3>v0.0.7 是当前最低保留版本</h3>
+              <p>已部署 <code>v0.0.7</code> 的客户可直接使用 <code>./devops.sh update</code> 自动检查、下载和累计升级；官网与 GitHub 不再提供更早版本。</p>
             </div>
-            <CopyCode value={launcherBootstrapCommand} />
+            <CopyCode value={'./devops.sh update --check\n./devops.sh update'} />
           </div>
           <div className="history-heading"><span>版本</span><span>正式发布记录</span><span>下载</span></div>
           {releases.map((release, index) => (
