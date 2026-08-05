@@ -15,21 +15,43 @@ const sourceRoot = path.resolve(root, process.env.AGENTS_PLATFORM_SOURCE_ROOT ||
 const publicSiteUrl = (process.env.AGENTS_PLATFORM_PUBLIC_URL || 'https://mmmqaz.cn').replace(/\/$/, '')
 const releaseArchiveName = `devops-${version}-linux-x64.tar.gz`
 const releaseArchive = path.join(sourceRoot, 'dist', 'releases', version, releaseArchiveName)
-const releaseNotes = path.join(sourceRoot, 'docs', 'releases', `${version}.md`)
+const publicReleaseNotes = path.join(root, 'docs', 'releases', `${version}.md`)
+const releaseContentSource = path.join(root, 'src', 'content', 'releases.ts')
 const launcherSource = path.join(sourceRoot, 'deploy', 'standalone', 'devops.sh')
 const launcherUpdaterSource = path.join(sourceRoot, 'deploy', 'standalone', 'update-launcher.sh')
 const publicReleaseDir = path.join(distDir, 'releases')
 
-for (const requiredFile of [releaseArchive, releaseNotes, launcherSource, launcherUpdaterSource]) {
+for (const requiredFile of [releaseArchive, publicReleaseNotes, releaseContentSource, launcherSource, launcherUpdaterSource]) {
   const fileStat = await stat(requiredFile).catch(() => null)
   if (!fileStat?.isFile()) {
     throw new Error(`官网打包缺少正式发布文件：${requiredFile}`)
   }
 }
 
+const forbiddenPublicReleaseTerms = [
+  [/HMAC/i, '签名算法'],
+  [/AES-GCM/i, '加密算法'],
+  [/SECRET_KEY/i, '内部配置键'],
+  [/Flyway/i, '数据库迁移工具'],
+  [/V\d{14}__/, '数据库迁移编号'],
+  [/\d+\s*张表/, '数据库结构统计'],
+  [/\d+\s*项[^\n，。]*测试/, '内部测试数量'],
+  [/(固定镜像|镜像[^\n，。]*(构建|推送|回拉)|远端回拉)/, '镜像发布过程'],
+  [/(密钥派生|分域签名|历史敏感信息)/, '内部安全实现'],
+]
+
+for (const publicContentFile of [publicReleaseNotes, releaseContentSource]) {
+  const publicContent = await readFile(publicContentFile, 'utf8')
+  for (const [pattern, label] of forbiddenPublicReleaseTerms) {
+    if (pattern.test(publicContent)) {
+      throw new Error(`官网公开版本文案包含${label}，请改为客户可感知的功能描述：${publicContentFile}`)
+    }
+  }
+}
+
 await mkdir(publicReleaseDir, { recursive: true })
 await copyFile(releaseArchive, path.join(publicReleaseDir, releaseArchiveName))
-await copyFile(releaseNotes, path.join(publicReleaseDir, `${version}.md`))
+await copyFile(publicReleaseNotes, path.join(publicReleaseDir, `${version}.md`))
 const launcherContent = (await readFile(launcherSource, 'utf8')).replace(/\r\n?/g, '\n')
 const launcherUpdaterContent = (await readFile(launcherUpdaterSource, 'utf8')).replace(/\r\n?/g, '\n')
 const launcherVersion = launcherContent.match(/^DEVOPS_LAUNCHER_VERSION='([1-9][0-9]*)'$/m)?.[1]

@@ -12,10 +12,12 @@ SOURCE="$(cd "$ROOT/$SOURCE_ROOT" && pwd)"
 [[ -n "${GITHUB_TOKEN:-}" ]] || { printf '错误：缺少 GITHUB_TOKEN。\n' >&2; exit 1; }
 
 ARCHIVE="$SOURCE/dist/releases/$VERSION/devops-$VERSION-linux-x64.tar.gz"
-NOTES="$SOURCE/docs/releases/$VERSION.md"
+INTERNAL_NOTES="$SOURCE/docs/releases/$VERSION.md"
+PUBLIC_NOTES="$ROOT/docs/releases/$VERSION.md"
 SITE_ARCHIVE="$ROOT/package/agents-platform-site-$VERSION.tar.gz"
 [[ -f "$ARCHIVE" ]] || { printf '错误：缺少正式 Linux 发布包：%s\n' "$ARCHIVE" >&2; exit 1; }
-[[ -f "$NOTES" ]] || { printf '错误：缺少正式版本说明：%s\n' "$NOTES" >&2; exit 1; }
+[[ -f "$INTERNAL_NOTES" ]] || { printf '错误：缺少内部正式版本说明：%s\n' "$INTERNAL_NOTES" >&2; exit 1; }
+[[ -f "$PUBLIC_NOTES" ]] || { printf '错误：缺少官网公开版本说明：%s\n' "$PUBLIC_NOTES" >&2; exit 1; }
 [[ "$(stat -c %s "$ARCHIVE")" -lt 2147483648 ]] || { printf '错误：正式包达到或超过 GitHub 单附件 2 GiB 上限。请先降低体积或设计分片交付，不要增加哈希文件。\n' >&2; exit 1; }
 
 PACKAGE_VERSION="v$(node -p "JSON.parse(require('fs').readFileSync('$ROOT/package.json','utf8')).version")"
@@ -64,7 +66,7 @@ if [[ -n "$RELEASE_JSON" && "$RESUME" != true ]]; then
   exit 1
 fi
 if [[ -z "$RELEASE_JSON" ]]; then
-  PAYLOAD="$(node - "$VERSION" "$NOTES" <<'NODE'
+  PAYLOAD="$(node - "$VERSION" "$PUBLIC_NOTES" <<'NODE'
 const fs = require('fs')
 const [version, notes] = process.argv.slice(2)
 process.stdout.write(JSON.stringify({tag_name: version, target_commitish: 'master', name: `Agents Platform ${version}`, body: fs.readFileSync(notes, 'utf8'), draft: false, prerelease: false}))
@@ -78,7 +80,7 @@ fi
 UPLOAD_URL="$(printf '%s' "$RELEASE_JSON" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>process.stdout.write(JSON.parse(s).upload_url.replace('{?name,label}','')))")"
 ASSET_NAMES="$(printf '%s' "$RELEASE_JSON" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>process.stdout.write((JSON.parse(s).assets||[]).map(x=>x.name).join('\\n')))")"
 
-for FILE in "$ARCHIVE" "$SITE_ARCHIVE"; do
+for FILE in "$ARCHIVE" "$PUBLIC_NOTES" "$SITE_ARCHIVE"; do
   NAME="$(basename "$FILE")"
   if printf '%s\n' "$ASSET_NAMES" | grep -Fxq "$NAME"; then
     printf '附件已存在，跳过：%s\n' "$NAME"

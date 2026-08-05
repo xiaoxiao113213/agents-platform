@@ -452,7 +452,7 @@ const manualDeploySteps = [
   {
     id: '03',
     title: '创建 MySQL 数据库与专用账号',
-    body: '创建空的 devops 数据库，第一次启动会由 Flyway 初始化结构和基础数据。不要让应用长期使用 root 账号。',
+    body: '创建空的 devops 数据库，第一次启动会自动初始化系统结构和基础数据。不要让应用长期使用 root 账号。',
     code: "CREATE DATABASE devops CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\nCREATE USER 'devops_app'@'127.0.0.1' IDENTIFIED BY 'CHANGE_ME_STRONG_PASSWORD';\nGRANT ALL PRIVILEGES ON devops.* TO 'devops_app'@'127.0.0.1';\nFLUSH PRIVILEGES;",
     icon: <Database />,
   },
@@ -638,7 +638,7 @@ function DeployPage() {
               <div className="guide-title">
                 <span>Launch</span>
                 <h2>启动、验证与首次登录</h2>
-                <p>第一次启动会从远端仓库拉取固定版本 Agent 镜像，并由 Flyway 初始化空数据库。下载时间取决于服务器网络。</p>
+                <p>第一次启动会自动准备所需 Agent 运行环境，并初始化空数据库。下载时间取决于服务器网络。</p>
               </div>
               <CopyCode value={'./devops.sh start\n./devops.sh status\n\n# 如果启动失败\n./devops.sh logs\n./devops.sh foreground'} />
               <div className="first-login-strip">
@@ -656,7 +656,7 @@ function DeployPage() {
               <div className="guide-title">
                 <span>Upgrade</span>
                 <h2>累计升级与回滚</h2>
-                <p>目标正式包包含全部历史 Flyway 迁移。现存客户均已升级到 v0.0.7，可直接使用启动器在线检查、下载并累计升级。</p>
+                <p>正式包支持历史版本累计升级。现存客户均已升级到 v0.0.7，可直接在线检查、下载并升级。</p>
               </div>
               <div className="launcher-transition">
                 <div className="launcher-transition__copy">
@@ -963,7 +963,7 @@ function CapabilitiesPage() {
       <section className="capability-final-cta">
         <div className="shell">
           <div><span className="eyebrow">Start with one workflow</span><h2>先交付一个能验收的 Agent，<br />再把能力复制给更多团队。</h2></div>
-          <div><p>下载当前 Linux 正式包，按部署指南完成安装。Agent 镜像由脚本从远端固定版本仓库自动拉取。</p><Link className="button button-primary" to="/deploy">查看完整部署流程 <ArrowRight size={17} /></Link></div>
+          <div><p>下载当前 Linux 正式包，按部署指南完成安装。所需 Agent 运行环境会在安装过程中自动准备。</p><Link className="button button-primary" to="/deploy">查看完整部署流程 <ArrowRight size={17} /></Link></div>
         </div>
       </section>
     </main>
@@ -980,7 +980,7 @@ function ReleasesPage() {
             <h1>版本与下载</h1>
           </div>
           <div>
-            <p>每个正式版本都是完整安装包和累计升级包。版本发布后，Tag、说明和发布物均冻结，不覆盖历史记录。</p>
+            <p>每个正式版本均可用于全新安装，也支持历史客户累计升级。版本记录清晰，方便确认当前版本与更新内容。</p>
             <a className="text-link" href={`${repositoryUrl}/releases`} target="_blank" rel="noreferrer">打开 GitHub Releases <ExternalLink size={16} /></a>
           </div>
         </div>
@@ -1001,7 +1001,7 @@ function ReleasesPage() {
           </div>
           <div className="latest-actions">
             <a className="button button-light" href={getReleaseDownloadUrl(latestRelease)}><CloudDownload size={17} /> 下载 Linux 包</a>
-            <a className="button button-ghost-light" href={getReleasePageUrl(latestRelease.version)} target="_blank" rel="noreferrer">Release notes <ExternalLink size={16} /></a>
+            <a className="button button-ghost-light" href={getReleasePageUrl(latestRelease.version)} target="_blank" rel="noreferrer">查看更新说明 <ExternalLink size={16} /></a>
           </div>
         </div>
       </section>
@@ -1055,9 +1055,9 @@ function ReleasesPage() {
 
       <section className="release-policy">
         <div className="shell policy-grid">
-          <div><GitBranch /><h3>不可复用 Tag</h3><p>每个版本创建唯一 Git Tag 和 GitHub Release，发布后不覆盖。</p></div>
-          <div><Database /><h3>累计迁移</h3><p>Flyway 保留完整历史，新客户直装，老客户可跨版本升级。</p></div>
-          <div><ShieldCheck /><h3>现场配置保留</h3><p>升级不覆盖真实 application.properties 与 nginx/devops.conf。</p></div>
+          <div><GitBranch /><h3>版本记录清晰</h3><p>每个正式版本保留独立的更新说明和下载记录。</p></div>
+          <div><Database /><h3>支持累计升级</h3><p>新客户可以直接安装，老客户可以跨版本升级。</p></div>
+          <div><ShieldCheck /><h3>现场配置保留</h3><p>升级时保留已经配置的端口、目录和站点参数。</p></div>
         </div>
       </section>
     </main>

@@ -12,7 +12,8 @@ $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $source = (Resolve-Path (Join-Path $root $SourceRoot)).Path
 $archive = Join-Path $source "dist\releases\$Version\devops-$Version-linux-x64.tar.gz"
-$notes = Join-Path $source "docs\releases\$Version.md"
+$internalNotes = Join-Path $source "docs\releases\$Version.md"
+$publicNotes = Join-Path $root "docs\releases\$Version.md"
 $siteArchive = Join-Path $root "package\agents-platform-site-$Version.tar.gz"
 $maxAssetBytes = 2GB
 
@@ -25,7 +26,8 @@ if (-not $env:GITHUB_TOKEN) {
     throw '缺少 GITHUB_TOKEN。请设置具有 agents-platform 仓库 Contents 写权限的 Token。'
 }
 if (-not (Test-Path -LiteralPath $archive)) { throw "缺少正式 Linux 发布包：$archive" }
-if (-not (Test-Path -LiteralPath $notes)) { throw "缺少正式版本说明：$notes" }
+if (-not (Test-Path -LiteralPath $internalNotes)) { throw "缺少内部正式版本说明：$internalNotes" }
+if (-not (Test-Path -LiteralPath $publicNotes)) { throw "缺少官网公开版本说明：$publicNotes" }
 if ((Get-Item -LiteralPath $archive).Length -ge $maxAssetBytes) {
     throw "正式包达到或超过 GitHub 单附件 2 GiB 上限：$archive。请先降低发布包体积或设计分片交付，不要增加哈希文件。"
 }
@@ -87,7 +89,7 @@ try {
             tag_name = $Version
             target_commitish = 'master'
             name = "Agents Platform $Version"
-            body = Get-Content -LiteralPath $notes -Raw
+            body = Get-Content -LiteralPath $publicNotes -Raw
             draft = $false
             prerelease = $false
         } | ConvertTo-Json
@@ -96,7 +98,7 @@ try {
 
     $existingNames = @($release.assets | ForEach-Object { $_.name })
     $uploadBase = $release.upload_url -replace '\{\?name,label\}$', ''
-    foreach ($file in @($archive, $siteArchive)) {
+    foreach ($file in @($archive, $publicNotes, $siteArchive)) {
         $name = [System.IO.Path]::GetFileName($file)
         if ($existingNames -contains $name) {
             Write-Host "附件已存在，跳过：$name"
