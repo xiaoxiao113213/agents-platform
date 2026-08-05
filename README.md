@@ -34,9 +34,9 @@
 </p>
 
 <p align="center">
-  <a href="https://mmmqaz.cn/releases/devops-v0.0.8-linux-x64.tar.gz"><strong>官网下载 v0.0.8</strong></a>
+  <a href="https://mmmqaz.cn/releases/devops-v0.0.9-linux-x64.tar.gz"><strong>官网下载 v0.0.9</strong></a>
   ·
-  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v0.0.8">版本说明</a>
+  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v0.0.9">版本说明</a>
 </p>
 
 > Agents Platform 正式 Linux 包可从官网直接下载；GitHub Releases 同步保存不可覆盖的 Tag、版本说明和发布归档。包名中的 `devops` 是现有发行标识，产品名称仍为 Agents Platform。
@@ -99,9 +99,9 @@ Issue 场景形成了更严格的人机闭环：待 AI 处理的 Issue 按优先
 
 ## 快速部署
 
-最新正式版本为 **v0.0.8**，生产环境仅支持 Linux x64。
+最新正式版本为 **v0.0.9**，生产环境仅支持 Linux x64。
 
-第一次部署或不熟悉 Linux/Nginx 时，请严格按[官方部署指南](https://mmmqaz.cn/#/deploy)操作。`v0.0.8` 延续中文交互安装向导：它会先检查环境，缺少依赖时逐项询问，并在用户确认后自动安装和配置。部署后的 API Key、Agent、MCP、Skill、授权与 Issue 操作见[使用指南](https://mmmqaz.cn/#/guide)。
+第一次部署或不熟悉 Linux/Nginx 时，请严格按[官方部署指南](https://mmmqaz.cn/#/deploy)操作。`v0.0.9` 延续中文交互安装向导：它会先检查环境，缺少依赖时逐项询问，并在用户确认后自动安装和配置。部署后的 API Key、Agent、MCP、Skill、授权与 Issue 操作见[使用指南](https://mmmqaz.cn/#/guide)。
 
 部署前准备：
 
@@ -115,11 +115,11 @@ Issue 场景形成了更严格的人机闭环：待 AI 处理的 Issue 按优先
 
 ```bash
 curl -fL \
-  -o devops-v0.0.8-linux-x64.tar.gz \
-  https://mmmqaz.cn/releases/devops-v0.0.8-linux-x64.tar.gz
+  -o devops-v0.0.9-linux-x64.tar.gz \
+  https://mmmqaz.cn/releases/devops-v0.0.9-linux-x64.tar.gz
 
-tar -xzf devops-v0.0.8-linux-x64.tar.gz
-cd devops-v0.0.8
+tar -xzf devops-v0.0.9-linux-x64.tar.gz
+cd devops-v0.0.9
 chmod 755 devops.sh
 
 # 中文向导检查环境、询问配置并按确认结果自动安装依赖

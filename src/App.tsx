@@ -48,6 +48,12 @@ import {
   releases,
   repositoryUrl,
 } from './content/releases'
+import {
+  agentCaseCategories,
+  agentUseCases,
+  serviceCustomers,
+  type AgentUseCase,
+} from './content/useCases'
 
 const navItems = [
   { to: '/', label: '平台' },
@@ -56,6 +62,8 @@ const navItems = [
   { to: '/guide', label: '使用指南' },
   { to: '/releases', label: '版本与下载' },
 ]
+
+const contactEmail = '418179551@qq.com'
 
 function Logo() {
   return (
@@ -110,7 +118,7 @@ function SiteFooter() {
       <div className="shell footer-grid">
         <div>
           <Logo />
-          <p>让 Agent、工具、流程与业务问题在同一套可交付系统中工作。</p>
+          <p>给 Agent 一个目标、一组工具和清晰边界，让它把真实工作交付到结果。</p>
         </div>
         <div className="footer-links">
           <span>产品</span>
@@ -124,6 +132,10 @@ function SiteFooter() {
           <a href={repositoryUrl} target="_blank" rel="noreferrer">GitHub</a>
           <a href={`${repositoryUrl}/issues`} target="_blank" rel="noreferrer">提交问题</a>
         </div>
+        <div className="footer-links">
+          <span>联系</span>
+          <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+        </div>
       </div>
       <div className="shell footer-bottom">
         <span>Agents Platform</span>
@@ -134,138 +146,203 @@ function SiteFooter() {
 }
 
 function HomePage() {
-  const capabilityRows = [
-    {
-      icon: <Bot />,
-      index: '01',
-      title: '拿来就能做专业工作',
-      body: '不是交付一个空容器。通用开发、带旁白视频、PPT、Grafana 大盘和 Issue 处理 Agent 都带着工程规范与工具链到场。',
-      tags: ['5 个专业 Agent', '固定版本镜像', '工作区持久化'],
-    },
-    {
-      icon: <Network />,
-      index: '02',
-      title: '接进真实业务，而不止会聊天',
-      body: 'MCP、Skill 和项目配置把 Agent 接入数据库、Grafana、Issue 与研发工具。必填值不放假默认值，密钥加密保存。',
-      tags: ['17+ 内置 MCP', '项目级配置', '密钥隔离'],
-    },
-    {
-      icon: <Workflow />,
-      index: '03',
-      title: '长任务也有清晰的运行轨迹',
-      body: '会话、任务、产物、上下文压缩与 Dynamic Workflow 统一追踪。用户知道 Agent 正在做什么，也找得到历史结果。',
-      tags: ['实时状态', '历史产物', '上下文管理'],
-    },
-    {
-      icon: <MessageSquareText />,
-      index: '04',
-      title: 'AI 执行，人保留最终决定权',
-      body: 'Issue 按优先级进入队列，Agent 一次领取一条；不清楚就提问，完成后交回验收，关闭权始终留给用户。',
-      tags: ['串行领取', '澄清闭环', '人工验收'],
-    },
-  ]
+  const [activeCaseCategory, setActiveCaseCategory] = useState<(typeof agentCaseCategories)[number]>('全部')
+  const [activeCaseId, setActiveCaseId] = useState(agentUseCases[0].id)
+  const visibleCases = activeCaseCategory === '全部'
+    ? agentUseCases
+    : agentUseCases.filter((item) => item.category === activeCaseCategory)
+  const activeCase = agentUseCases.find((item) => item.id === activeCaseId) ?? visibleCases[0] ?? agentUseCases[0]
+  const caseIcons: Record<AgentUseCase['icon'], ReactNode> = {
+    code: <Code2 />,
+    issue: <MessageSquareText />,
+    data: <Database />,
+    presentation: <PanelTop />,
+    video: <Play />,
+    operations: <Server />,
+    research: <Sparkles />,
+    office: <FileCheck2 />,
+    schedule: <RefreshCcw />,
+    web: <PanelTop />,
+  }
 
-  const advantages = [
-    {
-      icon: <Boxes />,
-      title: '专业 Agent 已工程化',
-      body: '视频、PPT、监控大盘和研发 Issue 都有独立镜像、默认工程、质量规范与验收链路。',
-    },
-    {
-      icon: <Route />,
-      title: '能力可以自由组合',
-      body: '同一个 MCP 可按项目多次配置并自定义 Server 名称，Agent 能连接不同客户和不同业务环境。',
-    },
-    {
-      icon: <Users />,
-      title: '团队与客户真正协作',
-      body: '按用户或组授权 Agent 和 Issue 项目，共享会话与处理记录，后台与客户工作台完全分离。',
-    },
-    {
-      icon: <RefreshCcw />,
-      title: '每个客户都能持续升级',
-      body: '新客户直接安装最新版，老客户从任意历史正式版累计直升；现场配置和 Nginx 修改不被覆盖。',
-    },
-  ]
+  const changeCaseCategory = (category: (typeof agentCaseCategories)[number]) => {
+    setActiveCaseCategory(category)
+    const firstCase = category === '全部'
+      ? agentUseCases[0]
+      : agentUseCases.find((item) => item.category === category)
+    if (firstCase) setActiveCaseId(firstCase.id)
+  }
 
   return (
     <main>
-      <section className="hero">
-        <div className="hero-product-image" aria-hidden="true" />
-        <div className="hero-shade" aria-hidden="true" />
-        <div className="shell hero-inner">
-          <div className="hero-copy">
+      <section className="home-hero">
+        <div className="home-hero-product" aria-hidden="true" />
+        <div className="home-hero-wash" aria-hidden="true" />
+        <div className="shell home-hero-inner">
+          <div className="home-hero-copy">
             <div className="release-kicker">
               <span className="live-dot" />
-              最新正式版 {latestRelease.version}
+              Agent operating system
               <span className="kicker-divider" />
-              生产可用
+              {latestRelease.version}
             </div>
             <h1>Agents Platform</h1>
-            <p className="hero-value">
-              把企业 AI 从一次对话，变成可交付、可运营的生产能力。
+            <p className="home-hero-statement">
+              不是回答问题。<br />是把工作做完。
             </p>
-            <p className="hero-lead">
-              内置专业 Agent、MCP、Skill、Workflow、Issue 和客户授权。部署一套平台，就能持续创建、交付和治理真正参与业务的数字员工。
+            <p className="home-hero-lead">
+              给出目标，接入企业工具，Agent 会自己拆解任务、操作系统、生成文件、验证结果，再把完整过程交给人验收。
             </p>
-            <div className="hero-actions">
-              <Link className="button button-primary" to="/guide">
-                开始使用 <ArrowRight size={17} />
+            <div className="home-hero-actions">
+              <RouteAnchor className="button button-primary" to="/#cases">
+                看它能做什么 <ArrowDown size={17} />
+              </RouteAnchor>
+              <Link className="text-action" to="/capabilities">
+                查看完整能力目录 <ArrowRight size={17} />
               </Link>
-              <a className="button button-secondary" href={getReleaseDownloadUrl(latestRelease)}>
-                <CloudDownload size={17} /> 下载 {latestRelease.version}
-              </a>
             </div>
-            <div className="hero-proof" aria-label="平台核心规模">
-              <span><strong>05</strong><small>专业 Agent</small></span>
-              <span><strong>18</strong><small>内置 MCP</small></span>
-              <span><strong>02</strong><small>运行形态</small></span>
-              <span><strong>01</strong><small>累计升级包</small></span>
+            <div className="home-task-ticker" aria-label="Agent 可承接的任务示例">
+              <span>现在可以交给它</span>
+              <div>
+                <strong>修复跨端故障</strong>
+                <strong>生成经营大盘</strong>
+                <strong>完成投标方案</strong>
+                <strong>处理项目 Issue</strong>
+              </div>
             </div>
           </div>
-          <button
-            className="scroll-cue"
-            type="button"
-            aria-label="继续浏览"
-            onClick={() => document.getElementById('platform')?.scrollIntoView()}
-          >
-            <span>Explore platform</span>
-            <ArrowDown size={17} />
-          </button>
+          <div className="home-live-trace" aria-label="Agent 执行轨迹示例">
+            <span className="home-live-trace-status"><i /> 正在执行</span>
+            <strong>排查客户工作台实时消息异常</strong>
+            <div><span>01</span>读取截图与会话事件</div>
+            <div><span>02</span>定位前端、SSE 与持久化链路</div>
+            <div><span>03</span>修复并运行双端回归</div>
+            <small>过程留痕 · 结果待人工验收</small>
+          </div>
         </div>
       </section>
 
-      <section className="advantage-band">
-        <div className="shell advantage-heading">
-          <span className="eyebrow">Why Agents Platform</span>
-          <h2>真正拉开差距的，<br />不是再多一个聊天框。</h2>
-          <p>企业需要的是能进入业务、受权限约束、留下过程证据，并且可以长期升级的 Agent 系统。</p>
+      <section className="customer-signal" aria-labelledby="customer-signal-title">
+        <div className="shell customer-signal-inner">
+          <div>
+            <span>服务客户</span>
+            <strong id="customer-signal-title">来自真实企业场景的持续反馈</strong>
+          </div>
+          {serviceCustomers.map((customer) => (
+            <p key={customer.name}><small>{customer.city}</small>{customer.name}</p>
+          ))}
+          <Link to="/#customers">查看服务方式 <ArrowRight size={16} /></Link>
         </div>
-        <div className="shell advantage-grid">
-          {advantages.map((item, index) => (
-            <article className="advantage-item" key={item.title}>
-              <span className="advantage-number">0{index + 1}</span>
-              <span className="advantage-icon">{item.icon}</span>
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
-            </article>
+      </section>
+
+      <section className="case-lab" id="cases">
+        <div className="shell case-lab-heading">
+          <div>
+            <span className="eyebrow">Capability in practice</span>
+            <h2>能力不是一张清单。<br />它发生在每个真实任务里。</h2>
+          </div>
+          <div>
+            <p>下面是可复现的能力演示，不是客户项目成效。切换任务，查看 Agent 如何从一句目标走到可验收产物。</p>
+            <span>{agentUseCases.length} 个跨职能案例</span>
+          </div>
+        </div>
+        <div className="shell case-filters" role="tablist" aria-label="案例分类">
+          {agentCaseCategories.map((category) => (
+            <button
+              key={category}
+              type="button"
+              role="tab"
+              aria-selected={activeCaseCategory === category}
+              className={activeCaseCategory === category ? 'is-active' : ''}
+              onClick={() => changeCaseCategory(category)}
+            >
+              {category}
+            </button>
           ))}
         </div>
+        <div className="shell case-browser">
+          <div className="case-index" role="tablist" aria-label={`${activeCaseCategory}案例`}>
+            {visibleCases.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={activeCase.id === item.id}
+                className={activeCase.id === item.id ? 'is-active' : ''}
+                onClick={() => setActiveCaseId(item.id)}
+              >
+                <span>{item.index}</span>
+                <i>{caseIcons[item.icon]}</i>
+                <div><small>{item.category}</small><strong>{item.title}</strong></div>
+                <ArrowRight size={16} />
+              </button>
+            ))}
+          </div>
+          <article className="case-dossier" aria-live="polite">
+            <header>
+              <span>能力演示 / {activeCase.index}</span>
+              <div>{caseIcons[activeCase.icon]}</div>
+              <h3>{activeCase.title}</h3>
+              <p>{activeCase.summary}</p>
+            </header>
+            <blockquote>
+              <span>任务输入</span>
+              <p>{activeCase.request}</p>
+            </blockquote>
+            <div className="case-execution">
+              <span>Agent 执行路径</span>
+              {activeCase.sequence.map((step, index) => (
+                <div key={step}><i>0{index + 1}</i><p>{step}</p>{index < activeCase.sequence.length - 1 && <ChevronRight size={15} />}</div>
+              ))}
+            </div>
+            <footer>
+              <div>
+                <span>交付物</span>
+                <p>{activeCase.deliverables.map((item) => <strong key={item}>{item}</strong>)}</p>
+              </div>
+              <div>
+                <span>可接入系统</span>
+                <p>{activeCase.systems.map((item) => <code key={item}>{item}</code>)}</p>
+              </div>
+            </footer>
+          </article>
+        </div>
       </section>
 
-      <section className="platform-band" id="platform">
-        <div className="shell section-heading two-column-heading">
-          <div>
-            <span className="eyebrow">One operating surface</span>
-            <h2>一个工作台，管住<br />Agent 的完整生命周期。</h2>
+      <section className="capability-model">
+        <div className="shell capability-model-layout">
+          <div className="capability-model-copy">
+            <span className="eyebrow eyebrow-light">An extensible worker</span>
+            <h2>能力不设上限，<br />边界由权限和工具定义。</h2>
+            <p>Agent 本身会规划和执行；MCP 让它进入企业系统；Skill 让它遵守专业流程；Workflow、定时任务和 Issue 让工作持续发生。</p>
+            <Link className="button button-light" to="/capabilities">查看能力组合 <ArrowRight size={17} /></Link>
           </div>
-          <div className="section-intro">
-            <p>从镜像选择、API Key、MCP 和 Skill，到运行状态、任务产物、客户授权与异常诊断，管理员在同一处完成交付。</p>
+          <div className="capability-model-map" aria-label="Agent 能力组合模型">
+            <div className="capability-model-core"><Bot /><span>Agent</span><strong>规划、执行、反思</strong></div>
+            <div className="capability-model-node node-tools"><Network /><span>MCP</span><strong>连接企业系统</strong></div>
+            <div className="capability-model-node node-rules"><FileCheck2 /><span>Skill</span><strong>加载专业规范</strong></div>
+            <div className="capability-model-node node-flow"><Workflow /><span>Workflow</span><strong>编排长任务</strong></div>
+            <div className="capability-model-node node-human"><Users /><span>Human</span><strong>授权与验收</strong></div>
+            <div className="capability-model-output">
+              <span>可以继续扩展</span>
+              <p>浏览器 · 终端 · 文件 · 数据库 · 代码仓库 · 云平台 · 企业 API</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="product-evidence" id="platform">
+        <div className="shell product-evidence-heading">
+          <div>
+            <span className="eyebrow">Real operating surface</span>
+            <h2>强大的能力，必须有<br />看得见的运行与治理。</h2>
+          </div>
+          <div>
+            <p>管理员在同一工作台管理 Agent、模型密钥、项目目录、MCP、Skill、Workflow、客户授权、运行状态和历史产物。</p>
             <Link className="text-link" to="/guide">查看平台使用流程 <ArrowRight size={16} /></Link>
           </div>
         </div>
-
-        <div className="shell product-stage">
+        <div className="shell product-stage home-product-stage">
           <div className="stage-toolbar">
             <div className="stage-dots"><i /><i /><i /></div>
             <span>AI Agent / Container Management</span>
@@ -273,101 +350,46 @@ function HomePage() {
           </div>
           <img
             src="/images/platform-ai-agent.png"
-            alt="Agents Platform 的 Agent 容器管理工作台，展示运行状态、版本、模型与管理操作"
+            alt="Agents Platform 的 Agent 容器管理工作台，展示运行状态、模型、项目与管理操作"
           />
-        </div>
-      </section>
-
-      <section className="capabilities-section">
-        <div className="shell">
-          <div className="section-heading compact-heading">
-            <span className="eyebrow">From capability to outcome</span>
-            <h2>从一句需求，到可验收结果。</h2>
-          </div>
-          <div className="capability-list">
-            {capabilityRows.map((item) => (
-              <article className="capability-row" key={item.index}>
-                <span className="capability-index">{item.index}</span>
-                <span className="capability-icon">{item.icon}</span>
-                <div className="capability-copy">
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </div>
-                <div className="capability-tags">
-                  {item.tags.map((tag) => <span key={tag}>{tag}</span>)}
-                </div>
-              </article>
-            ))}
-          </div>
-          <div className="capability-directory-link">
-            <div>
-              <span>05 个专业 Agent · 18 个内置 MCP</span>
-              <strong>看看平台部署后，企业可以立刻交付哪些工作。</strong>
-            </div>
-            <Link className="button button-primary" to="/capabilities">打开能力目录 <ArrowRight size={17} /></Link>
+          <div className="product-evidence-notes">
+            <span><Check size={16} />运行时状态</span>
+            <span><Check size={16} />项目级能力</span>
+            <span><Check size={16} />客户授权</span>
+            <span><Check size={16} />版本与升级</span>
           </div>
         </div>
       </section>
 
-      <section className="difference-section">
-        <div className="shell difference-layout">
-          <div className="difference-copy">
-            <span className="eyebrow eyebrow-light">Delivery, not a demo</span>
-            <h2>交付之后，<br />平台仍然能向前走。</h2>
-            <p>版本、数据库迁移、运行时镜像和现场配置都有明确边界。第一个客户与后来接入的客户，都能走到同一个稳定版本。</p>
-          </div>
-          <div className="difference-table" role="table" aria-label="平台交付能力对比">
-            <div className="difference-head" role="row">
-              <span role="columnheader">常见 Agent 项目</span>
-              <span role="columnheader">Agents Platform</span>
-            </div>
-            {[
-              ['从空白环境开始拼工具', '专业 Agent 与 MCP 目录直接选择'],
-              ['一次部署，后续人工覆盖', '版本固化、累计升级、配置保护'],
-              ['只有聊天记录', '会话、任务、产物与 Issue 状态全留痕'],
-              ['所有人共用一套权限', '后台、客户、用户组和项目级授权'],
-            ].map(([usual, platform]) => (
-              <div className="difference-row" role="row" key={usual}>
-                <span role="cell">{usual}</span>
-                <strong role="cell"><Check size={17} />{platform}</strong>
-              </div>
-            ))}
-          </div>
+      <section className="customers-section" id="customers">
+        <div className="shell customers-heading">
+          <span className="eyebrow">Customers we serve</span>
+          <h2>服务客户</h2>
+          <p>以下企业已进入服务客户名单。具体项目内容与交付数据遵循保密边界，不在官网展开。</p>
         </div>
-      </section>
-
-      <section className="flow-section">
-        <div className="shell flow-layout">
-          <div className="flow-copy">
-            <span className="eyebrow">Human in the loop</span>
-            <h2>AI 负责处理，<br />人负责验收。</h2>
-            <p>Issue 进入待 AI 队列后，Agent 按优先级和时间顺序一次领取一条。信息不足就发起澄清，处理完成交回用户验证，用户才拥有最终关闭权。</p>
-            <RouteAnchor className="button button-secondary" to="/guide#issue-workflow">查看 Issue 工作流 <ArrowRight size={17} /></RouteAnchor>
-          </div>
-          <div className="flow-rail" aria-label="Issue AI 处理流程">
-            {[
-              ['01', '待 AI 处理', '进入项目队列'],
-              ['02', 'AI 处理中', '原子领取单条'],
-              ['03', '待用户澄清', '评论补充后自动回队'],
-              ['04', 'AI 处理完毕', '提交结果与验证证据'],
-              ['05', '已关闭', '用户验收后关闭'],
-            ].map(([number, title, description], index) => (
-              <div className="flow-step" key={number}>
-                <span>{number}</span>
-                <div><strong>{title}</strong><small>{description}</small></div>
-                {index < 4 && <ChevronRight size={18} />}
-              </div>
-            ))}
-          </div>
+        <div className="shell customer-ledger">
+          {serviceCustomers.map((customer, index) => (
+            <article key={customer.name}>
+              <span>0{index + 1}</span>
+              <small>{customer.city}</small>
+              <h3>{customer.name}</h3>
+              <strong>企业客户</strong>
+            </article>
+          ))}
+        </div>
+        <div className="shell service-principles">
+          <div><Server /><strong>私有化部署</strong><span>数据、目录和运行环境由企业掌握。</span></div>
+          <div><Route /><strong>场景共同设计</strong><span>从真实任务出发配置 Agent、MCP 与 Skill。</span></div>
+          <div><RefreshCcw /><strong>持续升级</strong><span>正式版本、数据库迁移与现场配置边界清晰。</span></div>
         </div>
       </section>
 
       <section className="release-cta">
         <div className="shell release-cta-inner">
           <div>
-            <span className="eyebrow eyebrow-light">Current release</span>
-            <h2>{latestRelease.version}</h2>
-            <p>{latestRelease.title} · {latestRelease.date}</p>
+            <span className="eyebrow eyebrow-light">Start with real work</span>
+            <h2>从一个真实任务开始。</h2>
+            <p>当前正式版 {latestRelease.version} · {latestRelease.date}</p>
           </div>
           <div className="release-cta-actions">
             <a className="button button-light" href={getReleaseDownloadUrl(latestRelease)}>

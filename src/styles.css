@@ -901,7 +901,7 @@ button {
 .footer-grid {
   display: grid;
   padding-bottom: 72px;
-  grid-template-columns: 1fr 180px 180px;
+  grid-template-columns: minmax(0, 1fr) 150px 150px 220px;
   gap: 64px;
 }
 
@@ -2730,5 +2730,1210 @@ button {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Homepage: task-first product narrative */
+.home-hero {
+  position: relative;
+  height: calc(100dvh - 32px);
+  min-height: 650px;
+  max-height: 780px;
+  padding-top: 64px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background: #ffffff;
+}
+
+.home-hero-product {
+  position: absolute;
+  top: 92px;
+  right: -188px;
+  bottom: 32px;
+  width: min(1030px, 74vw);
+  background-image: url('/images/platform-ai-agent.png');
+  background-repeat: no-repeat;
+  background-position: center right;
+  background-size: contain;
+  filter: grayscale(0.76) contrast(0.92);
+  opacity: 0.64;
+}
+
+.home-hero-wash {
+  position: absolute;
+  inset: 64px auto 0 0;
+  width: 61%;
+  clip-path: polygon(0 0, 91% 0, 100% 100%, 0 100%);
+  background: #ffffff;
+}
+
+.home-hero-inner {
+  position: relative;
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+
+.home-hero-copy {
+  position: relative;
+  z-index: 2;
+  width: min(670px, 60%);
+  padding: 40px 0 54px;
+  animation: home-rise 560ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.home-hero h1 {
+  margin: 22px 0 18px;
+  font-size: 78px;
+  font-weight: 760;
+  line-height: 0.96;
+  letter-spacing: 0;
+}
+
+.home-hero h1::after {
+  color: var(--coral);
+  content: ".";
+}
+
+.home-hero-statement {
+  margin: 0 0 18px;
+  font-size: 36px;
+  font-weight: 680;
+  line-height: 1.18;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.home-hero-lead {
+  max-width: 600px;
+  margin: 0;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 16px;
+  line-height: 1.72;
+  text-wrap: pretty;
+}
+
+.home-hero-actions {
+  display: flex;
+  margin-top: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.text-action {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 9px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.28);
+  font-size: 14px;
+  font-weight: 650;
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+
+.text-action:hover {
+  border-color: #000000;
+  transform: translateX(2px);
+}
+
+.home-task-ticker {
+  display: grid;
+  max-width: 640px;
+  margin-top: 26px;
+  padding-top: 14px;
+  grid-template-columns: 138px 1fr;
+  align-items: start;
+  gap: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.home-task-ticker > span {
+  color: var(--faint);
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 10px;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+.home-task-ticker div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 18px;
+}
+
+.home-task-ticker strong {
+  position: relative;
+  min-width: 0;
+  padding-left: 12px;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-task-ticker strong::before {
+  position: absolute;
+  top: 0.6em;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  background: var(--coral);
+  content: "";
+}
+
+.home-live-trace {
+  position: absolute;
+  z-index: 3;
+  right: 0;
+  bottom: 42px;
+  display: grid;
+  width: 352px;
+  padding: 18px 20px 16px;
+  gap: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+  animation: home-rise 620ms 120ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.home-live-trace-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--green-dark);
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.home-live-trace-status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #77bd00;
+}
+
+.home-live-trace > strong {
+  margin-bottom: 2px;
+  font-size: 15px;
+  font-weight: 680;
+}
+
+.home-live-trace > div {
+  display: grid;
+  min-height: 30px;
+  grid-template-columns: 28px 1fr;
+  align-items: center;
+  border-top: 1px solid var(--soft-line);
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.home-live-trace > div span {
+  color: var(--faint);
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 9px;
+}
+
+.home-live-trace > small {
+  color: var(--faint);
+  font-size: 10px;
+}
+
+.customer-signal {
+  min-height: 104px;
+  border-bottom: 1px solid var(--line);
+  background: #ffffff;
+}
+
+.customer-signal-inner {
+  display: grid;
+  min-height: 104px;
+  grid-template-columns: 0.85fr 1fr 1fr auto;
+  align-items: center;
+  gap: 28px;
+}
+
+.customer-signal-inner > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.customer-signal-inner > div span,
+.customer-signal-inner p small {
+  color: var(--faint);
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.customer-signal-inner > div strong {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.customer-signal-inner p {
+  display: flex;
+  min-height: 48px;
+  margin: 0;
+  padding-left: 24px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  border-left: 1px solid var(--line);
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.customer-signal-inner > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.case-lab {
+  padding: 118px 0 132px;
+  border-bottom: 1px solid var(--line);
+  background: #f4f5f3;
+}
+
+.case-lab-heading {
+  display: grid;
+  margin-bottom: 44px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  align-items: end;
+  gap: 80px;
+}
+
+.case-lab-heading h2,
+.capability-model-copy h2,
+.product-evidence-heading h2,
+.customers-heading h2 {
+  margin: 0;
+  font-size: 50px;
+  font-weight: 680;
+  line-height: 1.1;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.case-lab-heading > div:last-child {
+  display: flex;
+  padding-bottom: 5px;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.case-lab-heading p,
+.product-evidence-heading p,
+.customers-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+
+.case-lab-heading > div:last-child span {
+  color: var(--faint);
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.case-filters {
+  display: flex;
+  min-height: 46px;
+  margin-bottom: 18px;
+  align-items: stretch;
+  border-top: 1px solid #000000;
+  border-bottom: 1px solid var(--line);
+}
+
+.case-filters button {
+  position: relative;
+  min-width: 104px;
+  padding: 0 18px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: color 180ms ease, background 180ms ease;
+}
+
+.case-filters button:hover,
+.case-filters button.is-active {
+  color: #000000;
+  background: #ffffff;
+}
+
+.case-filters button.is-active::after {
+  position: absolute;
+  right: 14px;
+  bottom: -1px;
+  left: 14px;
+  height: 2px;
+  background: #000000;
+  content: "";
+}
+
+.case-browser {
+  display: grid;
+  min-height: 650px;
+  grid-template-columns: minmax(320px, 0.72fr) minmax(0, 1.28fr);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.13);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.case-index {
+  max-height: 650px;
+  overflow-y: auto;
+  border-right: 1px solid var(--line);
+  scrollbar-color: rgba(0, 0, 0, 0.22) transparent;
+  scrollbar-width: thin;
+}
+
+.case-index button {
+  display: grid;
+  width: 100%;
+  min-height: 88px;
+  padding: 16px 18px;
+  grid-template-columns: 34px 40px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  border-bottom: 1px solid var(--soft-line);
+  text-align: left;
+  background: #ffffff;
+  cursor: pointer;
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.case-index button:hover {
+  background: #f6f7f5;
+}
+
+.case-index button.is-active {
+  color: #ffffff;
+  background: #111111;
+}
+
+.case-index button > span {
+  color: var(--faint);
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 10px;
+}
+
+.case-index button.is-active > span,
+.case-index button.is-active small,
+.case-index button.is-active > svg {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.case-index button > i {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+}
+
+.case-index button.is-active > i {
+  color: #000000;
+  border-color: #ffffff;
+  background: #ffffff;
+}
+
+.case-index button > i svg {
+  width: 17px;
+}
+
+.case-index button div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.case-index button small {
+  color: var(--faint);
+  font-size: 9px;
+}
+
+.case-index button strong {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.case-index button > svg {
+  color: var(--faint);
+}
+
+.case-dossier {
+  display: flex;
+  min-width: 0;
+  min-height: 650px;
+  padding: 42px 44px 34px;
+  flex-direction: column;
+  color: #ffffff;
+  background: #111111;
+}
+
+.case-dossier header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 12px 24px;
+}
+
+.case-dossier header > span,
+.case-dossier blockquote > span,
+.case-execution > span,
+.case-dossier footer span {
+  color: rgba(255, 255, 255, 0.43);
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.case-dossier header > div {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.case-dossier header > div svg {
+  width: 20px;
+}
+
+.case-dossier h3 {
+  max-width: 580px;
+  margin: 12px 0 0;
+  grid-column: 1;
+  font-size: 34px;
+  font-weight: 680;
+  line-height: 1.18;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.case-dossier header p {
+  max-width: 640px;
+  margin: 4px 0 0;
+  grid-column: 1 / -1;
+  color: rgba(255, 255, 255, 0.63);
+  font-size: 14px;
+  line-height: 1.72;
+}
+
+.case-dossier blockquote {
+  margin: 28px 0 0;
+  padding: 18px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-left: 3px solid var(--coral);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.case-dossier blockquote p {
+  margin: 9px 0 0;
+  font-size: 14px;
+  font-weight: 550;
+  line-height: 1.6;
+}
+
+.case-execution {
+  margin-top: 28px;
+}
+
+.case-execution > span {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.case-execution > div {
+  display: grid;
+  min-height: 52px;
+  grid-template-columns: 36px 1fr 18px;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.case-execution > div:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.case-execution i {
+  color: rgba(255, 255, 255, 0.36);
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 9px;
+  font-style: normal;
+}
+
+.case-execution p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+}
+
+.case-execution svg {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.case-dossier footer {
+  display: grid;
+  margin-top: auto;
+  padding-top: 26px;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.case-dossier footer > div {
+  min-width: 0;
+}
+
+.case-dossier footer p {
+  display: flex;
+  margin: 11px 0 0;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.case-dossier footer strong,
+.case-dossier footer code {
+  padding: 5px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.05);
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.capability-model {
+  padding: 122px 0 132px;
+  color: #ffffff;
+  background: #101010;
+}
+
+.capability-model-layout {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.28fr);
+  align-items: center;
+  gap: 110px;
+}
+
+.capability-model-copy p {
+  max-width: 520px;
+  margin: 26px 0 30px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 16px;
+  line-height: 1.78;
+}
+
+.capability-model-map {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-left: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.capability-model-core,
+.capability-model-node {
+  display: grid;
+  min-height: 126px;
+  padding: 22px;
+  grid-template-columns: 36px 1fr;
+  align-content: center;
+  gap: 7px 14px;
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.capability-model-core {
+  min-height: 150px;
+  grid-column: 1 / -1;
+  color: #101010;
+  background: var(--green);
+}
+
+.capability-model-core svg,
+.capability-model-node svg {
+  width: 24px;
+  grid-row: 1 / span 2;
+}
+
+.capability-model-core span,
+.capability-model-node span {
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.capability-model-core strong,
+.capability-model-node strong {
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.capability-model-node span {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.capability-model-output {
+  padding: 18px 22px;
+  grid-column: 1 / -1;
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.capability-model-output span {
+  color: rgba(255, 255, 255, 0.42);
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.capability-model-output p {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.product-evidence {
+  padding: 124px 0 134px;
+  background: #ffffff;
+}
+
+.product-evidence-heading {
+  display: grid;
+  margin-bottom: 54px;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  align-items: end;
+  gap: 80px;
+}
+
+.product-evidence-heading > div:last-child {
+  display: flex;
+  padding-bottom: 4px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 22px;
+}
+
+.home-product-stage {
+  position: relative;
+  overflow: visible;
+}
+
+.home-product-stage img {
+  border-radius: 0 0 8px 8px;
+}
+
+.product-evidence-notes {
+  position: absolute;
+  right: 28px;
+  bottom: -25px;
+  display: flex;
+  min-height: 50px;
+  padding: 0 18px;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.product-evidence-notes span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.product-evidence-notes svg {
+  color: var(--green-dark);
+}
+
+.customers-section {
+  padding: 120px 0 126px;
+  border-top: 1px solid var(--line);
+  background: #eef4ee;
+}
+
+.customers-heading {
+  display: grid;
+  margin-bottom: 52px;
+  grid-template-columns: 160px minmax(0, 1fr) minmax(260px, 0.62fr);
+  align-items: end;
+  gap: 32px;
+}
+
+.customers-heading .eyebrow {
+  margin: 0 0 8px;
+}
+
+.customers-heading h2 {
+  font-size: 62px;
+}
+
+.customer-ledger {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid #000000;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+.customer-ledger article {
+  display: grid;
+  min-height: 210px;
+  padding: 26px 32px 30px 0;
+  grid-template-columns: 52px 1fr auto;
+  align-content: start;
+  gap: 36px 18px;
+  border-right: 1px solid rgba(0, 0, 0, 0.16);
+}
+
+.customer-ledger article + article {
+  padding-left: 32px;
+  border-right: 0;
+}
+
+.customer-ledger article > span,
+.customer-ledger article > small {
+  color: var(--faint);
+  font-family: "PP Neue Montreal Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 10px;
+}
+
+.customer-ledger article > small {
+  align-self: start;
+  justify-self: end;
+  text-transform: uppercase;
+}
+
+.customer-ledger h3 {
+  margin: 0;
+  grid-column: 1 / -1;
+  font-size: 26px;
+  font-weight: 680;
+  line-height: 1.32;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.customer-ledger article > strong {
+  padding-top: 14px;
+  grid-column: 1 / -1;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 550;
+}
+
+.service-principles {
+  display: grid;
+  margin-top: 34px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.service-principles > div {
+  display: grid;
+  min-height: 112px;
+  padding: 22px;
+  grid-template-columns: 34px 1fr;
+  align-content: center;
+  gap: 6px 12px;
+  background: #eef4ee;
+}
+
+.service-principles svg {
+  width: 20px;
+  grid-row: 1 / span 2;
+}
+
+.service-principles strong {
+  font-size: 14px;
+}
+
+.service-principles span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.release-cta h2 {
+  max-width: 720px;
+  font-size: 58px;
+  line-height: 1.06;
+  letter-spacing: 0;
+}
+
+.case-filters button:focus-visible,
+.case-index button:focus-visible,
+.text-action:focus-visible,
+.customer-signal-inner > a:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+@keyframes home-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1050px) {
+  .home-hero-product {
+    right: -330px;
+    width: 1050px;
+    opacity: 0.48;
+  }
+
+  .home-hero-wash {
+    width: 68%;
+  }
+
+  .home-hero-copy {
+    width: 66%;
+  }
+
+  .home-live-trace {
+    width: 316px;
+  }
+
+  .customer-signal-inner {
+    grid-template-columns: 0.8fr 1fr 1fr;
+  }
+
+  .customer-signal-inner > a {
+    display: none;
+  }
+
+  .case-lab-heading,
+  .product-evidence-heading {
+    gap: 54px;
+  }
+
+  .case-browser {
+    grid-template-columns: minmax(300px, 0.82fr) minmax(0, 1.18fr);
+  }
+
+  .case-dossier {
+    padding-right: 30px;
+    padding-left: 30px;
+  }
+
+  .capability-model-layout {
+    gap: 60px;
+  }
+
+  .product-evidence-notes {
+    right: 18px;
+  }
+}
+
+@media (max-width: 820px) {
+  .home-hero {
+    height: auto;
+    min-height: 760px;
+    max-height: none;
+    padding-bottom: 42px;
+  }
+
+  .home-hero-product {
+    top: 84px;
+    right: -340px;
+    bottom: auto;
+    width: 880px;
+    height: 520px;
+    opacity: 0.2;
+  }
+
+  .home-hero-wash {
+    inset: 64px 0 0;
+    width: 100%;
+    clip-path: none;
+    background: rgba(255, 255, 255, 0.82);
+  }
+
+  .home-hero-inner {
+    display: block;
+    height: auto;
+  }
+
+  .home-hero-copy {
+    width: 100%;
+    padding: 86px 0 34px;
+  }
+
+  .home-hero h1 {
+    font-size: 64px;
+  }
+
+  .home-live-trace {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: min(100%, 520px);
+    margin-left: auto;
+  }
+
+  .customer-signal-inner {
+    padding: 24px 0;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .customer-signal-inner p {
+    min-height: 0;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .case-lab,
+  .product-evidence,
+  .customers-section {
+    padding-top: 88px;
+    padding-bottom: 96px;
+  }
+
+  .case-lab-heading,
+  .product-evidence-heading,
+  .customers-heading,
+  .capability-model-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .case-lab-heading h2,
+  .capability-model-copy h2,
+  .product-evidence-heading h2 {
+    font-size: 42px;
+  }
+
+  .case-filters {
+    overflow-x: auto;
+  }
+
+  .case-filters button {
+    flex: 0 0 auto;
+  }
+
+  .case-browser {
+    grid-template-columns: 1fr;
+  }
+
+  .case-index {
+    max-height: 384px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .case-dossier {
+    min-height: 620px;
+  }
+
+  .capability-model {
+    padding: 92px 0 100px;
+  }
+
+  .capability-model-copy p {
+    max-width: 640px;
+  }
+
+  .home-product-stage {
+    margin-bottom: 46px;
+  }
+
+  .product-evidence-notes {
+    right: 12px;
+    bottom: -54px;
+    left: 12px;
+    min-height: 78px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 16px;
+  }
+
+  .customers-heading h2 {
+    font-size: 52px;
+  }
+
+  .customer-ledger {
+    grid-template-columns: 1fr;
+  }
+
+  .customer-ledger article,
+  .customer-ledger article + article {
+    min-height: 176px;
+    padding: 24px 0 26px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+  }
+
+  .customer-ledger article:last-child {
+    border-bottom: 0;
+  }
+
+  .service-principles {
+    grid-template-columns: 1fr;
+  }
+
+  .release-cta h2 {
+    font-size: 48px;
+  }
+}
+
+@media (max-width: 580px) {
+  .home-hero {
+    min-height: 820px;
+  }
+
+  .home-hero-copy {
+    padding-top: 70px;
+  }
+
+  .home-hero h1 {
+    max-width: 100%;
+    font-size: 52px;
+    overflow-wrap: anywhere;
+  }
+
+  .home-hero-statement {
+    font-size: 30px;
+  }
+
+  .home-hero-lead {
+    font-size: 15px;
+  }
+
+  .home-task-ticker {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .home-task-ticker div {
+    gap: 7px 10px;
+  }
+
+  .home-live-trace {
+    padding: 16px;
+  }
+
+  .case-lab-heading h2,
+  .capability-model-copy h2,
+  .product-evidence-heading h2 {
+    font-size: 34px;
+  }
+
+  .case-filters {
+    width: calc(100% + 32px);
+    margin-left: -16px;
+    padding-left: 16px;
+  }
+
+  .case-filters button {
+    min-width: 94px;
+    padding: 0 14px;
+  }
+
+  .case-browser {
+    width: calc(100% + 16px);
+    margin-left: -8px;
+  }
+
+  .case-index button {
+    padding: 14px;
+    grid-template-columns: 28px 38px minmax(0, 1fr) 16px;
+    gap: 9px;
+  }
+
+  .case-dossier {
+    min-height: 700px;
+    padding: 30px 20px 26px;
+  }
+
+  .case-dossier h3 {
+    font-size: 28px;
+  }
+
+  .case-dossier footer {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .capability-model-map {
+    grid-template-columns: 1fr;
+  }
+
+  .capability-model-core,
+  .capability-model-output {
+    grid-column: 1;
+  }
+
+  .capability-model-core,
+  .capability-model-node {
+    min-height: 104px;
+  }
+
+  .product-evidence-notes {
+    position: static;
+    margin: 0;
+    border-width: 1px 0 0;
+    box-shadow: none;
+  }
+
+  .home-product-stage {
+    margin-bottom: 0;
+  }
+
+  .customers-heading h2 {
+    font-size: 46px;
+  }
+
+  .customer-ledger h3 {
+    font-size: 22px;
+  }
+
+  .release-cta h2 {
+    font-size: 40px;
   }
 }

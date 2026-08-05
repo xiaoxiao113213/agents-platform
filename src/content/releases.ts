@@ -17,9 +17,26 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v0.0.9',
+    date: '2026-08-05',
+    status: 'stable',
+    title: '凭据清理与密钥体系加固',
+    summary: '清理源码与工具配置中的历史敏感信息，统一主密钥派生、Token 分域签名和数据库连接密码加密，并完成五个固定镜像与累计升级验证。',
+    highlights: [
+      '移除历史模型 Key、地图 Key、本地数据库密码、固定签名材料、示例 Token、个人目录与本机绝对路径。',
+      '登录 Token 与文件 Token 从主密钥按用途独立派生 HMAC-SHA256 密钥，跨用途 Token 不能互相验签。',
+      '数据库连接密码改为基于主密钥的 AES-GCM 加密；旧格式密文明确提示重新填写，不再用不可靠的固定密钥兼容。',
+      'SECRET_KEY 不再提供运行默认值，升级保持既有配置键、端口、目录、MySQL 与 Nginx 现场参数不变。',
+      '五个内置 Agent 镜像统一升级到 v0.0.9，并完成空库、v0.0.8 升级和 v0.0.1 累计直升验证。',
+    ],
+    metrics: ['230 项后端测试', '5 个 v0.0.9 固定镜像', '3 条数据库路径双启动'],
+    assetName: 'devops-v0.0.9-linux-x64.tar.gz',
+    guidedInstall: true,
+  },
+  {
     version: 'v0.0.8',
     date: '2026-08-04',
-    status: 'stable',
+    status: 'archived',
     title: 'Agent 项目隔离与原生 Issue 协作',
     summary: '完善客户 Agent 多项目隔离、流式消息稳定性和定时任务，并把 Issue MCP 与 Skill 收敛为平台托管的一键能力包。',
     highlights: [
