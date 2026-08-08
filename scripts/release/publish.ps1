@@ -85,11 +85,12 @@ try {
         if ($_.Exception.Response.StatusCode.value__ -ne 404) { throw }
     }
     if ($null -eq $release) {
+        $publicReleaseBody = [System.IO.File]::ReadAllText($publicNotes, [System.Text.Encoding]::UTF8)
         $body = @{
             tag_name = $Version
             target_commitish = 'master'
             name = "Agents Platform $Version"
-            body = Get-Content -LiteralPath $publicNotes -Raw
+            body = $publicReleaseBody
             draft = $false
             prerelease = $false
         } | ConvertTo-Json
