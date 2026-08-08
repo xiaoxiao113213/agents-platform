@@ -1,0 +1,16 @@
+# Agents Platform
+
+> Agents Platform 是面向企业团队的 Agent 工作平台，让 Agent 进入项目、连接获准使用的数据与业务系统，并交付代码、文件、看板、PPT、视频和 Issue 处理结果。
+
+## 主要页面
+
+- [首页](https://mmmqaz.cn/): 产品定位、真实界面、工作案例和服务客户
+- [能力与案例](https://mmmqaz.cn/#/capabilities): 七类内置 Agent、十类工作案例和可连接系统
+- [部署指南](https://mmmqaz.cn/#/deploy): v1.0.0 Linux 全新安装说明
+- [使用指南](https://mmmqaz.cn/#/guide): 创建 Agent、项目、数据库与 Issue 工作空间
+- [版本下载](https://mmmqaz.cn/#/releases): 当前正式版本和 Linux 安装包
+
+## 联系
+
+- 邮箱：418179551@qq.com
+- GitHub：https://github.com/xiaoxiao113213/agents-platform

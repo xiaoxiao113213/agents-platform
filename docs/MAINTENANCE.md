@@ -98,16 +98,16 @@ agents-platform-site-vX.Y.Z.tar.gz
 
 公开内容只描述客户能够感知的功能、稳定性、兼容性和升级体验。不公开凭据处理过程、加密与签名实现、内部配置真源、数据库迁移编号和结构统计、测试数量，以及构建、推送、回拉等发布过程。无法用客户价值清晰表达的内部修正，统一写为“修复了已知问题”。`pnpm package` 会对页面版本数据和公开 Markdown 执行术语门禁；发布前还必须检查页面、`dist/releases/<version>.md`、GitHub Release 正文和同名 Markdown 附件。
 
-脚本会使用 `git push --force-with-lease origin master` 同步远端。执行前必须确认本地 `master` 没有意外分叉，且远端没有其他人尚未合并的发布提交。
+脚本会使用普通 `git push origin master` 同步远端。执行前必须确认本地 `master` 没有意外分叉，且远端没有其他人尚未合并的发布提交。
 
 ## Windows 发布
 
-以下命令以 `v0.0.6` 为当前正式版本示例：
+以下命令以 `v1.0.0` 为当前正式版本示例：
 
 ```powershell
 $secureToken = Read-Host 'GitHub Token' -AsSecureString
 $env:GITHUB_TOKEN = [System.Net.NetworkCredential]::new('', $secureToken).Password
-./scripts/release/publish.ps1 -Version v0.0.6 -SourceRoot ..
+./scripts/release/publish.ps1 -Version v1.0.0 -SourceRoot ..
 Remove-Item Env:\GITHUB_TOKEN
 $secureToken = $null
 ```
@@ -118,7 +118,7 @@ $secureToken = $null
 read -rsp 'GitHub Token: ' GITHUB_TOKEN
 printf '\n'
 export GITHUB_TOKEN
-./scripts/release/publish.sh v0.0.6 ..
+./scripts/release/publish.sh v1.0.0 ..
 unset GITHUB_TOKEN
 ```
 
@@ -136,18 +136,18 @@ unset GITHUB_TOKEN
 
 如果 Tag 已创建，但 Release 创建或附件上传因网络中断，必须先确认目标 Tag 指向正确冻结提交，并确认当前官网构建输入与该 Tag 完全一致。
 
-恢复模式不是纯上传模式：两个脚本仍会重新安装依赖、构建官网、执行 `git add -A`、按需提交，并通过 `force-with-lease` 推送 `master`。只要当前源码已经继续开发，就不得直接恢复旧版本发布；应先把旧版本构建输入恢复到与 Tag 一致的状态，并再次检查生成的官网包。
+恢复模式不是纯上传模式：两个脚本仍会重新安装依赖、构建官网、执行 `git add -A`、按需提交，并通过普通 push 同步 `master`。只要当前源码已经继续开发，就不得直接恢复旧版本发布；应先把旧版本构建输入恢复到与 Tag 一致的状态，并再次检查生成的官网包。
 
 Windows：
 
 ```powershell
-./scripts/release/publish.ps1 -Version v0.0.6 -SourceRoot .. -Resume
+./scripts/release/publish.ps1 -Version v1.0.0 -SourceRoot .. -Resume
 ```
 
 Linux：
 
 ```bash
-RESUME=true ./scripts/release/publish.sh v0.0.6 ..
+RESUME=true ./scripts/release/publish.sh v1.0.0 ..
 ```
 
 恢复模式不会覆盖已有 Tag、Release 和同名附件，只会在完成上述重建与 `master` 同步后补齐缺失项。不要用它修改已经正式发布的版本内容。

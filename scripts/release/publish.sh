@@ -42,7 +42,7 @@ AGENTS_PLATFORM_SOURCE_ROOT="$SOURCE" pnpm package
 
 git add -A
 git diff --cached --quiet || git commit -m "release: $VERSION"
-git push --force-with-lease origin master
+git push origin master
 
 REMOTE_TAG="$(git ls-remote --tags origin "refs/tags/$VERSION")"
 if [[ -n "$REMOTE_TAG" && "$RESUME" != true ]]; then
