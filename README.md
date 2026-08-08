@@ -18,6 +18,7 @@
   <img src="https://img.shields.io/badge/production-Linux%20x64-111111?style=flat-square" alt="生产平台 Linux x64" />
   <img src="https://img.shields.io/badge/runtime-Java%2021-111111?style=flat-square" alt="Java 21" />
   <img src="https://img.shields.io/badge/Agent-7%20built--in-137a55?style=flat-square" alt="7 个内置 Agent" />
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-Proprietary-111111?style=flat-square" alt="专有软件许可" /></a>
 </p>
 
 <p align="center">
@@ -33,9 +34,9 @@
 </p>
 
 <p align="center">
-  <a href="https://mmmqaz.cn/releases/devops-v1.0.0-linux-x64.tar.gz"><strong>官网下载 v1.0.0</strong></a>
+  <a href="https://mmmqaz.cn/releases/devops-v1.0.1-linux-x64.tar.gz"><strong>官网下载 v1.0.1</strong></a>
   ·
-  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v1.0.0">GitHub Release</a>
+  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v1.0.1">GitHub Release</a>
 </p>
 
 ## Agent 是平台的工作入口
@@ -71,22 +72,22 @@ Agents Platform 不是另一个独立聊天页面。每个 Agent 都拥有项目
 
 更多完整案例见[官网能力与案例](https://mmmqaz.cn/#/capabilities)。
 
-## v1.0.0 部署
+## v1.0.1 部署
 
-`v1.0.0` 是全新的安装代际，仅支持 Linux x64 全新安装：
+`v1.0.1` 支持 Linux x64 全新安装，也支持从 `v1.0.0` 直接升级：
 
 - 使用新的安装目录。
 - 连接空 MySQL 8 `devops` 数据库。
 - 宿主机准备 Java 21 和 Docker。
 - 不支持从 `v0.x` 原地升级。
-- 后续 `v1.x` 补丁版本支持同代升级。
+- `v1.0.0` 是 v1 安装代际基点，`v0.x` 不支持原地升级。
 
 ```bash
-curl -fL -o devops-v1.0.0-linux-x64.tar.gz \
-  https://mmmqaz.cn/releases/devops-v1.0.0-linux-x64.tar.gz
+curl -fL -o devops-v1.0.1-linux-x64.tar.gz \
+  https://mmmqaz.cn/releases/devops-v1.0.1-linux-x64.tar.gz
 
-tar -xzf devops-v1.0.0-linux-x64.tar.gz
-cd devops-v1.0.0
+tar -xzf devops-v1.0.1-linux-x64.tar.gz
+cd devops-v1.0.1
 cp application.properties.example application.properties
 
 # 填写现场配置后执行
@@ -114,6 +115,12 @@ pnpm build
 
 官网交付文件生成在 `dist/`。线上官网文件由维护者自行拷贝部署。
 
+## 软件许可
+
+Agents Platform 是可免费自托管使用的专有软件，不是开源软件。免费授权适用于个人或同一法人实体内部使用官方未修改的二进制发布包；平台核心源码、再分发、OEM、SaaS 转售和面向第三方的托管服务不在免费授权范围内。
+
+本 GitHub 仓库用于维护官方网站源码与发布正式二进制文件，不代表平台核心源码开放。完整条款见 [LICENSE](./LICENSE)，其他使用方式请联系 `418179551@qq.com` 获取书面商业授权。
+
 ## 服务与联系
 
 当前服务客户包括：
@@ -125,6 +132,6 @@ pnpm build
 
 ## 版本
 
-当前正式版本：[`v1.0.0`](./docs/releases/v1.0.0.md)
+当前正式版本：[`v1.0.1`](./docs/releases/v1.0.1.md)
 
 正式安装包、版本说明和不可覆盖的 Tag 统一发布在 [GitHub Releases](https://github.com/xiaoxiao113213/agents-platform/releases)。

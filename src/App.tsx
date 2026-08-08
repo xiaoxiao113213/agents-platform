@@ -128,7 +128,7 @@ function Footer() {
         <div className="footer-links">
           <div><strong>产品</strong><Link to="/capabilities">能力与案例</Link><Link to="/guide">使用指南</Link><Link to="/releases">版本下载</Link></div>
           <div><strong>部署</strong><Link to="/deploy">Linux 部署</Link><a href={repositoryUrl} target="_blank" rel="noreferrer">GitHub</a><a href={`mailto:${contactEmail}`}>技术支持</a></div>
-          <div><strong>说明</strong><Link to="/privacy">隐私说明</Link><Link to="/terms">服务条款</Link></div>
+          <div><strong>说明</strong><Link to="/license">软件许可</Link><Link to="/privacy">隐私说明</Link><Link to="/terms">服务条款</Link></div>
         </div>
       </div>
       <div className="footer-bottom page-shell">
@@ -369,11 +369,11 @@ function CapabilitiesPage() {
 function DeployPage() {
   return (
     <main>
-      <PageIntro eyebrow="Linux 部署" title="从一个干净环境开始" description="v1.0.0 是全新的安装代际。准备新目录和空 MySQL 8 数据库，按中文向导完成检查、配置和启动。" />
+      <PageIntro eyebrow="Linux 部署" title="安装或升级当前版本" description="v1.0.1 支持全新安装，也支持从 v1.0.0 直接升级。按中文向导完成检查、配置和启动。" />
       <section className="generation-notice">
         <div className="page-shell">
           <span><ShieldCheck /></span>
-          <div><strong>v1.0.0 只支持全新安装</strong><p>不支持从 v0.x 原地升级。请使用新安装目录和空数据库，保留旧环境用于数据留存或独立迁移。</p></div>
+          <div><strong>v1.0.0 是 v1 安装代际基点</strong><p>全新安装请直接使用 v1.0.1。v1.0.0 可以直接升级，v0.x 仍需使用新目录和空数据库安装。</p></div>
           <Link to="/releases">查看版本说明<ArrowRight /></Link>
         </div>
       </section>
@@ -388,7 +388,7 @@ function DeployPage() {
               <div className="requirements-grid"><div><ServerCog /><strong>Linux x64</strong><span>全新安装目录</span></div><div><Database /><strong>MySQL 8</strong><span>空 devops 数据库</span></div><div><HardDrive /><strong>Java 21</strong><span>宿主机运行平台服务</span></div><div><CloudCog /><strong>Docker</strong><span>运行专业 Agent</span></div></div>
             </section>
             <section id="download"><h2>下载并解压正式包</h2><p>使用官网或 GitHub Release 中的同名 Linux 正式包。一个包包含平台前端、服务端、启动器和部署说明。</p>
-              <pre><code>{`curl -fL -o devops-v1.0.0-linux-x64.tar.gz \\\n  https://mmmqaz.cn/releases/devops-v1.0.0-linux-x64.tar.gz\n\ntar -xzf devops-v1.0.0-linux-x64.tar.gz\ncd devops-v1.0.0`}</code></pre>
+              <pre><code>{`curl -fL -o devops-v1.0.1-linux-x64.tar.gz \\\n  https://mmmqaz.cn/releases/devops-v1.0.1-linux-x64.tar.gz\n\ntar -xzf devops-v1.0.1-linux-x64.tar.gz\ncd devops-v1.0.1`}</code></pre>
             </section>
             <section id="configure"><h2>复制示例并填写现场配置</h2><p>配置数据库、访问地址和运行目录。示例文件对每个配置项都有中文说明，不应把真实配置提交到代码仓库。</p>
               <pre><code>{`cp application.properties.example application.properties\n\n# 编辑 application.properties\n# 填写现场数据库和访问配置`}</code></pre>
@@ -397,7 +397,7 @@ function DeployPage() {
               <pre><code>{`chmod +x devops.sh\n./devops.sh check\n./devops.sh start\n./devops.sh status`}</code></pre>
               <div className="callout"><MonitorCheck /><div><strong>首次进入平台后</strong><p>先完成管理员设置，再配置模型服务，随后创建第一个 Agent 和项目。系统管理入口按账号权限显示，账号 ID 1 拥有完整管理权限。</p></div></div>
             </section>
-            <section id="next"><h2>同代补丁版本支持持续升级</h2><p>`v1.0.0` 是 v1 安装基点。后续 v1.x 补丁版本将提供同代升级能力，升级前可先运行只读检查，现场配置继续由外置文件管理。</p></section>
+            <section id="next"><h2>从 v1.0.0 升级</h2><p>v1.0.1 支持从 v1.0.0 直接升级。升级前先运行安装包提供的只读检查，确认环境与配置差异；现场配置继续由外置文件管理。</p></section>
           </div>
         </div>
       </section>
@@ -429,7 +429,7 @@ function GuidePage() {
 function ReleasesPage() {
   return (
     <main>
-      <PageIntro eyebrow="版本与下载" title="从 v1.0.0 开始新的 Agent 平台" description="官网和 GitHub 只提供当前 v1 正式版本。公开说明聚焦功能、稳定性、兼容性和升级体验。" />
+      <PageIntro eyebrow="版本与下载" title="当前正式版本 v1.0.1" description="官网和 GitHub 只提供当前 v1 正式版本。公开说明聚焦功能、稳定性、兼容性和升级体验。" />
       <section className="section page-section release-page">
         <div className="page-shell">
           {releases.map((release) => (
@@ -438,7 +438,7 @@ function ReleasesPage() {
               <div className="release-content"><h2>{release.title}</h2><p>{release.summary}</p><ul>{release.highlights.map((item) => <li key={item}><Check />{item}</li>)}</ul><div className="release-metrics">{release.metrics.map((item) => <span key={item}>{item}</span>)}</div><div className="release-actions"><a className="button button-primary" href={getReleaseDownloadUrl(release)}><Download />下载 Linux 正式包</a><a className="button button-quiet" href={getReleasePageUrl(release.version)} target="_blank" rel="noreferrer"><ExternalLink />GitHub Release</a></div></div>
             </article>
           ))}
-          <div className="release-generation"><ShieldCheck /><div><strong>全新安装代际</strong><p>v1.0.0 需要在 Linux 新目录中连接空 MySQL 8 数据库，不支持从 v0.x 原地升级。后续 v1.x 补丁版本支持同代升级。</p></div><Link to="/deploy">阅读部署指南<ArrowRight /></Link></div>
+          <div className="release-generation"><ShieldCheck /><div><strong>安装与升级边界</strong><p>v1.0.0 是 v1 安装代际基点，v1.0.1 支持全新安装和从 v1.0.0 直接升级；v0.x 不支持原地升级。</p></div><Link to="/deploy">阅读部署指南<ArrowRight /></Link></div>
         </div>
       </section>
     </main>
@@ -450,7 +450,11 @@ function PrivacyPage() {
 }
 
 function TermsPage() {
-  return <LegalPage title="服务条款" updated="2026-08-06"><p>下载、安装或使用 Agents Platform 即表示使用方同意按照适用法律、授权范围和所在组织的管理制度使用本产品。</p><h2>适用范围</h2><p>平台用于创建和运行 Agent、管理项目以及连接获准使用的企业系统。使用方应确保其对接入的数据、代码、账号和外部服务拥有合法权限。</p><h2>部署与运维责任</h2><p>产品由使用方部署在自己的环境中。使用方负责基础设施、网络、备份、账号权限、外部服务费用和生产变更审批。</p><h2>Agent 结果</h2><p>Agent 可以执行复杂工作，但结果仍应按照业务风险接受人工复核。涉及生产变更、数据写入、对外发布和重要决策时，使用方应建立明确的确认流程。</p><h2>版本支持</h2><p>v1.0.0 是新的安装代际，只支持全新安装。版本适用条件、已知限制和后续更新以对应 Release 说明为准。</p><h2>联系我们</h2><p>许可和服务问题请发送邮件至 <a href={`mailto:${contactEmail}`}>{contactEmail}</a>。</p></LegalPage>
+  return <LegalPage title="服务条款" updated="2026-08-08"><p>下载、安装或使用 Agents Platform 即表示使用方同意按照适用法律、软件许可、授权范围和所在组织的管理制度使用本产品。</p><h2>适用范围</h2><p>平台用于创建和运行 Agent、管理项目以及连接获准使用的企业系统。使用方应确保其对接入的数据、代码、账号和外部服务拥有合法权限。</p><h2>部署与运维责任</h2><p>产品由使用方部署在自己的环境中。使用方负责基础设施、网络、备份、账号权限、外部服务费用和生产变更审批。</p><h2>Agent 结果</h2><p>Agent 可以执行复杂工作，但结果仍应按照业务风险接受人工复核。涉及生产变更、数据写入、对外发布和重要决策时，使用方应建立明确的确认流程。</p><h2>版本支持</h2><p>v1.0.0 是 v1 安装代际基点，v1.0.1 支持全新安装和从 v1.0.0 直接升级。版本适用条件、已知限制和后续更新以对应 Release 说明为准。</p><h2>软件许可</h2><p>本产品是专有软件，不是开源软件。使用范围、限制和单独商业授权方式以<Link to="/license">软件许可</Link>为准。</p><h2>联系我们</h2><p>许可和服务问题请发送邮件至 <a href={`mailto:${contactEmail}`}>{contactEmail}</a>。</p></LegalPage>
+}
+
+function LicensePage() {
+  return <LegalPage title="软件许可" updated="2026-08-08"><p>Agents Platform 是可免费自托管使用的专有软件，不是开源软件。下载、安装或使用产品即表示使用方同意随正式版本提供的许可条款。</p><h2>免费使用范围</h2><p>个人或同一法人实体可以在自己控制的环境中免费安装、运行和备份官方未修改的二进制发布包，用于内部业务，包括内部商业业务。</p><h2>不包含的权利</h2><p>免费授权不包含平台核心源码、再分发、修改后分发、OEM、SaaS 转售、面向第三方的托管服务、逆向工程或移除权利声明。适用法律明确禁止限制的情形除外。</p><h2>商业授权</h2><p>需要再分发、OEM、托管服务、定制转售或其他扩展用途时，请发送邮件至 <a href={`mailto:${contactEmail}`}>{contactEmail}</a> 获取书面授权。</p><h2>第三方组件</h2><p>产品包含或依赖的第三方组件继续适用各自的许可，Agents Platform 的专有许可不会减少第三方许可已经授予的权利。</p><h2>完整条款</h2><p>正式法律文本随每个 Linux 发布包提供，也可以在 <a href={`${repositoryUrl}/blob/master/LICENSE`} target="_blank" rel="noreferrer">GitHub LICENSE</a> 中查看。</p></LegalPage>
 }
 
 function LegalPage({ title, updated, children }: { title: string; updated: string; children: ReactNode }) {
@@ -483,6 +487,7 @@ export default function App() {
         <RouterRoute path="/releases" element={<ReleasesPage />} />
         <RouterRoute path="/privacy" element={<PrivacyPage />} />
         <RouterRoute path="/terms" element={<TermsPage />} />
+        <RouterRoute path="/license" element={<LicensePage />} />
         <RouterRoute path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />
