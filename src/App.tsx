@@ -411,7 +411,8 @@ function DeployPage() {
 ./devops.sh check
 ./devops.sh start
 ./devops.sh status`}</code></pre>
-              <p className="section-note"><code>update</code> 会下载官网最新正式 Linux 包，校验升级代际、包结构和目标版本，并仅拉取本地缺少的固定版本 Agent 镜像。下载失败时当前安装不会被替换。</p>
+              <p className="section-note"><code>update</code> 会下载官网最新正式 Linux 包，校验升级代际、包结构和目标版本，并仅拉取本地缺少的固定版本 Agent 镜像。产品包下载中断后再次执行会断点续传；产品包已经下载完成而镜像阶段中断时，下次会直接复用，不会从头下载。</p>
+              <div className="callout"><Download /><div><strong>镜像下载过程保持可见</strong><p>脚本按当前数量和总数显示进度，同时保留 Docker 的分层下载内容；下载时间较长时会持续显示等待时间，结束后汇总复用和实际下载数量。</p></div></div>
             </section>
 
             <section id="launcher">
@@ -420,8 +421,15 @@ function DeployPage() {
               <pre><code>{`cd /opt/devops/devops
 curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash
 ./devops.sh launcher-version
+./devops.sh images status
 ./devops.sh update --check`}</code></pre>
-              <div className="launcher-boundary"><RefreshCw /><div><strong>启动器更新只替换 devops.sh</strong><p>更新器会先备份旧脚本并校验新脚本；不会停止服务，也不会修改 Jar、前端、application.properties、Nginx、数据库或运行数据。已经是最新版本时不会重复替换。</p></div></div>
+              <div className="launcher-boundary"><RefreshCw /><div><strong>启动器更新只替换 devops.sh</strong><p>更新器会先备份旧脚本并校验新脚本；不会停止服务，也不会修改 Jar、前端、application.properties、Nginx、数据库或运行数据。已经是最新版本时不会重复替换，后续产品升级也不会用较旧脚本将它降级。</p></div></div>
+              <pre><code>{`# 单独查看或下载当前版本镜像
+./devops.sh images status
+./devops.sh images pull
+
+# 按本地发布包提前下载目标版本镜像
+./devops.sh images pull /tmp/${releaseArchive}`}</code></pre>
             </section>
 
             <section id="offline">

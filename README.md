@@ -94,10 +94,19 @@ Agents Platform 不是另一个独立聊天页面。每个 Agent 都拥有项目
 ```bash
 curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash
 ./devops.sh launcher-version
+./devops.sh images status
 ./devops.sh update --check
 ```
 
-启动器更新会备份并只替换 `devops.sh`，不会停止服务，也不会修改程序、配置、Nginx、数据库或运行数据。服务器无法访问官网时，可以先下载 Linux 包，再执行：
+启动器更新会备份并只替换 `devops.sh`，不会停止服务，也不会修改程序、配置、Nginx、数据库或运行数据。镜像可以独立查看和下载，下载时会显示每个镜像、Docker 分层进度、等待时间和最终汇总：
+
+```bash
+./devops.sh images status
+./devops.sh images pull
+./devops.sh images pull /tmp/devops-v1.0.3-linux-x64.tar.gz
+```
+
+在线产品包下载中断后，再次执行 `./devops.sh update` 会断点续传；如果产品包已经完成而镜像阶段中断，会直接复用已下载的包，不会再次下载完整产品包。独立更新后的启动器也不会被较旧的产品包降级覆盖。服务器无法访问官网时，可以先下载 Linux 包，再执行：
 
 ```bash
 ./devops.sh upgrade --check /tmp/devops-v1.0.3-linux-x64.tar.gz
