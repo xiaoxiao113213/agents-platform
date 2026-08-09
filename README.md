@@ -34,9 +34,9 @@
 </p>
 
 <p align="center">
-  <a href="https://mmmqaz.cn/releases/devops-v1.0.2-linux-x64.tar.gz"><strong>官网下载 v1.0.2</strong></a>
+  <a href="https://mmmqaz.cn/releases/devops-v1.0.3-linux-x64.tar.gz"><strong>官网下载 v1.0.3</strong></a>
   ·
-  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v1.0.2">GitHub Release</a>
+  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v1.0.3">GitHub Release</a>
 </p>
 
 ## Agent 是平台的工作入口
@@ -57,7 +57,7 @@ Agents Platform 不是另一个独立聊天页面。每个 Agent 都拥有项目
 | 数据库 Agent | 数据库问答、结构设计与 SQL 操作 | ER 设计、SQL、分析与执行记录 |
 | 网站开发 Agent | 网站与 Web 应用设计、开发和验收 | 前端工程、构建文件、可访问站点 |
 | Issue 处理 Agent | 接管需求、Bug 和任务并完成处理闭环 | 修改结果、评论、证据与验收状态 |
-| Grafana Agent | 分析数据并创建经营或运维看板 | 指标口径、SQL、Dashboard |
+| Grafana Agent | 在一套 Grafana 中组合多个数据源进行分析 | 指标口径、SQL、多数据源 Dashboard |
 | PPT Agent | 把材料整理成专业演示文稿 | 可编辑 PPTX、PDF、预览图 |
 | 视频 Agent | 从主题完成脚本、旁白、字幕和成片 | MP4、字幕、脚本与工程文件 |
 
@@ -72,9 +72,9 @@ Agents Platform 不是另一个独立聊天页面。每个 Agent 都拥有项目
 
 更多完整案例见[官网能力与案例](https://mmmqaz.cn/#/capabilities)。
 
-## v1.0.2 安装与升级
+## v1.0.3 安装与升级
 
-`v1.0.2` 支持 Linux x64 全新安装，也支持从 `v1.0.0`、`v1.0.1` 在原安装目录直接累计升级，无需补装中间版本。
+`v1.0.3` 支持 Linux x64 全新安装，也支持从 `v0.0.1` 及后续正式版本在原安装目录直接累计升级，无需补装中间版本。跨较大版本升级前，请先在数据库备份副本上核对业务数据。
 
 ### 已有 v1 环境在线升级
 
@@ -100,9 +100,9 @@ curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash
 启动器更新会备份并只替换 `devops.sh`，不会停止服务，也不会修改程序、配置、Nginx、数据库或运行数据。服务器无法访问官网时，可以先下载 Linux 包，再执行：
 
 ```bash
-./devops.sh upgrade --check /tmp/devops-v1.0.2-linux-x64.tar.gz
+./devops.sh upgrade --check /tmp/devops-v1.0.3-linux-x64.tar.gz
 ./devops.sh stop
-./devops.sh upgrade /tmp/devops-v1.0.2-linux-x64.tar.gz
+./devops.sh upgrade /tmp/devops-v1.0.3-linux-x64.tar.gz
 ./devops.sh check
 ./devops.sh start
 ./devops.sh status
@@ -112,14 +112,14 @@ curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash
 
 ### 首次安装
 
-全新安装使用新目录和空 MySQL 8 `devops` 数据库；`v0.x` 进入 `v1.x` 也必须走全新安装：
+全新安装使用新目录和空 MySQL 8 `devops` 数据库：
 
 ```bash
-curl -fL -o devops-v1.0.2-linux-x64.tar.gz \
-  https://mmmqaz.cn/releases/devops-v1.0.2-linux-x64.tar.gz
+curl -fL -o devops-v1.0.3-linux-x64.tar.gz \
+  https://mmmqaz.cn/releases/devops-v1.0.3-linux-x64.tar.gz
 
-tar -xzf devops-v1.0.2-linux-x64.tar.gz
-cd devops-v1.0.2
+tar -xzf devops-v1.0.3-linux-x64.tar.gz
+cd devops-v1.0.3
 chmod +x devops.sh
 ./devops.sh install
 ```
@@ -159,6 +159,6 @@ Agents Platform 是可免费自托管使用的专有软件，不是开源软件�
 
 ## 版本
 
-当前正式版本：[`v1.0.2`](./docs/releases/v1.0.2.md)
+当前正式版本：[`v1.0.3`](./docs/releases/v1.0.3.md)
 
 正式安装包、版本说明和不可覆盖的 Tag 统一发布在 [GitHub Releases](https://github.com/xiaoxiao113213/agents-platform/releases)。
