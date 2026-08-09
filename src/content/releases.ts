@@ -17,20 +17,20 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
-    version: 'v1.0.1',
-    date: '2026-08-08',
+    version: 'v1.0.2',
+    date: '2026-08-09',
     status: 'stable',
-    title: '更清晰的能力权限与项目访问',
-    summary: '让团队更准确地分配 Agent 能力，并在同一平台地址内使用项目网站、外部服务和持续协作能力。',
+    title: '更省心的安装与项目网站发布',
+    summary: '减少重复配置和安装阻断，让平台、Agent 项目网站与运行环境按一致的默认规则协同工作。',
     highlights: [
-      '本地 Agent、远程 Agent 和 Skill 工作台可分别授权，更适合不同岗位和团队边界。',
-      '项目网站与平台使用同一访问地址，项目服务可在对话右侧或弹层中直接打开。',
-      '外部网站不支持页面内打开时，会清楚说明需要调整的嵌入、HTTPS、Cookie 或登录条件。',
-      '平台交互统一使用 Agent 产品语言，提问、审批与异常提示更加一致。',
-      '支持全新安装和从 v1.0.0 直接升级，并修复了已知问题。',
+      'Agent 项目网站自动使用平台当前域名和端口下的固定路径，无需重复填写公开访问地址。',
+      '项目网站发布目录跟随平台数据根目录，应用与 Nginx 默认配置保持一致。',
+      '安装和启动会直接复用本机已有运行环境，缺少的内容会在需要时自动下载。',
+      '部署检查兼容常见 Nginx 配置写法，远程 Agent 地址仅在实际使用该能力时配置。',
+      '发布成功后会直接返回可点击的网站入口，并修复了已知问题。',
     ],
-    metrics: ['本地与远程 Agent', '项目内 Skill', 'Linux 安装与升级'],
-    assetName: 'devops-v1.0.1-linux-x64.tar.gz',
+    metrics: ['同域项目网站', '更少安装配置', '累计升级'],
+    assetName: 'devops-v1.0.2-linux-x64.tar.gz',
     guidedInstall: true,
   },
 ]

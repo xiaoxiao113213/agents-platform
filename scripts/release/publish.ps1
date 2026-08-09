@@ -86,20 +86,26 @@ try {
     }
     if ($null -eq $release) {
         $publicReleaseBody = [System.IO.File]::ReadAllText($publicNotes, [System.Text.Encoding]::UTF8)
-        $body = @{
+        $bodyObject = @{
             tag_name = $Version
             target_commitish = 'master'
             name = "Agents Platform $Version"
             body = $publicReleaseBody
             draft = $false
             prerelease = $false
-        } | ConvertTo-Json
+        }
+        $body = $bodyObject | ConvertTo-Json
+        $roundTripBody = ($body | ConvertFrom-Json).body
+        if ($roundTripBody -isnot [string] -or $roundTripBody -cne $publicReleaseBody) {
+            throw 'GitHub Release 正文 JSON 往返校验失败，禁止创建 Release。'
+        }
         $release = Invoke-RestMethod -Method Post -Uri "https://api.github.com/repos/$Repository/releases" -Headers $headers -ContentType 'application/json' -Body $body
     }
 
+    $releaseFiles = @($archive, $publicNotes, $siteArchive)
     $existingNames = @($release.assets | ForEach-Object { $_.name })
     $uploadBase = $release.upload_url -replace '\{\?name,label\}$', ''
-    foreach ($file in @($archive, $publicNotes, $siteArchive)) {
+    foreach ($file in $releaseFiles) {
         $name = [System.IO.Path]::GetFileName($file)
         if ($existingNames -contains $name) {
             Write-Host "附件已存在，跳过：$name"
@@ -109,7 +115,52 @@ try {
         Write-Host "正在上传：$name"
         Invoke-WebRequest -Method Post -Uri "$uploadBase`?name=$encodedName" -Headers $headers -ContentType 'application/octet-stream' -InFile $file | Out-Null
     }
-    Write-Host "正式发布完成：https://github.com/$Repository/releases/tag/$Version"
+
+    $verifiedRelease = Invoke-RestMethod -Method Get -Uri $releaseUri -Headers $headers
+    $expectedBody = [System.IO.File]::ReadAllText($publicNotes, [System.Text.Encoding]::UTF8)
+    if ($verifiedRelease.body -isnot [string] -or $verifiedRelease.body -cne $expectedBody) {
+        throw 'GitHub Release 正文与客户版说明不一致。'
+    }
+    $expectedAssets = @{}
+    foreach ($file in $releaseFiles) {
+        $expectedAssets[[System.IO.Path]::GetFileName($file)] = Get-Item -LiteralPath $file
+    }
+    foreach ($name in $expectedAssets.Keys) {
+        $asset = @($verifiedRelease.assets | Where-Object { $_.name -eq $name })
+        if ($asset.Count -ne 1) { throw "GitHub Release 附件数量异常：$name（实际 $($asset.Count)）" }
+        if ($asset[0].state -ne 'uploaded') { throw "GitHub Release 附件尚未上传完成：$name" }
+        if ([long]$asset[0].size -ne [long]$expectedAssets[$name].Length) {
+            throw "GitHub Release 附件大小不一致：$name"
+        }
+    }
+
+    $tempRoot = [System.IO.Path]::GetFullPath([System.IO.Path]::GetTempPath()).TrimEnd('\') + '\'
+    $verificationDir = [System.IO.Path]::GetFullPath((Join-Path $tempRoot "agents-platform-release-$Version-$([guid]::NewGuid().ToString('N'))"))
+    if (-not $verificationDir.StartsWith($tempRoot, [StringComparison]::OrdinalIgnoreCase)) {
+        throw "GitHub Release 验收目录不在系统临时目录内：$verificationDir"
+    }
+    New-Item -ItemType Directory -Path $verificationDir | Out-Null
+    try {
+        foreach ($file in $releaseFiles) {
+            $name = [System.IO.Path]::GetFileName($file)
+            $asset = @($verifiedRelease.assets | Where-Object { $_.name -eq $name })[0]
+            $downloaded = Join-Path $verificationDir $name
+            Write-Host "正在回读验收：$name"
+            Invoke-WebRequest -Uri $asset.browser_download_url -Headers $headers -OutFile $downloaded
+            $localHash = (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash
+            $remoteHash = (Get-FileHash -LiteralPath $downloaded -Algorithm SHA256).Hash
+            if ($localHash -cne $remoteHash) { throw "GitHub Release 附件回读摘要不一致：$name" }
+            if ($name.EndsWith('.tar.gz', [StringComparison]::OrdinalIgnoreCase)) {
+                & tar -tzf $downloaded *> $null
+                if ($LASTEXITCODE -ne 0) { throw "GitHub Release 远端压缩包无法完整读取：$name" }
+            }
+        }
+    } finally {
+        if (Test-Path -LiteralPath $verificationDir) {
+            Remove-Item -LiteralPath $verificationDir -Recurse -Force
+        }
+    }
+    Write-Host "正式发布和远端回读验收完成：https://github.com/$Repository/releases/tag/$Version"
 } finally {
     Pop-Location
 }
