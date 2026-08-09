@@ -23,6 +23,8 @@ import {
   MonitorCheck,
   PanelsTopLeft,
   Presentation,
+  RefreshCw,
+  RotateCcw,
   ServerCog,
   Share2,
   ShieldCheck,
@@ -82,7 +84,7 @@ function Header() {
   const nav = (
     <>
       <NavLink to="/capabilities">能力与案例</NavLink>
-      <NavLink to="/deploy">部署</NavLink>
+      <NavLink to="/deploy">安装与升级</NavLink>
       <NavLink to="/guide">使用指南</NavLink>
       <NavLink to="/releases">版本</NavLink>
     </>
@@ -127,7 +129,7 @@ function Footer() {
         </div>
         <div className="footer-links">
           <div><strong>产品</strong><Link to="/capabilities">能力与案例</Link><Link to="/guide">使用指南</Link><Link to="/releases">版本下载</Link></div>
-          <div><strong>部署</strong><Link to="/deploy">Linux 部署</Link><a href={repositoryUrl} target="_blank" rel="noreferrer">GitHub</a><a href={`mailto:${contactEmail}`}>技术支持</a></div>
+          <div><strong>安装与升级</strong><Link to="/deploy">Linux 安装与升级</Link><a href={repositoryUrl} target="_blank" rel="noreferrer">GitHub</a><a href={`mailto:${contactEmail}`}>技术支持</a></div>
           <div><strong>说明</strong><Link to="/license">软件许可</Link><Link to="/privacy">隐私说明</Link><Link to="/terms">服务条款</Link></div>
         </div>
       </div>
@@ -367,37 +369,107 @@ function CapabilitiesPage() {
 }
 
 function DeployPage() {
+  const releaseVersion = latestRelease.version
+  const releaseArchive = latestRelease.assetName
+
   return (
     <main>
-      <PageIntro eyebrow="Linux 部署" title="安装或升级当前版本" description="v1.0.2 支持全新安装，也支持从 v1.0.0 或 v1.0.1 直接升级。按中文向导完成检查、配置和启动。" />
+      <PageIntro eyebrow="Linux 安装与升级" title="已有环境直接升级，无需重新部署" description={`${releaseVersion} 支持全新安装，也支持已有 v1.x 正式版本在原安装目录累计升级。启动器、程序、配置和数据库分别按清晰边界处理。`} />
       <section className="generation-notice">
         <div className="page-shell">
-          <span><ShieldCheck /></span>
-          <div><strong>v1.0.0 是 v1 安装代际基点</strong><p>全新安装请直接使用 v1.0.2。v1.0.0 和 v1.0.1 都可以直接升级，v0.x 仍需使用新目录和空数据库安装。</p></div>
+          <span><RefreshCw /></span>
+          <div><strong>已有 v1 环境请在原目录升级</strong><p><code>update</code> 会保留现场配置、Nginx、数据和日志；只有 v0.x 进入 v1 时才需要新目录和空数据库。</p></div>
           <Link to="/releases">查看版本说明<ArrowRight /></Link>
         </div>
       </section>
       <section className="section page-section">
         <div className="page-shell deploy-layout">
           <aside className="page-toc">
-            <strong>部署步骤</strong>
-            <a href="#prepare">准备环境</a><a href="#download">下载解压</a><a href="#configure">配置连接</a><a href="#check">检查启动</a><a href="#next">后续升级</a>
+            <strong>安装与升级</strong>
+            <Link to="/deploy#choose">选择路径</Link><Link to="/deploy#upgrade">在线升级</Link><Link to="/deploy#launcher">升级启动器</Link><Link to="/deploy#offline">离线升级</Link><Link to="/deploy#verify">配置与验证</Link><Link to="/deploy#install">全新安装</Link><Link to="/deploy#rollback">回滚边界</Link>
           </aside>
           <div className="guide-content">
-            <section id="prepare"><h2>准备 Linux 主机与空数据库</h2><p>生产环境使用 Linux x64。平台主服务运行在 Java 21 上，Agent 工作空间由 Docker 提供隔离环境。</p>
-              <div className="requirements-grid"><div><ServerCog /><strong>Linux x64</strong><span>全新安装目录</span></div><div><Database /><strong>MySQL 8</strong><span>空 devops 数据库</span></div><div><HardDrive /><strong>Java 21</strong><span>宿主机运行平台服务</span></div><div><CloudCog /><strong>Docker</strong><span>运行专业 Agent</span></div></div>
+            <section id="choose">
+              <h2>先确认你是哪种情况</h2>
+              <p>升级与全新安装是两条不同路径。已有 v1 环境不要重新解压到新目录，也不要连接空数据库。</p>
+              <div className="deploy-paths">
+                <Link className="deploy-path deploy-path-primary" to="/deploy#upgrade"><RefreshCw /><span>已有 v1.x 正式版本</span><strong>在原安装目录累计升级</strong><p>保留配置、Nginx、数据、日志和数据库，只替换版本程序。</p><ArrowRight /></Link>
+                <Link className="deploy-path" to="/deploy#install"><Download /><span>首次部署或从 v0.x 迁移</span><strong>使用新目录全新安装</strong><p>连接空 MySQL 8 devops 数据库，再按安装向导完成配置。</p><ArrowRight /></Link>
+              </div>
             </section>
-            <section id="download"><h2>下载并解压正式包</h2><p>使用官网或 GitHub Release 中的同名 Linux 正式包。一个包包含平台前端、服务端、启动器和部署说明。</p>
-              <pre><code>{`curl -fL -o devops-v1.0.2-linux-x64.tar.gz \\\n  https://mmmqaz.cn/releases/devops-v1.0.2-linux-x64.tar.gz\n\ntar -xzf devops-v1.0.2-linux-x64.tar.gz\ncd devops-v1.0.2`}</code></pre>
+
+            <section id="upgrade">
+              <h2>在线升级：先检查，再执行</h2>
+              <p>进入当前正在使用的安装目录。<code>update --check</code> 只读取官网版本信息和发布包响应，不下载大包、不拉取镜像，也不会修改任何现场文件。</p>
+              <pre><code>{`cd /opt/devops/devops
+./devops.sh version
+./devops.sh launcher-version
+./devops.sh update --check`}</code></pre>
+              <div className="callout"><ShieldCheck /><div><strong>预检通过后再安排升级窗口</strong><p>先备份 MySQL、application.properties 和 nginx/devops.conf。生产环境建议主动停止服务后升级，完成检查后再启动。</p></div></div>
+              <pre><code>{`./devops.sh stop
+./devops.sh update
+./devops.sh check
+./devops.sh start
+./devops.sh status`}</code></pre>
+              <p className="section-note"><code>update</code> 会下载官网最新正式 Linux 包，校验升级代际、包结构和目标版本，并仅拉取本地缺少的固定版本 Agent 镜像。下载失败时当前安装不会被替换。</p>
             </section>
-            <section id="configure"><h2>复制示例并填写现场配置</h2><p>全新安装只需按说明配置数据库和数据根目录。平台与 Agent 项目网站使用同一个域名和端口，项目网站地址会自动生成；远程 Agent 地址仅在使用远程 Agent 时配置。</p>
-              <pre><code>{`cp application.properties.example application.properties\n\n# 编辑 application.properties\n# 填写数据库和数据根目录`}</code></pre>
+
+            <section id="launcher">
+              <h2>devops.sh 本身需要升级时</h2>
+              <p>启动器与产品版本独立更新。旧启动器没有 <code>update</code> 命令，或新版本提示先升级启动器时，在现有安装目录执行下面的命令。</p>
+              <pre><code>{`cd /opt/devops/devops
+curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash
+./devops.sh launcher-version
+./devops.sh update --check`}</code></pre>
+              <div className="launcher-boundary"><RefreshCw /><div><strong>启动器更新只替换 devops.sh</strong><p>更新器会先备份旧脚本并校验新脚本；不会停止服务，也不会修改 Jar、前端、application.properties、Nginx、数据库或运行数据。已经是最新版本时不会重复替换。</p></div></div>
             </section>
-            <section id="check"><h2>先检查，再启动</h2><p>启动器会检查系统环境、目录、数据库和运行依赖。检查通过后再启动平台，并按现场 Nginx 配置开放访问。</p>
-              <pre><code>{`chmod +x devops.sh\n./devops.sh check\n./devops.sh start\n./devops.sh status`}</code></pre>
-              <div className="callout"><MonitorCheck /><div><strong>首次进入平台后</strong><p>先完成管理员设置，再配置模型服务，随后创建第一个 Agent 和项目。系统管理入口按账号权限显示，账号 ID 1 拥有完整管理权限。</p></div></div>
+
+            <section id="offline">
+              <h2>服务器无法访问官网时使用离线包</h2>
+              <p>先在可联网环境下载正式 Linux 包并传到服务器。<code>upgrade</code> 使用指定的本地包，其他校验、保留和备份规则与在线升级一致。</p>
+              <pre><code>{`cd /opt/devops/devops
+./devops.sh upgrade --check /tmp/${releaseArchive}
+./devops.sh stop
+./devops.sh upgrade /tmp/${releaseArchive}
+./devops.sh check
+./devops.sh start
+./devops.sh status`}</code></pre>
+              <div className="command-compare"><div><strong>update</strong><span>自动检查并下载官网最新正式包</span></div><div><strong>upgrade</strong><span>使用已经下载到服务器的指定安装包</span></div></div>
             </section>
-            <section id="next"><h2>从 v1.0.0 或 v1.0.1 升级</h2><p>两个版本都可以直接升级到 v1.0.2，无需补装中间版本。升级前先运行安装包提供的只读检查，确认环境与配置差异；现场配置继续由外置文件管理，不会被自动覆盖。</p></section>
+            <section id="verify">
+              <h2>升级后哪些保留，哪些更新</h2>
+              <p>升级器把现场文件和版本程序分开处理，不要求用户重新填写全部配置。</p>
+              <div className="upgrade-boundaries">
+                <div><strong>始终保留</strong><span>application.properties</span><span>nginx/devops.conf</span><span>数据、日志和数据库</span></div>
+                <div><strong>随版本更新</strong><span>服务端、平台前端与 devops.sh</span><span>application.properties.example</span><span>nginx/devops.conf.example</span></div>
+              </div>
+              <p className="section-note">如果示例配置或 Nginx 模板发生变化，升级器会保留实际文件并给出差异提示。只合并新版本需要的配置项和路由，不要覆盖现场域名、端口、证书与密钥。</p>
+              <pre><code>{`diff -u application.properties application.properties.example
+diff -u nginx/devops.conf nginx/devops.conf.example
+sudo nginx -t
+
+./devops.sh check
+./devops.sh start
+./devops.sh status`}</code></pre>
+              <div className="guide-checks"><div><Check />确认安装版本已更新</div><div><Check />确认平台健康检查通过</div><div><Check />确认 Nginx 配置有效</div><div><Check />确认 Agent 镜像与核心业务可用</div></div>
+            </section>
+            <section id="install">
+              <h2>只有首次部署才需要全新安装</h2>
+              <p>生产环境使用 Linux x64、Java 21、MySQL 8 和 Docker。全新安装使用新目录与空 devops 数据库；从 v0.x 进入 v1 也按这条路径执行。</p>
+              <div className="requirements-grid"><div><ServerCog /><strong>Linux x64</strong><span>新的安装目录</span></div><div><Database /><strong>MySQL 8</strong><span>空 devops 数据库</span></div><div><HardDrive /><strong>Java 21</strong><span>宿主机运行平台服务</span></div><div><CloudCog /><strong>Docker</strong><span>运行专业 Agent</span></div></div>
+              <pre><code>{`curl -fL -o ${releaseArchive} \\\n  https://mmmqaz.cn/releases/${releaseArchive}\n\ntar -xzf ${releaseArchive}\ncd devops-${releaseVersion}\nchmod +x devops.sh\n./devops.sh install`}</code></pre>
+              <div className="callout"><MonitorCheck /><div><strong>安装向导逐项完成现场准备</strong><p>向导检查依赖、填写外置配置、准备 MySQL 与数据目录、生成 Nginx 站点并执行最终检查。每项系统修改都会先询问确认。</p></div></div>
+            </section>
+            <section id="rollback">
+              <h2>回滚程序不等于回滚数据库</h2>
+              <p><code>rollback</code> 只恢复最近一次程序备份，不会反向修改数据库结构，也不会覆盖现场配置。若新版本已经执行数据库升级，恢复旧程序前必须同时恢复升级前的 MySQL 备份。</p>
+              <pre><code>{`# 仅在确认数据库兼容，或已恢复升级前数据库备份后执行
+./devops.sh rollback
+./devops.sh check
+./devops.sh start
+./devops.sh status`}</code></pre>
+              <div className="rollback-warning"><RotateCcw /><div><strong>不要把旧发布包传给 upgrade 尝试降级</strong><p>相同版本和降级包会被拒绝。发生问题时先保留现场日志，根据数据迁移情况决定继续修复还是恢复程序与数据库备份。</p></div></div>
+            </section>
           </div>
         </div>
       </section>
@@ -411,7 +483,7 @@ function GuidePage() {
       <PageIntro eyebrow="使用指南" title="先创建一个 Agent，再把项目交给它" description="从模型服务、Agent、项目和成员开始，数据库、Issue 与其他工具都围绕当前 Agent 项目展开。" />
       <section className="section page-section">
         <div className="page-shell guide-layout">
-          <aside className="page-toc"><strong>开始使用</strong><a href="#start">平台准备</a><a href="#agent">创建 Agent</a><a href="#project">创建项目</a><a href="#database">数据库工作</a><a href="#issue">Issue 协作</a><a href="#share">团队共享</a></aside>
+          <aside className="page-toc"><strong>开始使用</strong><Link to="/guide#start">平台准备</Link><Link to="/guide#agent">创建 Agent</Link><Link to="/guide#project">创建项目</Link><Link to="/guide#database">数据库工作</Link><Link to="/guide#issue">Issue 协作</Link><Link to="/guide#share">团队共享</Link></aside>
           <div className="guide-content">
             <section id="start"><h2>配置团队可用的模型服务</h2><p>管理员先在平台中添加可用的模型服务。成员创建 Agent 时从已配置的选项中选择，无需在每个项目重复填写。</p><div className="inline-flow"><div><LockKeyhole /><strong>管理员配置</strong></div><ChevronRight /><div><Bot /><strong>Agent 选择</strong></div><ChevronRight /><div><MessageSquareText /><strong>发送首条任务</strong></div></div></section>
             <section id="agent"><h2>选择专业 Agent 或通用 Agent</h2><p>数据库、网站、Issue、Grafana、PPT 和视频 Agent 已经准备好对应工作方式。更通用的研发和自动化任务从通用 Agent 开始。</p><div className="guide-checks"><div><Check />名称说明用途和团队</div><div><Check />选择获准使用的模型服务</div><div><Check />按任务配置资源和扩展能力</div><div><Check />启动后进入 Agent 控制台</div></div></section>
@@ -429,7 +501,7 @@ function GuidePage() {
 function ReleasesPage() {
   return (
     <main>
-      <PageIntro eyebrow="版本与下载" title="当前正式版本 v1.0.2" description="官网和 GitHub 提供当前 v1 正式版本。公开说明聚焦功能、稳定性、兼容性和升级体验。" />
+      <PageIntro eyebrow="版本与下载" title={`当前正式版本 ${latestRelease.version}`} description="官网和 GitHub 提供当前 v1 正式版本。公开说明聚焦功能、稳定性、兼容性和升级体验。" />
       <section className="section page-section release-page">
         <div className="page-shell">
           {releases.map((release) => (
@@ -438,7 +510,7 @@ function ReleasesPage() {
               <div className="release-content"><h2>{release.title}</h2><p>{release.summary}</p><ul>{release.highlights.map((item) => <li key={item}><Check />{item}</li>)}</ul><div className="release-metrics">{release.metrics.map((item) => <span key={item}>{item}</span>)}</div><div className="release-actions"><a className="button button-primary" href={getReleaseDownloadUrl(release)}><Download />下载 Linux 正式包</a><a className="button button-quiet" href={getReleasePageUrl(release.version)} target="_blank" rel="noreferrer"><ExternalLink />GitHub Release</a></div></div>
             </article>
           ))}
-          <div className="release-generation"><ShieldCheck /><div><strong>安装与升级边界</strong><p>v1.0.0 是 v1 安装代际基点，v1.0.2 支持全新安装以及从 v1.0.0、v1.0.1 直接升级；v0.x 不支持原地升级。</p></div><Link to="/deploy">阅读部署指南<ArrowRight /></Link></div>
+          <div className="release-generation"><ShieldCheck /><div><strong>安装与升级边界</strong><p>v1.0.0 是 v1 安装代际基点，{latestRelease.version} 支持全新安装以及已有 v1.x 正式版本直接累计升级；v0.x 不支持原地升级。</p></div><Link to="/deploy">阅读安装与升级指南<ArrowRight /></Link></div>
         </div>
       </section>
     </main>
@@ -450,7 +522,7 @@ function PrivacyPage() {
 }
 
 function TermsPage() {
-  return <LegalPage title="服务条款" updated="2026-08-09"><p>下载、安装或使用 Agents Platform 即表示使用方同意按照适用法律、软件许可、授权范围和所在组织的管理制度使用本产品。</p><h2>适用范围</h2><p>平台用于创建和运行 Agent、管理项目以及连接获准使用的企业系统。使用方应确保其对接入的数据、代码、账号和外部服务拥有合法权限。</p><h2>部署与运维责任</h2><p>产品由使用方部署在自己的环境中。使用方负责基础设施、网络、备份、账号权限、外部服务费用和生产变更审批。</p><h2>Agent 结果</h2><p>Agent 可以执行复杂工作，但结果仍应按照业务风险接受人工复核。涉及生产变更、数据写入、对外发布和重要决策时，使用方应建立明确的确认流程。</p><h2>版本支持</h2><p>v1.0.0 是 v1 安装代际基点，v1.0.2 支持全新安装以及从 v1.0.0、v1.0.1 直接升级。版本适用条件、已知限制和后续更新以对应 Release 说明为准。</p><h2>软件许可</h2><p>本产品是专有软件，不是开源软件。使用范围、限制和单独商业授权方式以<Link to="/license">软件许可</Link>为准。</p><h2>联系我们</h2><p>许可和服务问题请发送邮件至 <a href={`mailto:${contactEmail}`}>{contactEmail}</a>。</p></LegalPage>
+  return <LegalPage title="服务条款" updated="2026-08-09"><p>下载、安装或使用 Agents Platform 即表示使用方同意按照适用法律、软件许可、授权范围和所在组织的管理制度使用本产品。</p><h2>适用范围</h2><p>平台用于创建和运行 Agent、管理项目以及连接获准使用的企业系统。使用方应确保其对接入的数据、代码、账号和外部服务拥有合法权限。</p><h2>部署与运维责任</h2><p>产品由使用方部署在自己的环境中。使用方负责基础设施、网络、备份、账号权限、外部服务费用和生产变更审批。</p><h2>Agent 结果</h2><p>Agent 可以执行复杂工作，但结果仍应按照业务风险接受人工复核。涉及生产变更、数据写入、对外发布和重要决策时，使用方应建立明确的确认流程。</p><h2>版本支持</h2><p>v1.0.0 是 v1 安装代际基点，{latestRelease.version} 支持全新安装以及已有 v1.x 正式版本直接累计升级。版本适用条件、已知限制和后续更新以对应 Release 说明为准。</p><h2>软件许可</h2><p>本产品是专有软件，不是开源软件。使用范围、限制和单独商业授权方式以<Link to="/license">软件许可</Link>为准。</p><h2>联系我们</h2><p>许可和服务问题请发送邮件至 <a href={`mailto:${contactEmail}`}>{contactEmail}</a>。</p></LegalPage>
 }
 
 function LicensePage() {

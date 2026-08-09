@@ -26,7 +26,7 @@
   ·
   <a href="https://mmmqaz.cn/#/capabilities">能力与案例</a>
   ·
-  <a href="https://mmmqaz.cn/#/deploy">部署指南</a>
+  <a href="https://mmmqaz.cn/#/deploy">安装与升级</a>
   ·
   <a href="https://mmmqaz.cn/#/guide">使用指南</a>
   ·
@@ -72,14 +72,47 @@ Agents Platform 不是另一个独立聊天页面。每个 Agent 都拥有项目
 
 更多完整案例见[官网能力与案例](https://mmmqaz.cn/#/capabilities)。
 
-## v1.0.2 部署
+## v1.0.2 安装与升级
 
-`v1.0.2` 支持 Linux x64 全新安装，也支持从 `v1.0.0`、`v1.0.1` 直接升级：
+`v1.0.2` 支持 Linux x64 全新安装，也支持从 `v1.0.0`、`v1.0.1` 在原安装目录直接累计升级，无需补装中间版本。
 
-- 全新安装使用新的安装目录，并连接空 MySQL 8 `devops` 数据库。
-- `v1.0.0`、`v1.0.1` 可以直接累计升级，无需补装中间版本。
-- 宿主机准备 Java 21 和 Docker。
-- `v1.0.0` 是 v1 安装代际基点，`v0.x` 不支持原地升级。
+### 已有 v1 环境在线升级
+
+先备份 MySQL、`application.properties` 和 `nginx/devops.conf`，再进入当前安装目录执行：
+
+```bash
+./devops.sh update --check
+./devops.sh stop
+./devops.sh update
+./devops.sh check
+./devops.sh start
+./devops.sh status
+```
+
+如果旧 `devops.sh` 没有 `update` 命令，或新版本提示先升级启动器，只更新启动器后再预检：
+
+```bash
+curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash
+./devops.sh launcher-version
+./devops.sh update --check
+```
+
+启动器更新会备份并只替换 `devops.sh`，不会停止服务，也不会修改程序、配置、Nginx、数据库或运行数据。服务器无法访问官网时，可以先下载 Linux 包，再执行：
+
+```bash
+./devops.sh upgrade --check /tmp/devops-v1.0.2-linux-x64.tar.gz
+./devops.sh stop
+./devops.sh upgrade /tmp/devops-v1.0.2-linux-x64.tar.gz
+./devops.sh check
+./devops.sh start
+./devops.sh status
+```
+
+升级会保留实际 `application.properties`、`nginx/devops.conf`、数据、日志和数据库；新版示例写入对应 `.example` 文件，由维护者按提示合并新增项。`rollback` 只回滚程序，不回滚数据库，恢复旧程序前必须确认数据库兼容或同时恢复升级前备份。
+
+### 首次安装
+
+全新安装使用新目录和空 MySQL 8 `devops` 数据库；`v0.x` 进入 `v1.x` 也必须走全新安装：
 
 ```bash
 curl -fL -o devops-v1.0.2-linux-x64.tar.gz \
@@ -87,16 +120,11 @@ curl -fL -o devops-v1.0.2-linux-x64.tar.gz \
 
 tar -xzf devops-v1.0.2-linux-x64.tar.gz
 cd devops-v1.0.2
-cp application.properties.example application.properties
-
-# 填写现场配置后执行
 chmod +x devops.sh
-./devops.sh check
-./devops.sh start
-./devops.sh status
+./devops.sh install
 ```
 
-完整步骤见[官方部署指南](https://mmmqaz.cn/#/deploy)。
+安装、升级、配置差异和回滚边界见[官方安装与升级指南](https://mmmqaz.cn/#/deploy)。
 
 ## 官网本地开发
 

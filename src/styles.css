@@ -1176,6 +1176,181 @@ pre {
   font-size: 12px;
 }
 
+.deploy-paths {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 34px;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.deploy-path {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 260px;
+  padding: 26px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.deploy-path > svg:first-child {
+  width: 26px;
+  height: 26px;
+  margin-bottom: 48px;
+  color: var(--accent);
+}
+
+.deploy-path > span {
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+.deploy-path > strong {
+  max-width: 260px;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.deploy-path > p {
+  max-width: 310px;
+  margin: 12px 38px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.deploy-path > svg:last-child {
+  position: absolute;
+  right: 24px;
+  bottom: 26px;
+}
+
+.deploy-path-primary {
+  color: #ffffff;
+  border-color: var(--dark);
+  background: var(--dark);
+}
+
+.deploy-path-primary > svg:first-child,
+.deploy-path-primary > span,
+.deploy-path-primary > p {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.deploy-path:hover {
+  background: var(--soft);
+}
+
+.deploy-path-primary:hover {
+  color: #ffffff;
+  background: #1a211d;
+}
+
+.section-note {
+  margin-top: 24px;
+  padding-left: 16px;
+  border-left: 2px solid var(--accent);
+  color: var(--muted);
+  font-size: 12px !important;
+}
+
+.guide-content p code,
+.generation-notice code {
+  padding: 2px 5px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--soft);
+  font-family: var(--mono);
+  font-size: 0.88em;
+}
+
+.generation-notice code {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.launcher-boundary,
+.rollback-warning {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  margin-top: 28px;
+  padding: 24px;
+  border: 1px solid #cbdcd3;
+  border-radius: 4px;
+  background: #f6fbf8;
+}
+
+.rollback-warning {
+  border-color: #e2d6c7;
+  background: #fffaf2;
+}
+
+.launcher-boundary > svg,
+.rollback-warning > svg {
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
+}
+
+.rollback-warning > svg {
+  color: #9a5d14;
+}
+
+.launcher-boundary strong,
+.rollback-warning strong {
+  font-size: 13px;
+}
+
+.launcher-boundary p,
+.rollback-warning p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.command-compare,
+.upgrade-boundaries {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 28px;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.command-compare > div,
+.upgrade-boundaries > div {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 0;
+  padding: 20px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.command-compare strong,
+.upgrade-boundaries strong {
+  margin-bottom: 4px;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.command-compare span,
+.upgrade-boundaries span {
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
 .inline-flow,
 .sharing-board {
   display: flex;
@@ -1779,8 +1954,15 @@ pre {
   }
 
   .requirements-grid,
-  .guide-checks {
+  .guide-checks,
+  .deploy-paths,
+  .command-compare,
+  .upgrade-boundaries {
     grid-template-columns: 1fr;
+  }
+
+  .deploy-path {
+    min-height: 240px;
   }
 
   .inline-flow,
