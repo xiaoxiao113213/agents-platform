@@ -34,9 +34,9 @@
 </p>
 
 <p align="center">
-  <a href="https://mmmqaz.cn/releases/devops-v1.0.1-linux-x64.tar.gz"><strong>官网下载 v1.0.1</strong></a>
+  <a href="https://mmmqaz.cn/releases/devops-v1.0.2-linux-x64.tar.gz"><strong>官网下载 v1.0.2</strong></a>
   ·
-  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v1.0.1">GitHub Release</a>
+  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v1.0.2">GitHub Release</a>
 </p>
 
 ## Agent 是平台的工作入口
@@ -72,22 +72,21 @@ Agents Platform 不是另一个独立聊天页面。每个 Agent 都拥有项目
 
 更多完整案例见[官网能力与案例](https://mmmqaz.cn/#/capabilities)。
 
-## v1.0.1 部署
+## v1.0.2 部署
 
-`v1.0.1` 支持 Linux x64 全新安装，也支持从 `v1.0.0` 直接升级：
+`v1.0.2` 支持 Linux x64 全新安装，也支持从 `v1.0.0`、`v1.0.1` 直接升级：
 
-- 使用新的安装目录。
-- 连接空 MySQL 8 `devops` 数据库。
+- 全新安装使用新的安装目录，并连接空 MySQL 8 `devops` 数据库。
+- `v1.0.0`、`v1.0.1` 可以直接累计升级，无需补装中间版本。
 - 宿主机准备 Java 21 和 Docker。
-- 不支持从 `v0.x` 原地升级。
 - `v1.0.0` 是 v1 安装代际基点，`v0.x` 不支持原地升级。
 
 ```bash
-curl -fL -o devops-v1.0.1-linux-x64.tar.gz \
-  https://mmmqaz.cn/releases/devops-v1.0.1-linux-x64.tar.gz
+curl -fL -o devops-v1.0.2-linux-x64.tar.gz \
+  https://mmmqaz.cn/releases/devops-v1.0.2-linux-x64.tar.gz
 
-tar -xzf devops-v1.0.1-linux-x64.tar.gz
-cd devops-v1.0.1
+tar -xzf devops-v1.0.2-linux-x64.tar.gz
+cd devops-v1.0.2
 cp application.properties.example application.properties
 
 # 填写现场配置后执行
@@ -132,6 +131,6 @@ Agents Platform 是可免费自托管使用的专有软件，不是开源软件�
 
 ## 版本
 
-当前正式版本：[`v1.0.1`](./docs/releases/v1.0.1.md)
+当前正式版本：[`v1.0.2`](./docs/releases/v1.0.2.md)
 
 正式安装包、版本说明和不可覆盖的 Tag 统一发布在 [GitHub Releases](https://github.com/xiaoxiao113213/agents-platform/releases)。
