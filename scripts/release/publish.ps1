@@ -9,6 +9,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.Net.Http
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $source = (Resolve-Path (Join-Path $root $SourceRoot)).Path
 $archive = Join-Path $source "dist\releases\$Version\devops-$Version-linux-x64.tar.gz"
@@ -43,6 +44,7 @@ if ($releaseSource -notmatch $stablePattern) {
 }
 
 Push-Location $root
+$githubClient = $null
 try {
     $branch = (& git branch --show-current).Trim()
     if ($branch -ne 'master') { throw "正式发布必须在 master 分支执行，当前分支为 $branch。" }
@@ -70,19 +72,32 @@ try {
         Invoke-Git @('push', 'origin', "refs/tags/$Version")
     }
 
-    $headers = @{
-        Authorization = "Bearer $($env:GITHUB_TOKEN)"
-        Accept = 'application/vnd.github+json'
-        'X-GitHub-Api-Version' = '2022-11-28'
-        'User-Agent' = 'agents-platform-release-script'
-    }
+    $githubClient = [System.Net.Http.HttpClient]::new()
+    $githubClient.Timeout = [TimeSpan]::FromMinutes(30)
+    $githubClient.DefaultRequestHeaders.Authorization = [System.Net.Http.Headers.AuthenticationHeaderValue]::new('Bearer', $env:GITHUB_TOKEN)
+    $githubClient.DefaultRequestHeaders.Accept.ParseAdd('application/vnd.github+json')
+    $githubClient.DefaultRequestHeaders.UserAgent.ParseAdd('agents-platform-release-script')
+    $githubClient.DefaultRequestHeaders.Add('X-GitHub-Api-Version', '2022-11-28')
     $releaseUri = "https://api.github.com/repos/$Repository/releases/tags/$Version"
-    $release = $null
-    try {
-        $release = Invoke-RestMethod -Method Get -Uri $releaseUri -Headers $headers
-        if (-not $Resume) { throw "GitHub Release $Version 已存在。正式 Release 不允许覆盖；仅补传附件时请使用 -Resume。" }
-    } catch {
-        if ($_.Exception.Response.StatusCode.value__ -ne 404) { throw }
+
+    function Get-GitHubRelease {
+        $response = $githubClient.GetAsync($releaseUri).GetAwaiter().GetResult()
+        try {
+            if ([int]$response.StatusCode -eq 404) { return $null }
+            if (-not $response.IsSuccessStatusCode) {
+                $detail = $response.Content.ReadAsStringAsync().GetAwaiter().GetResult()
+                throw "读取 GitHub Release 失败：$([int]$response.StatusCode) $detail"
+            }
+            $json = $response.Content.ReadAsStringAsync().GetAwaiter().GetResult()
+            return $json | ConvertFrom-Json
+        } finally {
+            $response.Dispose()
+        }
+    }
+
+    $release = Get-GitHubRelease
+    if ($null -ne $release -and -not $Resume) {
+        throw "GitHub Release $Version 已存在。正式 Release 不允许覆盖；仅补传附件时请使用 -Resume。"
     }
     if ($null -eq $release) {
         $publicReleaseBody = [System.IO.File]::ReadAllText($publicNotes, [System.Text.Encoding]::UTF8)
@@ -99,7 +114,19 @@ try {
         if ($roundTripBody -isnot [string] -or $roundTripBody -cne $publicReleaseBody) {
             throw 'GitHub Release 正文 JSON 往返校验失败，禁止创建 Release。'
         }
-        $release = Invoke-RestMethod -Method Post -Uri "https://api.github.com/repos/$Repository/releases" -Headers $headers -ContentType 'application/json' -Body $body
+        $content = [System.Net.Http.StringContent]::new($body, [System.Text.UTF8Encoding]::new($false), 'application/json')
+        $response = $null
+        try {
+            $response = $githubClient.PostAsync("https://api.github.com/repos/$Repository/releases", $content).GetAwaiter().GetResult()
+            if (-not $response.IsSuccessStatusCode) {
+                $detail = $response.Content.ReadAsStringAsync().GetAwaiter().GetResult()
+                throw "创建 GitHub Release 失败：$([int]$response.StatusCode) $detail"
+            }
+            $release = ($response.Content.ReadAsStringAsync().GetAwaiter().GetResult()) | ConvertFrom-Json
+        } finally {
+            if ($response) { $response.Dispose() }
+            $content.Dispose()
+        }
     }
 
     $releaseFiles = @($archive, $publicNotes, $siteArchive)
@@ -111,12 +138,29 @@ try {
             Write-Host "附件已存在，跳过：$name"
             continue
         }
-        $encodedName = [uri]::EscapeDataString($name)
+        $uploadUri = '{0}?name={1}' -f $uploadBase, [uri]::EscapeDataString($name)
+        $stream = [System.IO.File]::OpenRead($file)
+        $request = [System.Net.Http.HttpRequestMessage]::new([System.Net.Http.HttpMethod]::Post, $uploadUri)
+        $request.Headers.ExpectContinue = $false
+        $request.Content = [System.Net.Http.StreamContent]::new($stream)
+        $request.Content.Headers.ContentType = [System.Net.Http.Headers.MediaTypeHeaderValue]::new('application/octet-stream')
+        $request.Content.Headers.ContentLength = $stream.Length
         Write-Host "正在上传：$name"
-        Invoke-WebRequest -Method Post -Uri "$uploadBase`?name=$encodedName" -Headers $headers -ContentType 'application/octet-stream' -InFile $file | Out-Null
+        $response = $null
+        try {
+            $response = $githubClient.SendAsync($request, [System.Net.Http.HttpCompletionOption]::ResponseHeadersRead).GetAwaiter().GetResult()
+            if (-not $response.IsSuccessStatusCode) {
+                $detail = $response.Content.ReadAsStringAsync().GetAwaiter().GetResult()
+                throw "上传 GitHub Release 附件失败：$name $([int]$response.StatusCode) $detail"
+            }
+        } finally {
+            if ($response) { $response.Dispose() }
+            $request.Dispose()
+            $stream.Dispose()
+        }
     }
 
-    $verifiedRelease = Invoke-RestMethod -Method Get -Uri $releaseUri -Headers $headers
+    $verifiedRelease = Get-GitHubRelease
     $expectedBody = [System.IO.File]::ReadAllText($publicNotes, [System.Text.Encoding]::UTF8)
     if ($verifiedRelease.body -isnot [string] -or $verifiedRelease.body -cne $expectedBody) {
         throw 'GitHub Release 正文与客户版说明不一致。'
@@ -146,7 +190,16 @@ try {
             $asset = @($verifiedRelease.assets | Where-Object { $_.name -eq $name })[0]
             $downloaded = Join-Path $verificationDir $name
             Write-Host "正在回读验收：$name"
-            Invoke-WebRequest -Uri $asset.browser_download_url -Headers $headers -OutFile $downloaded
+            $input = $null
+            $output = $null
+            try {
+                $input = $githubClient.GetStreamAsync($asset.browser_download_url).GetAwaiter().GetResult()
+                $output = [System.IO.File]::Create($downloaded)
+                $input.CopyTo($output)
+            } finally {
+                if ($output) { $output.Dispose() }
+                if ($input) { $input.Dispose() }
+            }
             $localHash = (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash
             $remoteHash = (Get-FileHash -LiteralPath $downloaded -Algorithm SHA256).Hash
             if ($localHash -cne $remoteHash) { throw "GitHub Release 附件回读摘要不一致：$name" }
@@ -162,5 +215,6 @@ try {
     }
     Write-Host "正式发布和远端回读验收完成：https://github.com/$Repository/releases/tag/$Version"
 } finally {
+    if ($githubClient) { $githubClient.Dispose() }
     Pop-Location
 }
