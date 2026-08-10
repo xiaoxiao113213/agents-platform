@@ -17,6 +17,23 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.8',
+    date: '2026-08-11',
+    status: 'stable',
+    title: '大型会话更快，任务与产物更稳定',
+    summary: '大型会话按需加载历史，多人共享时消息与最终状态保持一致，任务进度和产物展示也更加可靠。',
+    highlights: [
+      '大型会话优先加载最近消息，需要时可继续查看更早内容，重新进入对话更加顺畅。',
+      '多人共用 Agent 和会话时，正在生成的消息、最终回复与刷新后的状态保持一致。',
+      '已结束任务不再错误显示为运行中，长计划默认展示摘要并可完整展开阅读。',
+      '会话产物打开更快，手工刷新仍可重新校准，无效或空白产物不再占据列表。',
+      '减少重复后台请求，并修复了已知问题。',
+    ],
+    metrics: ['历史按需加载', '共享消息一致', '任务状态准确'],
+    assetName: 'devops-v1.0.8-linux-x64.tar.gz',
+    guidedInstall: true,
+  },
+  {
     version: 'v1.0.7',
     date: '2026-08-10',
     status: 'stable',
