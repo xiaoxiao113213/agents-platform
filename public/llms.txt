@@ -6,9 +6,9 @@
 
 - [首页](https://mmmqaz.cn/): 产品定位、真实界面、工作案例和服务客户
 - [能力与案例](https://mmmqaz.cn/#/capabilities): 七类内置 Agent、十类工作案例和可连接系统
-- [安装与升级](https://mmmqaz.cn/#/deploy): v1.0.3 Linux 全新安装、启动器更新、在线/离线累计升级与回滚边界
+- [安装与升级](https://mmmqaz.cn/#/deploy): v1.0.6 Linux 全新安装、启动器更新、在线/离线累计升级与回滚边界
 - [使用指南](https://mmmqaz.cn/#/guide): 创建 Agent、项目、数据库与 Issue 工作空间
-- [版本下载](https://mmmqaz.cn/#/releases): v1.0.3 正式版本和 Linux 安装包
+- [版本下载](https://mmmqaz.cn/#/releases): v1.0.6 正式版本和 Linux 安装包
 
 ## 联系
 

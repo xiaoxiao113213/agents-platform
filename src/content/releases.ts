@@ -17,6 +17,23 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.6',
+    date: '2026-08-10',
+    status: 'stable',
+    title: '模型用量清晰可见，共享对话更加稳定',
+    summary: '模型连接支持按成员授权并提供多维用量分析，多人共享会话和长任务上下文处理也更加稳定。',
+    highlights: [
+      '模型连接可以全局共享或只授权给指定成员，团队复用与使用边界都能按需设置。',
+      '用量分析按连接、成员和模型展示请求次数及 Token 消耗，并支持日期与对象筛选。',
+      '删除模型连接前可以查看关联内容，并先批量替换到其他连接，减少 Agent 使用中断。',
+      '多人共用同一 Agent 和会话时，消息顺序、任务过程与最终结果保持一致。',
+      '长任务会更早整理上下文并继续执行，同时修复了已知问题。',
+    ],
+    metrics: ['成员级连接权限', '多维 Token 用量', '共享会话稳定'],
+    assetName: 'devops-v1.0.6-linux-x64.tar.gz',
+    guidedInstall: true,
+  },
+  {
     version: 'v1.0.5',
     date: '2026-08-10',
     status: 'stable',

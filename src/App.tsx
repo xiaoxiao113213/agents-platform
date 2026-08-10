@@ -374,11 +374,11 @@ function DeployPage() {
 
   return (
     <main>
-      <PageIntro eyebrow="Linux 安装与升级" title="已有环境直接升级，无需重新部署" description={`${releaseVersion} 支持全新安装，也支持已有 v1.x 正式版本在原安装目录累计升级。启动器、程序、配置和数据库分别按清晰边界处理。`} />
+      <PageIntro eyebrow="Linux 安装与升级" title="已有环境直接升级，无需重新部署" description={`${releaseVersion} 支持全新安装，也支持 v0.0.1 及后续正式版本在原安装目录累计升级。启动器、程序、配置和数据库分别按清晰边界处理。`} />
       <section className="generation-notice">
         <div className="page-shell">
           <span><RefreshCw /></span>
-          <div><strong>已有 v1 环境请在原目录升级</strong><p><code>update</code> 会保留现场配置、Nginx、数据和日志；只有 v0.x 进入 v1 时才需要新目录和空数据库。</p></div>
+          <div><strong>已有正式版本请在原目录升级</strong><p><code>update</code> 会保留现场配置、Nginx、数据和日志；首次部署才需要新目录和空数据库。</p></div>
           <Link to="/releases">查看版本说明<ArrowRight /></Link>
         </div>
       </section>
@@ -391,10 +391,10 @@ function DeployPage() {
           <div className="guide-content">
             <section id="choose">
               <h2>先确认你是哪种情况</h2>
-              <p>升级与全新安装是两条不同路径。已有 v1 环境不要重新解压到新目录，也不要连接空数据库。</p>
+              <p>升级与全新安装是两条不同路径。已有正式版本不要重新解压到新目录，也不要连接空数据库。</p>
               <div className="deploy-paths">
-                <Link className="deploy-path deploy-path-primary" to="/deploy#upgrade"><RefreshCw /><span>已有 v1.x 正式版本</span><strong>在原安装目录累计升级</strong><p>保留配置、Nginx、数据、日志和数据库，只替换版本程序。</p><ArrowRight /></Link>
-                <Link className="deploy-path" to="/deploy#install"><Download /><span>首次部署或从 v0.x 迁移</span><strong>使用新目录全新安装</strong><p>连接空 MySQL 8 devops 数据库，再按安装向导完成配置。</p><ArrowRight /></Link>
+                <Link className="deploy-path deploy-path-primary" to="/deploy#upgrade"><RefreshCw /><span>已有 v0.0.1 及后续正式版本</span><strong>在原安装目录累计升级</strong><p>保留配置、Nginx、数据、日志和数据库，只替换版本程序。</p><ArrowRight /></Link>
+                <Link className="deploy-path" to="/deploy#install"><Download /><span>首次部署</span><strong>使用新目录全新安装</strong><p>连接空 MySQL 8 devops 数据库，再按安装向导完成配置。</p><ArrowRight /></Link>
               </div>
             </section>
 
@@ -463,7 +463,7 @@ sudo nginx -t
             </section>
             <section id="install">
               <h2>只有首次部署才需要全新安装</h2>
-              <p>生产环境使用 Linux x64、Java 21、MySQL 8 和 Docker。全新安装使用新目录与空 devops 数据库；从 v0.x 进入 v1 也按这条路径执行。</p>
+              <p>生产环境使用 Linux x64、Java 21、MySQL 8 和 Docker。全新安装使用新目录与空 devops 数据库；已有 v0.0.1 及后续正式版本可在原目录累计升级。</p>
               <div className="requirements-grid"><div><ServerCog /><strong>Linux x64</strong><span>新的安装目录</span></div><div><Database /><strong>MySQL 8</strong><span>空 devops 数据库</span></div><div><HardDrive /><strong>Java 21</strong><span>宿主机运行平台服务</span></div><div><CloudCog /><strong>Docker</strong><span>运行专业 Agent</span></div></div>
               <pre><code>{`curl -fL -o ${releaseArchive} \\\n  https://mmmqaz.cn/releases/${releaseArchive}\n\ntar -xzf ${releaseArchive}\ncd devops-${releaseVersion}\nchmod +x devops.sh\n./devops.sh install`}</code></pre>
               <div className="callout"><MonitorCheck /><div><strong>安装向导逐项完成现场准备</strong><p>向导检查依赖、填写外置配置、准备 MySQL 与数据目录、生成 Nginx 站点并执行最终检查。每项系统修改都会先询问确认。</p></div></div>
@@ -518,7 +518,7 @@ function ReleasesPage() {
               <div className="release-content"><h2>{release.title}</h2><p>{release.summary}</p><ul>{release.highlights.map((item) => <li key={item}><Check />{item}</li>)}</ul><div className="release-metrics">{release.metrics.map((item) => <span key={item}>{item}</span>)}</div><div className="release-actions"><a className="button button-primary" href={getReleaseDownloadUrl(release)}><Download />下载 Linux 正式包</a><a className="button button-quiet" href={getReleasePageUrl(release.version)} target="_blank" rel="noreferrer"><ExternalLink />GitHub Release</a></div></div>
             </article>
           ))}
-          <div className="release-generation"><ShieldCheck /><div><strong>安装与升级边界</strong><p>v1.0.0 是 v1 安装代际基点，{latestRelease.version} 支持全新安装以及已有 v1.x 正式版本直接累计升级；v0.x 不支持原地升级。</p></div><Link to="/deploy">阅读安装与升级指南<ArrowRight /></Link></div>
+          <div className="release-generation"><ShieldCheck /><div><strong>安装与升级边界</strong><p>{latestRelease.version} 支持全新安装，也支持 v0.0.1 及后续正式版本直接累计升级，无需补装中间版本。</p></div><Link to="/deploy">阅读安装与升级指南<ArrowRight /></Link></div>
         </div>
       </section>
     </main>
@@ -530,7 +530,7 @@ function PrivacyPage() {
 }
 
 function TermsPage() {
-  return <LegalPage title="服务条款" updated="2026-08-09"><p>下载、安装或使用 Agents Platform 即表示使用方同意按照适用法律、软件许可、授权范围和所在组织的管理制度使用本产品。</p><h2>适用范围</h2><p>平台用于创建和运行 Agent、管理项目以及连接获准使用的企业系统。使用方应确保其对接入的数据、代码、账号和外部服务拥有合法权限。</p><h2>部署与运维责任</h2><p>产品由使用方部署在自己的环境中。使用方负责基础设施、网络、备份、账号权限、外部服务费用和生产变更审批。</p><h2>Agent 结果</h2><p>Agent 可以执行复杂工作，但结果仍应按照业务风险接受人工复核。涉及生产变更、数据写入、对外发布和重要决策时，使用方应建立明确的确认流程。</p><h2>版本支持</h2><p>v1.0.0 是 v1 安装代际基点，{latestRelease.version} 支持全新安装以及已有 v1.x 正式版本直接累计升级。版本适用条件、已知限制和后续更新以对应 Release 说明为准。</p><h2>软件许可</h2><p>本产品是专有软件，不是开源软件。使用范围、限制和单独商业授权方式以<Link to="/license">软件许可</Link>为准。</p><h2>联系我们</h2><p>许可和服务问题请发送邮件至 <a href={`mailto:${contactEmail}`}>{contactEmail}</a>。</p></LegalPage>
+  return <LegalPage title="服务条款" updated="2026-08-10"><p>下载、安装或使用 Agents Platform 即表示使用方同意按照适用法律、软件许可、授权范围和所在组织的管理制度使用本产品。</p><h2>适用范围</h2><p>平台用于创建和运行 Agent、管理项目以及连接获准使用的企业系统。使用方应确保其对接入的数据、代码、账号和外部服务拥有合法权限。</p><h2>部署与运维责任</h2><p>产品由使用方部署在自己的环境中。使用方负责基础设施、网络、备份、账号权限、外部服务费用和生产变更审批。</p><h2>Agent 结果</h2><p>Agent 可以执行复杂工作，但结果仍应按照业务风险接受人工复核。涉及生产变更、数据写入、对外发布和重要决策时，使用方应建立明确的确认流程。</p><h2>版本支持</h2><p>{latestRelease.version} 支持全新安装，也支持 v0.0.1 及后续正式版本直接累计升级，无需补装中间版本。版本适用条件、已知限制和后续更新以对应 Release 说明为准。</p><h2>软件许可</h2><p>本产品是专有软件，不是开源软件。使用范围、限制和单独商业授权方式以<Link to="/license">软件许可</Link>为准。</p><h2>联系我们</h2><p>许可和服务问题请发送邮件至 <a href={`mailto:${contactEmail}`}>{contactEmail}</a>。</p></LegalPage>
 }
 
 function LicensePage() {
