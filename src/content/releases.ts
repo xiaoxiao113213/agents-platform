@@ -17,6 +17,23 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.7',
+    date: '2026-08-10',
+    status: 'stable',
+    title: '项目切换更自然，团队权限更细致',
+    summary: '模型连接与 Issue 能力可以按角色分配，运行中的 Agent 支持跨项目查看，长任务消息展示也更加稳定。',
+    highlights: [
+      '模型连接管理与 Issue 管理统一通过角色权限分配，团队职责不再受固定账号限制。',
+      'Issue 权限覆盖查看、项目管理、创建、编辑、评论、流转、删除与项目令牌，操作和数据范围可分别控制。',
+      'Agent 执行期间可以切换项目，原任务继续完成，当前页面只显示所选项目的数据和状态。',
+      '切回原项目后可继续处理任务问答，项目浏览不会打断正在执行的工作。',
+      'Task、子任务和超长内容在分栏和小尺寸窗口中保持稳定，并修复了已知问题。',
+    ],
+    metrics: ['角色化能力权限', '运行中项目切换', '长内容稳定展示'],
+    assetName: 'devops-v1.0.7-linux-x64.tar.gz',
+    guidedInstall: true,
+  },
+  {
     version: 'v1.0.6',
     date: '2026-08-10',
     status: 'stable',
