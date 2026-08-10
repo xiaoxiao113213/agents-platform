@@ -17,6 +17,23 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.5',
+    date: '2026-08-10',
+    status: 'stable',
+    title: '团队模型连接与远程 Agent 更易使用',
+    summary: '团队可以更灵活地复用已配置的模型连接，远程 Agent 支持多模型连接，并进一步减少累计升级后的磁盘占用。',
+    highlights: [
+      '已启用的模型连接可以在团队 Agent 中直接选择和切换，集中配置后无需每位成员重复录入。',
+      '创建远程 Agent 时可以一次绑定多个模型连接、指定默认项，并根据可用模型完成选择。',
+      '模型连接的日常维护仍由具备管理权限的成员负责，Agent 使用与连接维护各自保持清晰。',
+      '累计升级完成后会清理没有被任何 Agent 使用的旧版本运行环境；仍在使用的内容会自动保留。',
+      '安装与升级说明统一到当前累计升级规则，并修复了已知问题。',
+    ],
+    metrics: ['团队连接共享', '远程 Agent 多模型', '升级自动整理'],
+    assetName: 'devops-v1.0.5-linux-x64.tar.gz',
+    guidedInstall: true,
+  },
+  {
     version: 'v1.0.4',
     date: '2026-08-10',
     status: 'stable',
