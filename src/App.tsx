@@ -69,7 +69,7 @@ const agentIcons: Record<string, ReactNode> = {
 function Brand() {
   return (
     <Link className="brand" to="/" aria-label="Agents Platform 首页">
-      <span className="brand-mark"><Bot size={19} /></span>
+      <span className="brand-mark"><img src="/favicon.svg" alt="" /></span>
       <span>Agents Platform</span>
     </Link>
   )

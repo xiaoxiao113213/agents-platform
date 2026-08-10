@@ -120,10 +120,15 @@ p {
   display: inline-grid;
   width: 34px;
   height: 34px;
-  color: #ffffff;
-  background: var(--ink);
   border-radius: 4px;
+  overflow: hidden;
   place-items: center;
+}
+
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .desktop-nav {
@@ -1581,8 +1586,7 @@ pre {
 }
 
 .site-footer .brand-mark {
-  color: var(--dark);
-  background: #ffffff;
+  outline: 1px solid rgba(255, 255, 255, 0.24);
 }
 
 .footer-intro p {

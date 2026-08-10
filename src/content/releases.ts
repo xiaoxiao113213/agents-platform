@@ -17,6 +17,23 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.4',
+    date: '2026-08-10',
+    status: 'stable',
+    title: '共享对话稳定性与更灵活的模型接入',
+    summary: '多人共享 Agent 的消息与任务过程更加稳定，并加入开箱即用的模型服务、可修改的 Grafana 配置和更清晰的升级进度。',
+    highlights: [
+      '共享会话按顺序处理每轮对话，消息、任务进度、工具结果和最终回复在所有使用者之间保持一致。',
+      '内置 DeepSeek 与 Kimi 模型服务，只需填写 API Key 即可选择平台维护的模型与配置，同时保留完整的自定义接入能力。',
+      'Grafana Agent 创建后可修改服务地址、令牌、默认文件夹和多数据源绑定，运行中的 Agent 保存后自动应用。',
+      '大型 Office 类 Skill 可以从能力目录完整同步，Agent 管理、小屏布局和站点视觉细节同步优化。',
+      '镜像准备与在线升级持续展示进度并支持断点续传，跨版本累计升级更加省心。',
+    ],
+    metrics: ['共享会话稳定', '内置模型服务', '可恢复升级'],
+    assetName: 'devops-v1.0.4-linux-x64.tar.gz',
+    guidedInstall: true,
+  },
+  {
     version: 'v1.0.3',
     date: '2026-08-09',
     status: 'stable',
