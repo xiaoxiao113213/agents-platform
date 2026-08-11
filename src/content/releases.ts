@@ -17,6 +17,23 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.9',
+    date: '2026-08-11',
+    status: 'stable',
+    title: '让每个 Agent 项目真正运行完整应用',
+    summary: '前端、Java、Node.js、Python 和前后端一体项目都可以在项目空间中运行、自检，并通过独立地址访问。',
+    highlights: [
+      '每个项目都可以按需添加项目应用能力，统一管理启动、停止、重启、状态和访问入口。',
+      '项目应用使用独立子域名访问，静态网站和动态服务保持一致，项目之间相互隔离。',
+      '对话中可以直接搜索和添加工程 Skill，不同项目可以自由组合自己的能力。',
+      '新增常用前端、Java、Node.js、Python 和一体化工程 Skill，数据库升级随服务启动自动完成。',
+      '服务启动会检查端口与进程状态，安装配置更清晰，并修复了已知问题。',
+    ],
+    metrics: ['完整项目运行', '项目级 Skill', '独立应用地址'],
+    assetName: 'devops-v1.0.9-linux-x64.tar.gz',
+    guidedInstall: true,
+  },
+  {
     version: 'v1.0.8',
     date: '2026-08-11',
     status: 'stable',
