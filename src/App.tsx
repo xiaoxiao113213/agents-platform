@@ -386,7 +386,7 @@ function DeployPage() {
         <div className="page-shell deploy-layout">
           <aside className="page-toc">
             <strong>安装与升级</strong>
-            <Link to="/deploy#choose">选择路径</Link><Link to="/deploy#upgrade">在线升级</Link><Link to="/deploy#launcher">升级启动器</Link><Link to="/deploy#offline">离线升级</Link><Link to="/deploy#verify">配置与验证</Link><Link to="/deploy#install">全新安装</Link><Link to="/deploy#rollback">回滚边界</Link>
+            <Link to="/deploy#choose">选择路径</Link><Link to="/deploy#upgrade">在线升级</Link><Link to="/deploy#launcher">升级启动器</Link><Link to="/deploy#offline">离线升级</Link><Link to="/deploy#verify">配置与验证</Link><Link to="/deploy#project-app">v1.0.9 项目应用</Link><Link to="/deploy#install">全新安装</Link><Link to="/deploy#rollback">回滚边界</Link>
           </aside>
           <div className="guide-content">
             <section id="choose">
@@ -461,6 +461,41 @@ sudo nginx -t
 ./devops.sh status`}</code></pre>
               <div className="guide-checks"><div><Check />确认安装版本已更新</div><div><Check />确认平台健康检查通过</div><div><Check />确认 Nginx 配置有效</div><div><Check />确认 Agent 镜像与核心业务可用</div></div>
             </section>
+            <section id="project-app">
+              <h2>v1.0.9 项目应用：升级后必须完成</h2>
+              <p>项目应用让每个 Agent 项目拥有独立地址，统一访问静态网站、Java、Node.js、Python 和前后端一体服务。新安装可由向导填写；从旧版本升级时，现场配置会被保留，所以下列步骤不能省略。</p>
+              <div className="callout"><Globe2 /><div><strong>先确定项目应用根域</strong><p>例如平台是 devops.yingpeiai.com，项目根域可使用 apps.yingpeiai.com，项目 53 的地址将是 p-53.apps.yingpeiai.com。根域中不要填协议、端口或路径。</p></div></div>
+              <pre><code>{`# application.properties
+base.agent.site.app-domain=apps.yingpeiai.com
+base.agent.site.app-scheme=http`}</code></pre>
+              <p className="section-note">纯 HTTP 环境填 <code>http</code>；只有已经为项目通配域名配置证书时才填 <code>https</code>。项目应用不需要另外暴露 3000、8082 或 Agent 内部端口。</p>
+
+              <h3>1. 配置通配 DNS</h3>
+              <p>在阿里云 DNS 中管理 <code>yingpeiai.com</code> 时，新增 <code>A</code> 记录，主机记录填 <code>*.apps</code>，记录值填平台服务器公网 IP。其他 DNS 服务商使用等价的通配记录。</p>
+              <pre><code>{`# 把示例域名替换为实际项目根域
+getent hosts p-1.apps.yingpeiai.com`}</code></pre>
+
+              <h3>2. 合并 Nginx 新模板</h3>
+              <p>升级器不会覆盖正在使用的 <code>nginx/devops.conf</code>。新版路由位于 <code>nginx/devops.conf.example</code>，需要将新的 map 和项目应用虚拟主机合并到实际配置，同时保留现场域名、证书和端口。</p>
+              <pre><code>{`diff -u application.properties application.properties.example
+diff -u nginx/devops.conf nginx/devops.conf.example`}</code></pre>
+              <div className="upgrade-boundaries">
+                <div><strong>平台虚拟主机</strong><span>server_name devops.yingpeiai.com</span><span>提供平台页面、API、SSE 和 WebSocket</span></div>
+                <div><strong>项目应用虚拟主机</strong><span>server_name 匹配 p-项目ID.apps.yingpeiai.com</span><span>保留新模板的项目应用网关路由</span></div>
+              </div>
+              <p className="section-note">两个 <code>server</code> 必须使用同一个公开端口：HTTP 通常同为 80，HTTPS 通常同为 443。这是同端口不同域名的两个虚拟主机，不是在平台主域名下再加一个 location。</p>
+
+              <h3>3. 让配置生效并完成真实访问</h3>
+              <pre><code>{`sudo nginx -t
+sudo systemctl reload nginx
+sudo nginx -T | grep -E 'server_name|app-gateway|project-app'
+
+./devops.sh check
+./devops.sh start
+./devops.sh status`}</code></pre>
+              <div className="guide-checks"><div><Check />通配 DNS 能解析到平台服务器</div><div><Check />两个虚拟主机共用公开端口</div><div><Check />项目应用网关已进入 Nginx 生效配置</div><div><Check />从项目页面启动并打开一个真实应用</div></div>
+              <div className="callout"><ShieldCheck /><div><strong>手工填写的外部服务不走这个网关</strong><p>浏览器 iframe 会直接访问用户填写的原始 URL。如果不能嵌入，需由目标网站调整 X-Frame-Options、CSP frame-ancestors 和跨站 Cookie，无需修改项目应用子域名配置。</p></div></div>
+            </section>
             <section id="install">
               <h2>只有首次部署才需要全新安装</h2>
               <p>生产环境使用 Linux x64、Java 21、MySQL 8 和 Docker。全新安装使用新目录与空 devops 数据库；已有 v0.0.1 及后续正式版本可在原目录累计升级。</p>
@@ -518,7 +553,14 @@ function ReleasesPage() {
               <div className="release-content"><h2>{release.title}</h2><p>{release.summary}</p><ul>{release.highlights.map((item) => <li key={item}><Check />{item}</li>)}</ul><div className="release-metrics">{release.metrics.map((item) => <span key={item}>{item}</span>)}</div><div className="release-actions"><a className="button button-primary" href={getReleaseDownloadUrl(release)}><Download />下载 Linux 正式包</a><a className="button button-quiet" href={getReleasePageUrl(release.version)} target="_blank" rel="noreferrer"><ExternalLink />GitHub Release</a></div></div>
             </article>
           ))}
-          <div className="release-generation"><ShieldCheck /><div><strong>安装与升级边界</strong><p>{latestRelease.version} 支持全新安装，也支持 v0.0.1 及后续正式版本直接累计升级，无需补装中间版本。</p></div><Link to="/deploy">阅读安装与升级指南<ArrowRight /></Link></div>
+          <div className="release-generation">
+            <ShieldCheck />
+            <div>
+              <strong>{latestRelease.upgradeNotice?.title ?? '安装与升级边界'}</strong>
+              <p>{latestRelease.upgradeNotice?.summary ?? `${latestRelease.version} 支持全新安装，也支持 v0.0.1 及后续正式版本直接累计升级，无需补装中间版本。`}</p>
+            </div>
+            <Link to={latestRelease.upgradeNotice?.guidePath ?? '/deploy'}>{latestRelease.upgradeNotice?.action ?? '阅读安装与升级指南'}<ArrowRight /></Link>
+          </div>
         </div>
       </section>
     </main>

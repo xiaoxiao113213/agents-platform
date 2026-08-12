@@ -10,12 +10,42 @@ export interface PlatformRelease {
   metrics: string[]
   assetName: string
   guidedInstall: boolean
+  upgradeNotice?: {
+    title: string
+    summary: string
+    guidePath: string
+    action: string
+  }
 }
 
 export const repositoryUrl = 'https://github.com/xiaoxiao113213/agents-platform'
 export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
+  {
+    version: 'v1.0.10',
+    date: '2026-08-12',
+    status: 'stable',
+    title: '共享会话与远程 Agent 更加稳定',
+    summary: '长任务消息、工具过程和最终回复保持一致，Windows 与 Linux 远程 Agent 的升级、终端和项目能力同步也更加可靠。',
+    highlights: [
+      '消息、任务进度、工具结果和最终回复保持稳定顺序，刷新后可以恢复完整历史。',
+      '错误、停止与中断结果更加清晰，已完成历史不再重复显示实时消息。',
+      'API Key 和模型只在当前会话执行期间锁定，其他空闲会话不受影响。',
+      'Windows 与 Linux 远程 Agent 统一提供生命周期、升级、状态和日志命令，并展示 Runtime 版本状态。',
+      '远程终端输入、输出与断线重连更加稳定，重启时确保只保留一个有效进程。',
+      '重建内置 Agent 会保留项目内容，远程项目的项目应用、Skill 和 MCP 同步更加可靠。',
+    ],
+    metrics: ['共享消息一致', '远程运行稳定', '项目内容保留'],
+    assetName: 'devops-v1.0.10-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级前先检查现场配置',
+      summary: 'v1.0.10 没有新增生产配置；项目应用仍需完成通配 DNS 与 Nginx 项目应用虚拟主机配置。',
+      guidePath: '/deploy#project-app',
+      action: '查看项目应用配置',
+    },
+  },
   {
     version: 'v1.0.9',
     date: '2026-08-11',
@@ -27,11 +57,18 @@ export const releases: PlatformRelease[] = [
       '项目应用使用独立子域名访问，静态网站和动态服务保持一致，项目之间相互隔离。',
       '对话中可以直接搜索和添加工程 Skill，不同项目可以自由组合自己的能力。',
       '新增常用前端、Java、Node.js、Python 和一体化工程 Skill，数据库升级随服务启动自动完成。',
+      '从旧版本升级后需合并项目应用 Nginx 虚拟主机，并配置项目根域的通配 DNS；版本页提供完整步骤和验证命令。',
       '服务启动会检查端口与进程状态，安装配置更清晰，并修复了已知问题。',
     ],
-    metrics: ['完整项目运行', '项目级 Skill', '独立应用地址'],
+    metrics: ['完整项目运行', '独立应用地址', '升级配置清单'],
     assetName: 'devops-v1.0.9-linux-x64.tar.gz',
     guidedInstall: true,
+    upgradeNotice: {
+      title: 'v1.0.9 项目应用升级必做',
+      summary: '从旧版本升级后，需要配置项目应用根域与通配 DNS，并将新的项目应用虚拟主机合并到现场 Nginx 配置。',
+      guidePath: '/deploy#project-app',
+      action: '查看域名与 Nginx 步骤',
+    },
   },
   {
     version: 'v1.0.8',

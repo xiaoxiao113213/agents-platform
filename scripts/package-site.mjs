@@ -1,4 +1,4 @@
-import { copyFile, cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { copyFile, cp, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import * as tar from 'tar'
@@ -16,12 +16,17 @@ const publicSiteUrl = (process.env.AGENTS_PLATFORM_PUBLIC_URL || 'https://mmmqaz
 const releaseArchiveName = `devops-${version}-linux-x64.tar.gz`
 const releaseArchive = path.join(sourceRoot, 'dist', 'releases', version, releaseArchiveName)
 const publicReleaseNotes = path.join(root, 'docs', 'releases', `${version}.md`)
+const publicGuideSourceDir = path.join(root, 'docs', 'guides')
+const publicGuideFiles = (await readdir(publicGuideSourceDir, { withFileTypes: true }))
+  .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+  .map((entry) => ({ source: path.join(publicGuideSourceDir, entry.name), output: entry.name }))
 const releaseContentSource = path.join(root, 'src', 'content', 'releases.ts')
 const launcherSource = path.join(sourceRoot, 'deploy', 'standalone', 'devops.sh')
 const launcherUpdaterSource = path.join(sourceRoot, 'deploy', 'standalone', 'update-launcher.sh')
 const publicReleaseDir = path.join(distDir, 'releases')
+const publicGuideDir = path.join(distDir, 'guides')
 
-for (const requiredFile of [releaseArchive, publicReleaseNotes, releaseContentSource, launcherSource, launcherUpdaterSource]) {
+for (const requiredFile of [releaseArchive, publicReleaseNotes, releaseContentSource, launcherSource, launcherUpdaterSource, ...publicGuideFiles.map((guide) => guide.source)]) {
   const fileStat = await stat(requiredFile).catch(() => null)
   if (!fileStat?.isFile()) {
     throw new Error(`官网打包缺少正式发布文件：${requiredFile}`)
@@ -40,7 +45,7 @@ const forbiddenPublicReleaseTerms = [
   [/(密钥派生|分域签名|历史敏感信息)/, '内部安全实现'],
 ]
 
-for (const publicContentFile of [publicReleaseNotes, releaseContentSource]) {
+for (const publicContentFile of [publicReleaseNotes, releaseContentSource, ...publicGuideFiles.map((guide) => guide.source)]) {
   const publicContent = await readFile(publicContentFile, 'utf8')
   for (const [pattern, label] of forbiddenPublicReleaseTerms) {
     if (pattern.test(publicContent)) {
@@ -50,8 +55,12 @@ for (const publicContentFile of [publicReleaseNotes, releaseContentSource]) {
 }
 
 await mkdir(publicReleaseDir, { recursive: true })
+await mkdir(publicGuideDir, { recursive: true })
 await copyFile(releaseArchive, path.join(publicReleaseDir, releaseArchiveName))
 await copyFile(publicReleaseNotes, path.join(publicReleaseDir, `${version}.md`))
+for (const guide of publicGuideFiles) {
+  await copyFile(guide.source, path.join(publicGuideDir, guide.output))
+}
 const launcherContent = (await readFile(launcherSource, 'utf8')).replace(/\r\n?/g, '\n')
 const launcherUpdaterContent = (await readFile(launcherUpdaterSource, 'utf8')).replace(/\r\n?/g, '\n')
 const launcherVersion = launcherContent.match(/^DEVOPS_LAUNCHER_VERSION='([1-9][0-9]*)'$/m)?.[1]

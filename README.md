@@ -34,9 +34,9 @@
 </p>
 
 <p align="center">
-  <a href="https://mmmqaz.cn/releases/devops-v1.0.9-linux-x64.tar.gz"><strong>官网下载 v1.0.9</strong></a>
+  <a href="https://mmmqaz.cn/releases/devops-v1.0.10-linux-x64.tar.gz"><strong>官网下载 v1.0.10</strong></a>
   ·
-  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v1.0.9">GitHub Release</a>
+  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v1.0.10">GitHub Release</a>
 </p>
 
 ## Agent 是平台的工作入口
@@ -72,9 +72,9 @@ Agents Platform 不是另一个独立聊天页面。每个 Agent 都拥有项目
 
 更多完整案例见[官网能力与案例](https://mmmqaz.cn/#/capabilities)。
 
-## v1.0.9 安装与升级
+## v1.0.10 安装与升级
 
-`v1.0.9` 支持 Linux x64 全新安装，也支持从 `v0.0.1` 及后续正式版本在原安装目录直接累计升级，无需补装中间版本。跨较大版本升级前，请先在数据库备份副本上核对业务数据。
+`v1.0.10` 支持 Linux x64 全新安装，也支持从 `v0.0.1` 及后续正式版本在原安装目录直接累计升级，无需补装中间版本。跨较大版本升级前，请先在数据库备份副本上核对业务数据。
 
 ### 已有 v1 环境在线升级
 
@@ -103,15 +103,15 @@ curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash
 ```bash
 ./devops.sh images status
 ./devops.sh images pull
-./devops.sh images pull /tmp/devops-v1.0.9-linux-x64.tar.gz
+./devops.sh images pull /tmp/devops-v1.0.10-linux-x64.tar.gz
 ```
 
 在线产品包下载中断后，再次执行 `./devops.sh update` 会断点续传；如果产品包已经完成而镜像阶段中断，会直接复用已下载的包，不会再次下载完整产品包。独立更新后的启动器也不会被较旧的产品包降级覆盖。服务器无法访问官网时，可以先下载 Linux 包，再执行：
 
 ```bash
-./devops.sh upgrade --check /tmp/devops-v1.0.9-linux-x64.tar.gz
+./devops.sh upgrade --check /tmp/devops-v1.0.10-linux-x64.tar.gz
 ./devops.sh stop
-./devops.sh upgrade /tmp/devops-v1.0.9-linux-x64.tar.gz
+./devops.sh upgrade /tmp/devops-v1.0.10-linux-x64.tar.gz
 ./devops.sh check
 ./devops.sh start
 ./devops.sh status
@@ -119,16 +119,26 @@ curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash
 
 升级会保留实际 `application.properties`、`nginx/devops.conf`、数据、日志和数据库；新版示例写入对应 `.example` 文件，由维护者按提示合并新增项。`rollback` 只回滚程序，不回滚数据库，恢复旧程序前必须确认数据库兼容或同时恢复升级前备份。
 
+### v1.0.9 项目应用升级必做
+
+`v1.0.9` 新增的项目应用独立子域名需要完成三项现场配置，否则 Java、Node.js、Python 和静态站点都无法通过项目地址访问：
+
+1. 在 `application.properties` 中设置 `base.agent.site.app-domain=apps.example.com` 和 `base.agent.site.app-scheme=http`（通配证书已就绪时使用 `https`）。
+2. 将项目根域的通配 DNS 指向平台公网 IP。阿里云 DNS 管理 `yingpeiai.com` 时，添加 `A` 记录 `*.apps`，项目地址形如 `p-53.apps.yingpeiai.com`。
+3. 将 `nginx/devops.conf.example` 中的项目应用虚拟主机合并到现场 `nginx/devops.conf`。平台主域名和项目子域名使用两个 `server`，但两者共用同一个公开端口。
+
+合并后执行 `sudo nginx -t`、重载 Nginx 并运行 `./devops.sh check`，最后从平台项目页面启动和打开一个真实应用。完整命令、HTTP/HTTPS 差异和外部 iframe 边界见[官方安装与升级指南](https://mmmqaz.cn/#/deploy#project-app)与 [`v1.0.9` 版本化部署补充说明](./docs/guides/v1.0.9-project-app-upgrade.md)。
+
 ### 首次安装
 
 全新安装使用新目录和空 MySQL 8 `devops` 数据库：
 
 ```bash
-curl -fL -o devops-v1.0.9-linux-x64.tar.gz \
-  https://mmmqaz.cn/releases/devops-v1.0.9-linux-x64.tar.gz
+curl -fL -o devops-v1.0.10-linux-x64.tar.gz \
+  https://mmmqaz.cn/releases/devops-v1.0.10-linux-x64.tar.gz
 
-tar -xzf devops-v1.0.9-linux-x64.tar.gz
-cd devops-v1.0.9
+tar -xzf devops-v1.0.10-linux-x64.tar.gz
+cd devops-v1.0.10
 chmod +x devops.sh
 ./devops.sh install
 ```
@@ -168,6 +178,6 @@ Agents Platform 是专有软件，不是开源软件。免费授权仅限自然�
 
 ## 版本
 
-当前正式版本：[`v1.0.9`](./docs/releases/v1.0.9.md)
+当前正式版本：[`v1.0.10`](./docs/releases/v1.0.10.md)
 
 正式安装包、版本说明和不可覆盖的 Tag 统一发布在 [GitHub Releases](https://github.com/xiaoxiao113213/agents-platform/releases)。
