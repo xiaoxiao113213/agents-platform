@@ -23,6 +23,33 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.11',
+    date: '2026-08-13',
+    status: 'stable',
+    title: '共享对话与刷新恢复更加可靠',
+    summary: '多人共用会话时保持顺序，执行中刷新可恢复完整状态，Windows 与 Linux 远程 Agent 的项目能力也更加稳定。',
+    highlights: [
+      '同一共享会话按顺序处理输入，发送后立即显示执行状态，快速重复点击只产生一次请求。',
+      '新会话执行期间刷新会恢复真实会话、工具过程和最终回复，不再残留临时会话。',
+      'Windows 与 Linux 远程 Agent 使用各自的平台身份和工作区，同机多个 Agent 相互独立。',
+      '项目应用兼容常见端口变量写法，修改配置或人工重启后会重新进行健康检查。',
+      '项目应用可按项目开放公网访问，未开放时继续只允许项目成员访问。',
+      '项目 Skill 可以贡献到能力广场，贡献者可以继续更新自己分享的版本。',
+      'Skill ZIP 导入兼容单个 Markdown 文件和常见 macOS 压缩包元数据。',
+      '可以独立导入完整运行环境交付包，再执行平台升级。',
+      '修复了已知问题。',
+    ],
+    metrics: ['共享输入有序', '项目应用可分享', 'Skill 可沉淀'],
+    assetName: 'devops-v1.0.11-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级前先检查现场配置',
+      summary: 'v1.0.11 没有新增生产配置；项目应用仍需完成通配 DNS 与 Nginx 项目应用虚拟主机配置。',
+      guidePath: '/deploy#project-app',
+      action: '查看项目应用配置',
+    },
+  },
+  {
     version: 'v1.0.10',
     date: '2026-08-12',
     status: 'stable',

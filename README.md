@@ -34,9 +34,7 @@
 </p>
 
 <p align="center">
-  <a href="https://mmmqaz.cn/releases/devops-v1.0.10-linux-x64.tar.gz"><strong>官网下载 v1.0.10</strong></a>
-  ·
-  <a href="https://github.com/xiaoxiao113213/agents-platform/releases/tag/v1.0.10">GitHub Release</a>
+  <a href="https://mmmqaz.cn/releases/devops-v1.0.11-linux-x64.tar.gz"><strong>官网下载 v1.0.11</strong></a>
 </p>
 
 ## Agent 是平台的工作入口
@@ -134,11 +132,11 @@ curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash
 全新安装使用新目录和空 MySQL 8 `devops` 数据库：
 
 ```bash
-curl -fL -o devops-v1.0.10-linux-x64.tar.gz \
-  https://mmmqaz.cn/releases/devops-v1.0.10-linux-x64.tar.gz
+curl -fL -o devops-v1.0.11-linux-x64.tar.gz \
+  https://mmmqaz.cn/releases/devops-v1.0.11-linux-x64.tar.gz
 
-tar -xzf devops-v1.0.10-linux-x64.tar.gz
-cd devops-v1.0.10
+tar -xzf devops-v1.0.11-linux-x64.tar.gz
+cd devops-v1.0.11
 chmod +x devops.sh
 ./devops.sh install
 ```
@@ -178,6 +176,6 @@ Agents Platform 是专有软件，不是开源软件。免费授权仅限自然�
 
 ## 版本
 
-当前正式版本：[`v1.0.10`](./docs/releases/v1.0.10.md)
+当前正式版本：[`v1.0.11`](./docs/releases/v1.0.11.md)
 
-正式安装包、版本说明和不可覆盖的 Tag 统一发布在 [GitHub Releases](https://github.com/xiaoxiao113213/agents-platform/releases)。
+正式安装包、版本说明和在线升级元数据统一由官网提供。
