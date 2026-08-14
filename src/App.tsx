@@ -386,7 +386,7 @@ function DeployPage() {
         <div className="page-shell deploy-layout">
           <aside className="page-toc">
             <strong>安装与升级</strong>
-            <Link to="/deploy#choose">选择路径</Link><Link to="/deploy#upgrade">在线升级</Link><Link to="/deploy#launcher">升级启动器</Link><Link to="/deploy#offline">离线升级</Link><Link to="/deploy#verify">配置与验证</Link><Link to="/deploy#project-app">v1.0.9 项目应用</Link><Link to="/deploy#install">全新安装</Link><Link to="/deploy#rollback">回滚边界</Link>
+            <Link to="/deploy#choose">选择路径</Link><Link to="/deploy#upgrade">在线升级</Link><Link to="/deploy#runtime-software">Agent 软件离线包</Link><Link to="/deploy#launcher">升级启动器</Link><Link to="/deploy#offline">离线升级</Link><Link to="/deploy#verify">配置与验证</Link><Link to="/deploy#project-app">v1.0.9 项目应用</Link><Link to="/deploy#install">全新安装</Link><Link to="/deploy#rollback">回滚边界</Link>
           </aside>
           <div className="guide-content">
             <section id="choose">
@@ -413,6 +413,17 @@ function DeployPage() {
 ./devops.sh status`}</code></pre>
               <p className="section-note"><code>update</code> 会下载官网最新正式 Linux 包，校验升级代际、包结构和目标版本，并仅拉取本地缺少的固定版本 Agent 镜像。产品包下载中断后再次执行会断点续传；产品包已经下载完成而镜像阶段中断时，下次会直接复用，不会从头下载。</p>
               <div className="callout"><Download /><div><strong>镜像下载过程保持可见</strong><p>脚本按当前数量和总数显示进度，同时保留 Docker 的分层下载内容；下载时间较长时会持续显示等待时间，结束后汇总复用和实际下载数量。</p></div></div>
+            </section>
+
+            <section id="runtime-software">
+              <h2>JDK、Maven、pnpm 只需准备一次</h2>
+              <p>需要在 Agent 中安装这些开发工具时，先把随版本提供的 <code>devops-runtime-software-{releaseVersion}-linux-amd64.tar.gz</code> 上传到服务器，再一次解压到平台缓存目录。之后所有 Docker Agent 和 Linux amd64 远程 Agent 都会复用，不再各自访问公网。</p>
+              <pre><code>{`mkdir -p /opt/devops/devops/runtime-software-cache
+tar -xzf /tmp/devops-runtime-software-${releaseVersion}-linux-amd64.tar.gz \\
+  -C /opt/devops/devops/runtime-software-cache
+chown -R "$(id -un)":"$(id -gn)" /opt/devops/devops/runtime-software-cache`}</code></pre>
+              <p className="section-note">默认目录由 <code>base.work.base-dir</code> 自动派生，通常不需要新增配置。现场修改过数据根目录时，把解压目标改为对应的 <code>runtime-software-cache</code>；需要独立磁盘时才设置 <code>base.agent.software-cache.dir</code>。</p>
+              <div className="callout"><HardDrive /><div><strong>平台先校验，再传输安装</strong><p>平台会检查 manifest、文件大小和 SHA-256。缺包、文件损坏或目标系统不支持时直接显示原因，不会回退到公网下载；安装完成后 Agent 内临时归档会自动删除。</p></div></div>
             </section>
 
             <section id="launcher">
