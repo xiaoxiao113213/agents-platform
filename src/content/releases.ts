@@ -23,6 +23,31 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.17',
+    date: '2026-08-15',
+    status: 'stable',
+    title: 'Skill 导入贡献与项目服务恢复更加稳定',
+    summary: '提升 GitHub Skill 包、大型项目 Skill 贡献和旧运行环境项目服务恢复的兼容性，并确保新项目自动具备统一目录规范。',
+    highlights: [
+      'GitHub 下载的 Skill ZIP 可保留安全的点目录和点文件，不再因常见仓库结构误判导入失败。',
+      '大型项目 Skill 贡献改用受控文件传输，降低长时间等待后返回 503 的概率，并在失败后清理临时文件。',
+      '每个新建项目和新 Agent 的默认项目都会自动写入项目目录规范 Skill，无需用户重复安装。',
+      '旧运行环境不支持新恢复接口时，平台会使用兼容动作重新部署或停止项目服务。',
+      'Agent 停止、重启、重建或迁移后会及时断开旧连接，避免请求继续命中过期运行环境。',
+      'JDK、Maven、pnpm 内容没有变化，不重复提供软件离线包，继续复用 v1.0.15 软件包和服务器缓存。',
+      '修复了已知问题。',
+    ],
+    metrics: ['GitHub Skill 兼容', '大型贡献稳定', '旧服务自动恢复'],
+    assetName: 'devops-v1.0.17-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级前先导入运行环境',
+      summary: '先导入本版本运行环境包，再执行平台累计升级；现场配置、项目工作区、会话和已有 Skill 会继续保留。',
+      guidePath: '/deploy#update',
+      action: '查看升级步骤',
+    },
+  },
+  {
     version: 'v1.0.16',
     date: '2026-08-14',
     status: 'stable',
