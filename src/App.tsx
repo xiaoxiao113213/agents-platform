@@ -40,6 +40,8 @@ import { builtinAgents, builtinMcps, mcpCategoryLabels } from './content/capabil
 import { agentCaseCategories, agentUseCases, serviceCustomers, type AgentCaseIcon } from './content/useCases'
 import { getReleaseDownloadUrl, getReleasePageUrl, latestRelease, releases } from './content/releases'
 
+const runtimeSoftwareVersion = 'v1.0.15'
+
 const contactEmail = '418179551@qq.com'
 const repositoryUrl = 'https://github.com/xiaoxiao113213/agents-platform'
 
@@ -417,9 +419,9 @@ function DeployPage() {
 
             <section id="runtime-software">
               <h2>JDK、Maven、pnpm 只需准备一次</h2>
-              <p>需要在 Agent 中安装这些开发工具时，先把随版本提供的 <code>devops-runtime-software-{releaseVersion}-linux-amd64.tar.gz</code> 上传到服务器，再一次解压到平台缓存目录。之后所有 Docker Agent 和 Linux amd64 远程 Agent 都会复用，不再各自访问公网。</p>
+              <p>需要在 Agent 中安装这些开发工具且服务器尚无缓存时，上传当前软件内容对应的 <code>devops-runtime-software-{runtimeSoftwareVersion}-linux-amd64.tar.gz</code>，再一次解压到平台缓存目录。软件包只在工具内容变化时更新，不随每个产品版本重复出包；之后所有 Docker Agent 和 Linux amd64 远程 Agent 都会复用。</p>
               <pre><code>{`mkdir -p /opt/devops/devops/runtime-software-cache
-tar -xzf /tmp/devops-runtime-software-${releaseVersion}-linux-amd64.tar.gz \\
+tar -xzf /tmp/devops-runtime-software-${runtimeSoftwareVersion}-linux-amd64.tar.gz \\
   -C /opt/devops/devops/runtime-software-cache
 chown -R "$(id -un)":"$(id -gn)" /opt/devops/devops/runtime-software-cache`}</code></pre>
               <p className="section-note">默认目录由 <code>base.work.base-dir</code> 自动派生，通常不需要新增配置。现场修改过数据根目录时，把解压目标改为对应的 <code>runtime-software-cache</code>；需要独立磁盘时才设置 <code>base.agent.software-cache.dir</code>。</p>

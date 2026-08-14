@@ -99,15 +99,19 @@ await writeFile(
   `${version}\n`,
   'utf8',
 )
-await tar.c(
-  {
-    cwd: packageDir,
-    file: archivePath,
-    gzip: true,
-    portable: true,
-  },
-  [stagingName],
-)
+try {
+  await tar.c(
+    {
+      cwd: packageDir,
+      file: archivePath,
+      gzip: true,
+      portable: true,
+    },
+    [stagingName],
+  )
+} finally {
+  await rm(stagingDir, { recursive: true, force: true })
+}
 
 console.log(`站点发布包已生成：${archivePath}`)
 console.log(`官网正式包已同步：${path.join(publicReleaseDir, releaseArchiveName)}`)

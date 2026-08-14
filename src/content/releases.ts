@@ -23,6 +23,32 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.16',
+    date: '2026-08-14',
+    status: 'stable',
+    title: '项目服务长期运行更稳定，异常可直接定位',
+    summary: '修复项目服务运行一段时间后访问超时和网络流量持续升高的问题，并在全局看板提供逐 Agent、逐服务诊断。',
+    highlights: [
+      '单个项目服务响应过快或浏览器处理过慢时，只中止受影响的访问，不再拖累同一 Agent 的其他服务。',
+      '项目服务长时间运行、Agent 断线重连和平台重启后的连接与资源释放更加完整。',
+      '全局看板新增项目服务总数、异常数，以及每个 Agent 的服务健康汇总。',
+      '逐服务诊断展示 Agent 与通道在线状态、活动请求、连接、数据积压、健康时间和明确问题原因。',
+      'Linux 升级预检兼容不同语言环境，不再输出配置键排序告警。',
+      '对话稳定、会话恢复、Linux 终端、离线安装和项目服务重建恢复继续纳入统一回归。',
+      'JDK、Maven、pnpm 内容没有变化，不重复提供软件离线包，已有环境继续复用缓存。',
+      '修复了已知问题。',
+    ],
+    metrics: ['长时间运行稳定', '单服务故障隔离', '全局诊断可见'],
+    assetName: 'devops-v1.0.16-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级前先导入运行环境',
+      summary: '先导入本版本运行环境包，再执行平台累计升级；现场配置、项目工作区和会话数据会继续保留。',
+      guidePath: '/deploy#update',
+      action: '查看升级步骤',
+    },
+  },
+  {
     version: 'v1.0.15',
     date: '2026-08-14',
     status: 'stable',
