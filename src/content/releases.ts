@@ -23,6 +23,32 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.20',
+    date: '2026-08-16',
+    status: 'stable',
+    title: '多项目服务、端口与 Agent 重置全面加固',
+    summary: '统一管理每个 Agent 的项目服务端口，修复项目应用 JSON、平台重启恢复和单服务故障扩散，并提供管理员安全重置能力。',
+    highlights: [
+      '同一 Agent 的多个项目、多个服务和多个端点统一分配稳定端口，启动前检测占用，停止后保留，删除后释放。',
+      '项目应用 JSON 不再被平台代理追加额外内容，上传、接口、SSE 和 WebSocket 继续使用公开项目域名。',
+      '平台重启后主 Agent 会快速重新连接并立即唤醒项目服务通道，缩短服务不可访问窗口。',
+      '单个服务构建或启动失败只标记该服务，其他项目和服务继续同步与运行。',
+      '最高管理员可重置异常 Agent 的运行环境、SDK 和会话状态，同时保留所有项目目录与聊天上传文件。',
+      '全局看板展示 Agent 端口、服务端点、冲突、未声明监听和离线状态，便于快速定位卡顿位置。',
+      'JDK、Maven、pnpm 内容没有变化，继续复用 v1.0.15 软件离线包和服务器缓存。',
+      '修复了已知问题。',
+    ],
+    metrics: ['端口稳定分配', '项目服务故障隔离', '重启快速恢复'],
+    assetName: 'devops-v1.0.20-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级后检查端口登记与项目服务恢复',
+      summary: '导入本版本运行环境并完成平台升级后，确认 Agent Runtime 已更新，再打开真实项目服务并检查端口与异常诊断。',
+      guidePath: '/deploy#verify',
+      action: '查看升级验证步骤',
+    },
+  },
+  {
     version: 'v1.0.19',
     date: '2026-08-16',
     status: 'stable',
