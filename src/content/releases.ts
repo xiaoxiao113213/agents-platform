@@ -23,6 +23,32 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.18',
+    date: '2026-08-16',
+    status: 'stable',
+    title: '对话、下载与项目服务长连接全面加固',
+    summary: '修复对话状态闪动、大文件下载中断和项目服务长时间运行不稳定，并完善工作区能力管理、定时任务串行和管理员诊断。',
+    highlights: [
+      '对话前台与后台任务使用统一运行状态，后台工作未结束时不再提前收尾或刷新整页。',
+      '文件、产物和远程工作区采用流式分片传输、完整性校验和有界流控，大文件下载更加稳定。',
+      '项目服务 HTTP、SSE、WebSocket、上传和下载具备多通道隔离、背压、长连接保活和重启恢复。',
+      'Skill 与 MCP 统一在当前 Agent 工作区管理，并可查看当前项目已有 Skill。',
+      '定时对话从上一次完成后计算固定间隔，同一会话严格串行，避免重复并发执行。',
+      '管理员可按用户查看 Agent、项目服务、节点与隧道的真实状态，离线 Agent 不再显示正常。',
+      'JDK、Maven、pnpm 内容没有变化，继续复用 v1.0.15 软件离线包和服务器缓存。',
+      '修复了已知问题。',
+    ],
+    metrics: ['对话状态稳定', '大文件流式传输', '项目服务故障隔离'],
+    assetName: 'devops-v1.0.18-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级后必须合并项目服务 Nginx 参数',
+      summary: '升级器会保留现场 Nginx；请从新模板合并 WebSocket 分流、上游连接复用、长连接超时、请求标识和下载非缓冲路由。',
+      guidePath: '/deploy#project-app',
+      action: '查看配置与验收步骤',
+    },
+  },
+  {
     version: 'v1.0.17',
     date: '2026-08-15',
     status: 'stable',

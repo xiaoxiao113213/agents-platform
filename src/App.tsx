@@ -388,7 +388,7 @@ function DeployPage() {
         <div className="page-shell deploy-layout">
           <aside className="page-toc">
             <strong>安装与升级</strong>
-            <Link to="/deploy#choose">选择路径</Link><Link to="/deploy#upgrade">在线升级</Link><Link to="/deploy#runtime-software">Agent 软件离线包</Link><Link to="/deploy#launcher">升级启动器</Link><Link to="/deploy#offline">离线升级</Link><Link to="/deploy#verify">配置与验证</Link><Link to="/deploy#project-app">v1.0.9 项目应用</Link><Link to="/deploy#install">全新安装</Link><Link to="/deploy#rollback">回滚边界</Link>
+            <Link to="/deploy#choose">选择路径</Link><Link to="/deploy#upgrade">在线升级</Link><Link to="/deploy#runtime-software">Agent 软件离线包</Link><Link to="/deploy#launcher">升级启动器</Link><Link to="/deploy#offline">离线升级</Link><Link to="/deploy#verify">配置与验证</Link><Link to="/deploy#project-app">v1.0.18 项目服务</Link><Link to="/deploy#install">全新安装</Link><Link to="/deploy#rollback">回滚边界</Link>
           </aside>
           <div className="guide-content">
             <section id="choose">
@@ -475,7 +475,7 @@ sudo nginx -t
               <div className="guide-checks"><div><Check />确认安装版本已更新</div><div><Check />确认平台健康检查通过</div><div><Check />确认 Nginx 配置有效</div><div><Check />确认 Agent 镜像与核心业务可用</div></div>
             </section>
             <section id="project-app">
-              <h2>v1.0.9 项目应用：升级后必须完成</h2>
+              <h2>v1.0.18 项目服务：升级后必须完成</h2>
               <p>项目应用让每个 Agent 项目拥有独立地址，统一访问静态网站、Java、Node.js、Python 和前后端一体服务。新安装可由向导填写；从旧版本升级时，现场配置会被保留，所以下列步骤不能省略。</p>
               <div className="callout"><Globe2 /><div><strong>先确定项目应用根域</strong><p>例如平台是 devops.yingpeiai.com，项目根域可使用 apps.yingpeiai.com，项目 53 的地址将是 p-53.apps.yingpeiai.com。根域中不要填协议、端口或路径。</p></div></div>
               <pre><code>{`# application.properties
@@ -498,7 +498,32 @@ diff -u nginx/devops.conf nginx/devops.conf.example`}</code></pre>
               </div>
               <p className="section-note">两个 <code>server</code> 必须使用同一个公开端口：HTTP 通常同为 80，HTTPS 通常同为 443。这是同端口不同域名的两个虚拟主机，不是在平台主域名下再加一个 location。</p>
 
-              <h3>3. 让配置生效并完成真实访问</h3>
+              <h3>3. 合并 v1.0.18 稳定性参数</h3>
+              <p>应用会为新增参数提供安全默认值，升级后可以先不改实际 <code>application.properties</code>。需要按机器规模调优时，从示例文件完整复制以下配置键，保留每项中文注释和单位。</p>
+              <pre><code>{`base.agent.site.gateway.tunnel-lanes=4
+base.agent.site.gateway.max-active-http-per-node=256
+base.agent.site.gateway.max-active-web-sockets-per-node=256
+base.agent.site.gateway.max-active-http-total=8192
+base.agent.site.gateway.max-active-web-sockets-total=8192
+base.agent.site.gateway.outbound-queue-bytes-per-lane=2097152
+base.agent.site.gateway.outbound-queue-frames-per-lane=128
+base.agent.site.gateway.flow-window-frames=8
+base.agent.site.gateway.websocket-max-message-bytes=16777216
+base.agent.site.gateway.local-connect-timeout=10s
+base.agent.site.gateway.first-byte-timeout=120s
+base.agent.site.gateway.upload-idle-timeout=1h
+base.agent.site.gateway.stream-idle-timeout=24h
+base.agent.site.gateway.websocket-handshake-timeout=10s
+base.agent.site.gateway.heartbeat-timeout=45s
+base.agent.site.gateway.send-timeout=15s`}</code></pre>
+              <p>Nginx 必须从新模板合并 WebSocket 精确分流、<code>upstream keepalive 128</code>、<code>devops_project</code> 耗时日志、工作区下载非缓冲路由，以及项目虚拟主机的 <code>2G</code> 请求体、<code>86400s</code> 读写超时、TCP keepalive 和 <code>X-Request-ID</code>。不要覆盖现场的 <code>server_name</code>、证书和监听端口。</p>
+              <pre><code>{`diff -u nginx/devops.conf nginx/devops.conf.example
+sudo nginx -t
+sudo systemctl reload nginx
+sudo nginx -T | grep -E 'devops_project|keepalive 128|project_app_gateway_path|workspace/download|proxy_read_timeout 86400s|X-Request-ID'
+./devops.sh check`}</code></pre>
+
+              <h3>4. 让配置生效并完成真实访问</h3>
               <pre><code>{`sudo nginx -t
 sudo systemctl reload nginx
 sudo nginx -T | grep -E 'server_name|app-gateway|project-app'
