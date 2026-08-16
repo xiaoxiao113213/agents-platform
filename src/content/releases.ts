@@ -23,6 +23,30 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.19',
+    date: '2026-08-16',
+    status: 'stable',
+    title: '对话恢复、项目服务和产物提示更稳定',
+    summary: '修复浏览器断开后会话长期占用、草稿与正式会话控制不一致、项目服务重复构建以及失效产物只显示通用错误的问题。',
+    highlights: [
+      '浏览器刷新、断网或关闭页面后，平台会及时取消上游任务并释放会话，不再长期提示上一条消息仍在处理中。',
+      '草稿会话切换为正式会话后，停止、恢复、状态查询和继续发送始终控制同一个运行任务。',
+      '项目服务恢复相同版本时只重启进程，不再周期性重复构建并覆盖正在使用的产物。',
+      '文件型产物被删除或改名时会显示原路径和明确的失效状态，避免用户反复点击无效下载。',
+      'JDK、Maven、pnpm 内容没有变化，继续复用 v1.0.15 软件离线包和服务器缓存。',
+      '修复了已知问题。',
+    ],
+    metrics: ['断流及时释放', '同版本恢复不重构建', '失效产物可诊断'],
+    assetName: 'devops-v1.0.19-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级后确认 Agent Runtime 已更新',
+      summary: '导入本版本运行环境并完成平台升级后，确认 Agent 重新连接，再复验老会话、项目服务和文件型产物。',
+      guidePath: '/deploy#verify',
+      action: '查看升级验证步骤',
+    },
+  },
+  {
     version: 'v1.0.18',
     date: '2026-08-16',
     status: 'stable',
