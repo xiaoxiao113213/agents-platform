@@ -23,6 +23,32 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.21',
+    date: '2026-08-17',
+    status: 'stable',
+    title: 'Agent 实例隔离与管理看板全面加固',
+    summary: '解决单个 Agent 重建后遗留实例抢占连接的问题，并完善运维诊断、用户数据、返回状态和工程 Skill。',
+    highlights: [
+      'Docker Agent 识别当前运行实例，遗留实例不能再抢占控制连接或项目服务通道。',
+      '运维看板显示当前与遗留容器，最高管理员可在严格校验后精确清理遗留实例。',
+      '用户数据看板增加活跃、在线、资源密度、使用分层、趋势、搜索、筛选和业务列排序。',
+      '从对话工作区返回管理台时恢复原页签、管理员用户筛选、搜索和远程状态。',
+      '项目服务面板优化长文本换行，服务、端点、端口和状态在常用宽度下更清晰。',
+      '内置工程 Skill 增加 SQLite 开发模式和切换 MySQL 时的备份、迁移、校验与回滚流程。',
+      'JDK、Maven、pnpm 内容没有变化，继续复用 v1.0.15 软件离线包和服务器缓存。',
+      '修复了已知问题。',
+    ],
+    metrics: ['实例身份隔离', '遗留容器可治理', '管理状态可恢复'],
+    assetName: 'devops-v1.0.21-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级后确认 Agent 当前实例与运行环境',
+      summary: '完成平台升级后等待 Agent 重新连接，在运维看板核对当前实例，再复验真实对话和项目服务。',
+      guidePath: '/deploy#verify',
+      action: '查看升级验证步骤',
+    },
+  },
+  {
     version: 'v1.0.20',
     date: '2026-08-16',
     status: 'stable',
