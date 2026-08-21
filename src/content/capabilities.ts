@@ -29,16 +29,6 @@ export const builtinAgents: BuiltinAgent[] = [
     capabilities: ['软件开发', '终端操作', '文件处理', 'MCP 扩展'],
   },
   {
-    code: 'database-agent',
-    name: '数据库 Agent',
-    category: '数据与研发',
-    summary: '一个 Agent 绑定一个 MySQL Schema，在同一项目里完成问答、结构设计和 SQL 操作。',
-    input: '数据库连接、表结构、指标问题或设计目标',
-    output: '结构分析、ER 设计、可复查 SQL 与执行记录',
-    audience: '研发、数据、产品与运营团队',
-    capabilities: ['数据库问答', 'ER 设计', 'SQL 控制台', '只读 MCP'],
-  },
-  {
     code: 'frontend-vibe-coding',
     name: '网站开发 Agent',
     category: '产品与交付',

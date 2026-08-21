@@ -23,6 +23,30 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.30',
+    date: '2026-08-22',
+    status: 'stable',
+    title: '项目式界面与双 Web 交付',
+    summary: '新增以项目为中心的第二套平台界面，经典功能完整保留；默认 Agent 与真实项目入口形成稳定工作路径，部署时可选择并随时切换界面。',
+    highlights: [
+      '项目式首页、最近项目和项目列表直接连接真实 Agent 项目与原工作区深链。',
+      '每位用户的第一个有效 Agent 成为不可删除、不可转移的默认 Agent，新用户自动补齐。',
+      '经典界面的 Agent、Skill、MCP、Issue、系统管理和工作区能力在项目式界面中完整保留。',
+      'Linux 包同时携带 classic 与 project 两套 Web，支持安装时选择、升级保留和运行中安全切换。',
+      '数据库设计与数据库专用 Agent 退役，历史 Agent 项目、会话、工作区和产物记录继续保留。',
+      '本版本不新增 DNS、证书、公开端口或后端配置键，并修复了已知问题。',
+    ],
+    metrics: ['双 Web 可切换', '默认 Agent 长期绑定', '真实项目直达'],
+    assetName: 'devops-v1.0.30-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级后合并 Web 入口并选择界面',
+      summary: '保留现场域名与证书，只把 Nginx 静态根目录合并到 web/current，再用 web status/use 验证两套界面。',
+      guidePath: '/deploy#web-mode',
+      action: '查看双 Web 升级步骤',
+    },
+  },
+  {
     version: 'v1.0.29',
     date: '2026-08-21',
     status: 'stable',

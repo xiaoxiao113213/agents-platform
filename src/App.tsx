@@ -60,7 +60,6 @@ const caseIcons: Record<AgentCaseIcon, ReactNode> = {
 
 const agentIcons: Record<string, ReactNode> = {
   default: <TerminalSquare />,
-  'database-agent': <Database />,
   'frontend-vibe-coding': <Globe2 />,
   'issue-resolution': <CircleDot />,
   'grafana-dashboard': <BarChart3 />,
@@ -265,15 +264,15 @@ function HomePage() {
         <section className="section section-builtins">
           <div className="page-shell">
             <div className="section-heading wide-heading">
-              <div><h2>数据和 Issue 与项目一起工作</h2></div>
+              <div><h2>项目和 Issue 在同一现场工作</h2></div>
               <p>常用能力不是散落的配置页面，而是直接进入 Agent 项目，在当前上下文里完成工作。</p>
             </div>
             <div className="builtin-split">
               <article>
-                <Database />
-                <h3>数据库工作空间</h3>
-                <p>一个数据库 Agent 绑定一个 MySQL Schema，团队在同一处完成问答、结构设计和 SQL 操作。</p>
-                <ul><li><Check />连接状态和结构一目了然</li><li><Check />默认 ER 画板自动准备</li><li><Check />变更操作需要明确确认</li></ul>
+                <PanelsTopLeft />
+                <h3>项目式工作台</h3>
+                <p>从一条需求直接创建真实 Agent 项目，会话、文件、任务、服务和交付物始终跟随项目。</p>
+                <ul><li><Check />默认 Agent 自动承接首个项目</li><li><Check />跨 Agent 项目统一检索</li><li><Check />原有管理能力完整保留</li></ul>
               </article>
               <article>
                 <CircleDot />
@@ -389,7 +388,7 @@ function DeployPage() {
         <div className="page-shell deploy-layout">
           <aside className="page-toc">
             <strong>安装与升级</strong>
-            <Link to="/deploy#choose">选择路径</Link><Link to="/deploy#runtime-images">运行时镜像包</Link><Link to="/deploy#upgrade">累计升级</Link><Link to="/deploy#runtime-software">Agent 软件离线包</Link><Link to="/deploy#launcher">升级启动器</Link><Link to="/deploy#offline">离线升级</Link><Link to="/deploy#verify">配置与验证</Link><Link to="/deploy#project-app">v1.0.18 项目服务</Link><Link to="/deploy#install">全新安装</Link><Link to="/deploy#rollback">回滚边界</Link>
+            <Link to="/deploy#choose">选择路径</Link><Link to="/deploy#runtime-images">运行时镜像包</Link><Link to="/deploy#upgrade">累计升级</Link><Link to="/deploy#web-mode">选择平台界面</Link><Link to="/deploy#runtime-software">Agent 软件离线包</Link><Link to="/deploy#launcher">升级启动器</Link><Link to="/deploy#offline">离线升级</Link><Link to="/deploy#verify">配置与验证</Link><Link to="/deploy#project-app">v1.0.18 项目服务</Link><Link to="/deploy#install">全新安装</Link><Link to="/deploy#rollback">回滚边界</Link>
           </aside>
           <div className="guide-content">
             <section id="choose">
@@ -406,7 +405,7 @@ function DeployPage() {
               <p>从维护方获取与产品版本一致的 <code>{runtimeImageArchive}</code>，在升级或首次安装前一次性导入。该文件与 Linux 产品包分开交付，避免安装过程依赖镜像仓库。</p>
               <pre><code>{`docker load -i /tmp/${runtimeImageArchive}
 ./devops.sh images status`}</code></pre>
-              <div className="callout"><HardDrive /><div><strong>七个固定版本镜像必须全部就绪</strong><p><code>images status</code> 应显示当前版本清单全部存在；缺少任一镜像时先补齐，不要继续升级或首次安装。</p></div></div>
+              <div className="callout"><HardDrive /><div><strong>六个固定版本镜像必须全部就绪</strong><p><code>images status</code> 应显示当前版本清单全部存在；缺少任一镜像时先补齐，不要继续升级或首次安装。</p></div></div>
             </section>
 
             <section id="upgrade">
@@ -424,6 +423,21 @@ function DeployPage() {
 ./devops.sh start
 ./devops.sh status`}</code></pre>
               <p className="section-note"><code>update</code> 会下载官网最新正式 Linux 包，校验升级代际、包结构和目标版本，并复用已经导入的当前版本 Agent 镜像。产品包下载中断后再次执行会断点续传，不会从头下载。</p>
+            </section>
+
+            <section id="web-mode">
+              <h2>选择客户看到的平台界面</h2>
+              <p>正式包同时携带经典界面 <code>classic</code> 和项目式界面 <code>project</code>。两者使用同一后端、账号、权限和业务数据；升级保留当前选择，切换不需要迁移数据库。</p>
+              <pre><code>{`# 从旧单 Web 版本升级时，只合并这一条静态根目录
+root /opt/devops/devops/web/current;
+
+diff -u nginx/devops.conf nginx/devops.conf.example
+sudo nginx -t
+./devops.sh web status
+./devops.sh web use project
+# 需要回到经典界面时
+./devops.sh web use classic`}</code></pre>
+              <div className="callout"><MonitorCheck /><div><strong>保留现场 Nginx 内容，只合并静态根目录</strong><p>不要覆盖 <code>listen</code>、<code>server_name</code>、证书、项目子域名和代理规则。本版本不要求新增 DNS、证书、端口或后端配置键。<code>web use</code> 会执行 <code>nginx -t</code> 与 reload，失败自动恢复原界面。</p></div></div>
             </section>
 
             <section id="runtime-software">
@@ -470,7 +484,7 @@ cd /opt/devops/devops
               <p>升级器把现场文件和版本程序分开处理，不要求用户重新填写全部配置。</p>
               <div className="upgrade-boundaries">
                 <div><strong>始终保留</strong><span>application.properties</span><span>nginx/devops.conf</span><span>数据、日志和数据库</span></div>
-                <div><strong>随版本更新</strong><span>服务端、平台前端与 devops.sh</span><span>application.properties.example</span><span>nginx/devops.conf.example</span></div>
+                <div><strong>随版本更新</strong><span>服务端、classic/project 前端与 devops.sh</span><span>application.properties.example</span><span>nginx/devops.conf.example</span></div>
               </div>
               <p className="section-note">如果示例配置或 Nginx 模板发生变化，升级器会保留实际文件并给出差异提示。只合并新版本需要的配置项和路由，不要覆盖现场域名、端口、证书与密钥。</p>
               <pre><code>{`diff -u application.properties application.properties.example
@@ -480,7 +494,7 @@ sudo nginx -t
 ./devops.sh check
 ./devops.sh start
 ./devops.sh status`}</code></pre>
-              <div className="guide-checks"><div><Check />确认安装版本已更新</div><div><Check />确认平台健康检查通过</div><div><Check />确认 Nginx 配置有效</div><div><Check />确认 Agent 镜像与核心业务可用</div></div>
+              <div className="guide-checks"><div><Check />确认安装版本已更新</div><div><Check />确认平台健康检查通过</div><div><Check />确认 Nginx 配置有效</div><div><Check />确认两套 Web 与核心业务可用</div></div>
             </section>
             <section id="project-app">
               <h2>v1.0.18 项目服务：升级后必须完成</h2>
@@ -547,7 +561,7 @@ sudo nginx -T | grep -E 'server_name|app-gateway|project-app'
               <p>生产环境使用 Linux x64、Java 21、MySQL 8 和 Docker。全新安装使用新目录与空 devops 数据库；已有 v0.0.1 及后续正式版本可在原目录累计升级。</p>
               <div className="requirements-grid"><div><ServerCog /><strong>Linux x64</strong><span>新的安装目录</span></div><div><Database /><strong>MySQL 8</strong><span>空 devops 数据库</span></div><div><HardDrive /><strong>Java 21</strong><span>宿主机运行平台服务</span></div><div><CloudCog /><strong>Docker</strong><span>运行专业 Agent</span></div></div>
               <pre><code>{`docker load -i /tmp/${runtimeImageArchive}`}</code></pre>
-              <pre><code>{`curl -fL -o ${releaseArchive} \\\n  https://mmmqaz.cn/releases/${releaseArchive}\n\ntar -xzf ${releaseArchive}\ncd devops-${releaseVersion}\nchmod +x devops.sh\n./devops.sh install`}</code></pre>
+              <pre><code>{`curl -fL -o ${releaseArchive} \\\n  https://mmmqaz.cn/releases/${releaseArchive}\n\ntar -xzf ${releaseArchive}\ncd devops-${releaseVersion}\nchmod +x devops.sh\n./devops.sh install --web classic\n# 或选择项目式界面\n./devops.sh install --web project`}</code></pre>
               <div className="callout"><MonitorCheck /><div><strong>安装向导逐项完成现场准备</strong><p>向导检查依赖、填写外置配置、准备 MySQL 与数据目录、生成 Nginx 站点并执行最终检查。每项系统修改都会先询问确认。</p></div></div>
             </section>
             <section id="rollback">
@@ -570,17 +584,16 @@ sudo nginx -T | grep -E 'server_name|app-gateway|project-app'
 function GuidePage() {
   return (
     <main>
-      <PageIntro eyebrow="使用指南" title="先创建一个 Agent，再把项目交给它" description="从模型服务、Agent、项目和成员开始，数据库、Issue 与其他工具都围绕当前 Agent 项目展开。" />
+      <PageIntro eyebrow="使用指南" title="先创建一个 Agent，再把项目交给它" description="从模型服务、Agent、项目和成员开始，Issue 与其他工具都围绕当前 Agent 项目展开。" />
       <section className="section page-section">
         <div className="page-shell guide-layout">
-          <aside className="page-toc"><strong>开始使用</strong><Link to="/guide#start">平台准备</Link><Link to="/guide#agent">创建 Agent</Link><Link to="/guide#project">创建项目</Link><Link to="/guide#database">数据库工作</Link><Link to="/guide#issue">Issue 协作</Link><Link to="/guide#share">团队共享</Link></aside>
+          <aside className="page-toc"><strong>开始使用</strong><Link to="/guide#start">平台准备</Link><Link to="/guide#agent">创建 Agent</Link><Link to="/guide#project">创建项目</Link><Link to="/guide#issue">Issue 协作</Link><Link to="/guide#share">团队共享</Link></aside>
           <div className="guide-content">
             <section id="start"><h2>配置团队可用的模型服务</h2><p>管理员先在平台中添加可用的模型服务。成员创建 Agent 时从已配置的选项中选择，无需在每个项目重复填写。</p><div className="inline-flow"><div><LockKeyhole /><strong>管理员配置</strong></div><ChevronRight /><div><Bot /><strong>Agent 选择</strong></div><ChevronRight /><div><MessageSquareText /><strong>发送首条任务</strong></div></div></section>
-            <section id="agent"><h2>选择专业 Agent 或通用 Agent</h2><p>数据库、网站、Issue、Grafana、PPT 和视频 Agent 已经准备好对应工作方式。更通用的研发和自动化任务从通用 Agent 开始。</p><div className="guide-checks"><div><Check />名称说明用途和团队</div><div><Check />选择获准使用的模型服务</div><div><Check />按任务配置资源和扩展能力</div><div><Check />启动后进入 Agent 控制台</div></div></section>
+            <section id="agent"><h2>选择专业 Agent 或通用 Agent</h2><p>网站、Issue、Grafana、PPT 和视频 Agent 已经准备好对应工作方式。更通用的研发和自动化任务从通用 Agent 开始。</p><div className="guide-checks"><div><Check />名称说明用途和团队</div><div><Check />选择获准使用的模型服务</div><div><Check />按任务配置资源和扩展能力</div><div><Check />启动后进入 Agent 控制台</div></div></section>
             <section id="project"><h2>在 Agent 空间下创建项目</h2><p>每个 Agent 的工作空间下都有独立 projects 目录。新项目会在其中形成自己的目录，会话、文件、任务和产物都跟随当前项目。</p><pre><code>{`/workspace/projects/<agent-space>/projects/<project-code>`}</code></pre></section>
-            <section id="database"><h2>把一个 Database Agent 绑定到一个 Schema</h2><p>填写 MySQL 连接并验证后，平台会准备数据库工作空间和默认结构画板。团队可在同一处问答、设计表关系和执行 SQL。</p><div className="callout"><Database /><div><strong>变更边界</strong><p>结构修改和数据写入会先明确展示影响并要求确认，只读分析可以直接进行。</p></div></div></section>
             <section id="issue"><h2>一个项目目录绑定一个 Issue 项目</h2><p>绑定后，项目顶部会持续展示当前 Issue 项目。成员和 Agent 在同一空间查看事项、评论、图片、附件和状态，不会混入其他项目。</p></section>
-            <section id="share"><h2>共享的是同一个 Agent</h2><p>添加共享成员后，大家进入的是同一份 Agent，不是复制出来的个人副本。会话、项目文件、数据库状态、SQL 记录和 Issue 工作区都共同可见。</p><div className="sharing-board"><div><Users /><span>产品、研发、测试、运营</span></div><Share2 /><div><Bot /><span>同一 Agent 与项目上下文</span></div><ArrowRight /><div><Check /><span>共同验收交付结果</span></div></div></section>
+            <section id="share"><h2>共享的是同一个 Agent</h2><p>添加共享成员后，大家进入的是同一份 Agent，不是复制出来的个人副本。会话、项目文件、任务记录、交付物和 Issue 工作区都共同可见。</p><div className="sharing-board"><div><Users /><span>产品、研发、测试、运营</span></div><Share2 /><div><Bot /><span>同一 Agent 与项目上下文</span></div><ArrowRight /><div><Check /><span>共同验收交付结果</span></div></div></section>
           </div>
         </div>
       </section>
