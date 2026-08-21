@@ -1,4 +1,4 @@
-import { copyFile, cp, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
+import { copyFile, cp, mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import * as tar from 'tar'
@@ -11,6 +11,7 @@ const packageDir = path.join(root, 'package')
 const stagingName = `agents-platform-site-${version}`
 const stagingDir = path.join(packageDir, stagingName)
 const archivePath = path.join(packageDir, `${stagingName}.tar.gz`)
+const partialArchivePath = `${archivePath}.partial`
 const sourceRoot = path.resolve(root, process.env.AGENTS_PLATFORM_SOURCE_ROOT || '..')
 const publicSiteUrl = (process.env.AGENTS_PLATFORM_PUBLIC_URL || 'https://mmmqaz.cn').replace(/\/$/, '')
 const releaseArchiveName = `devops-${version}-linux-x64.tar.gz`
@@ -91,7 +92,13 @@ await writeFile(
   'utf8',
 )
 
-await rm(packageDir, { recursive: true, force: true })
+const existingArchive = await stat(archivePath).catch(() => null)
+if (existingArchive) {
+  throw new Error(`官网发布包已存在，禁止覆盖历史版本：${archivePath}`)
+}
+await mkdir(packageDir, { recursive: true })
+await rm(stagingDir, { recursive: true, force: true })
+await rm(partialArchivePath, { force: true })
 await mkdir(stagingDir, { recursive: true })
 await cp(distDir, stagingDir, { recursive: true })
 await writeFile(
@@ -103,12 +110,16 @@ try {
   await tar.c(
     {
       cwd: packageDir,
-      file: archivePath,
+      file: partialArchivePath,
       gzip: true,
       portable: true,
     },
     [stagingName],
   )
+  await rename(partialArchivePath, archivePath)
+} catch (error) {
+  await rm(partialArchivePath, { force: true })
+  throw error
 } finally {
   await rm(stagingDir, { recursive: true, force: true })
 }

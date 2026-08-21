@@ -373,6 +373,7 @@ function CapabilitiesPage() {
 function DeployPage() {
   const releaseVersion = latestRelease.version
   const releaseArchive = latestRelease.assetName
+  const runtimeImageArchive = `devops-runtime-images-${releaseVersion}-linux-amd64.tar`
 
   return (
     <main>
@@ -388,7 +389,7 @@ function DeployPage() {
         <div className="page-shell deploy-layout">
           <aside className="page-toc">
             <strong>安装与升级</strong>
-            <Link to="/deploy#choose">选择路径</Link><Link to="/deploy#upgrade">在线升级</Link><Link to="/deploy#runtime-software">Agent 软件离线包</Link><Link to="/deploy#launcher">升级启动器</Link><Link to="/deploy#offline">离线升级</Link><Link to="/deploy#verify">配置与验证</Link><Link to="/deploy#project-app">v1.0.18 项目服务</Link><Link to="/deploy#install">全新安装</Link><Link to="/deploy#rollback">回滚边界</Link>
+            <Link to="/deploy#choose">选择路径</Link><Link to="/deploy#runtime-images">运行时镜像包</Link><Link to="/deploy#upgrade">累计升级</Link><Link to="/deploy#runtime-software">Agent 软件离线包</Link><Link to="/deploy#launcher">升级启动器</Link><Link to="/deploy#offline">离线升级</Link><Link to="/deploy#verify">配置与验证</Link><Link to="/deploy#project-app">v1.0.18 项目服务</Link><Link to="/deploy#install">全新安装</Link><Link to="/deploy#rollback">回滚边界</Link>
           </aside>
           <div className="guide-content">
             <section id="choose">
@@ -400,12 +401,21 @@ function DeployPage() {
               </div>
             </section>
 
+            <section id="runtime-images">
+              <h2>先导入本版本 Agent 运行时镜像</h2>
+              <p>从维护方获取与产品版本一致的 <code>{runtimeImageArchive}</code>，在升级或首次安装前一次性导入。该文件与 Linux 产品包分开交付，避免安装过程依赖镜像仓库。</p>
+              <pre><code>{`docker load -i /tmp/${runtimeImageArchive}
+./devops.sh images status`}</code></pre>
+              <div className="callout"><HardDrive /><div><strong>七个固定版本镜像必须全部就绪</strong><p><code>images status</code> 应显示当前版本清单全部存在；缺少任一镜像时先补齐，不要继续升级或首次安装。</p></div></div>
+            </section>
+
             <section id="upgrade">
-              <h2>在线升级：先检查，再执行</h2>
-              <p>进入当前正在使用的安装目录。<code>update --check</code> 只读取官网版本信息和发布包响应，不下载大包、不拉取镜像，也不会修改任何现场文件。</p>
+              <h2>累计升级：先检查，再执行</h2>
+              <p>完成运行时镜像导入后，进入当前正在使用的安装目录。<code>update --check</code> 只读取官网版本信息和发布包响应，不下载大包、不修改任何现场文件。</p>
               <pre><code>{`cd /opt/devops/devops
 ./devops.sh version
 ./devops.sh launcher-version
+./devops.sh images status
 ./devops.sh update --check`}</code></pre>
               <div className="callout"><ShieldCheck /><div><strong>预检通过后再安排升级窗口</strong><p>先备份 MySQL、application.properties 和 nginx/devops.conf。生产环境建议主动停止服务后升级，完成检查后再启动。</p></div></div>
               <pre><code>{`./devops.sh stop
@@ -413,8 +423,7 @@ function DeployPage() {
 ./devops.sh check
 ./devops.sh start
 ./devops.sh status`}</code></pre>
-              <p className="section-note"><code>update</code> 会下载官网最新正式 Linux 包，校验升级代际、包结构和目标版本，并仅拉取本地缺少的固定版本 Agent 镜像。产品包下载中断后再次执行会断点续传；产品包已经下载完成而镜像阶段中断时，下次会直接复用，不会从头下载。</p>
-              <div className="callout"><Download /><div><strong>镜像下载过程保持可见</strong><p>脚本按当前数量和总数显示进度，同时保留 Docker 的分层下载内容；下载时间较长时会持续显示等待时间，结束后汇总复用和实际下载数量。</p></div></div>
+              <p className="section-note"><code>update</code> 会下载官网最新正式 Linux 包，校验升级代际、包结构和目标版本，并复用已经导入的当前版本 Agent 镜像。产品包下载中断后再次执行会断点续传，不会从头下载。</p>
             </section>
 
             <section id="runtime-software">
@@ -437,18 +446,17 @@ curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash
 ./devops.sh images status
 ./devops.sh update --check`}</code></pre>
               <div className="launcher-boundary"><RefreshCw /><div><strong>启动器更新只替换 devops.sh</strong><p>更新器会先备份旧脚本并校验新脚本；不会停止服务，也不会修改 Jar、前端、application.properties、Nginx、数据库或运行数据。已经是最新版本时不会重复替换，后续产品升级也不会用较旧脚本将它降级。</p></div></div>
-              <pre><code>{`# 单独查看或下载当前版本镜像
-./devops.sh images status
-./devops.sh images pull
-
-# 按本地发布包提前下载目标版本镜像
-./devops.sh images pull /tmp/${releaseArchive}`}</code></pre>
+              <pre><code>{`# 导入维护方分发的当前版本镜像包
+docker load -i /tmp/${runtimeImageArchive}
+./devops.sh images status`}</code></pre>
             </section>
 
             <section id="offline">
               <h2>服务器无法访问官网时使用离线包</h2>
-              <p>先在可联网环境下载正式 Linux 包并传到服务器。<code>upgrade</code> 使用指定的本地包，其他校验、保留和备份规则与在线升级一致。</p>
-              <pre><code>{`cd /opt/devops/devops
+              <p>将正式 Linux 包和同版本 Runtime 镜像包传到服务器，先导入镜像，再使用 <code>upgrade</code> 处理指定的本地产品包。其他校验、保留和备份规则与累计升级一致。</p>
+              <pre><code>{`docker load -i /tmp/${runtimeImageArchive}
+cd /opt/devops/devops
+./devops.sh images status
 ./devops.sh upgrade --check /tmp/${releaseArchive}
 ./devops.sh stop
 ./devops.sh upgrade /tmp/${releaseArchive}
@@ -538,6 +546,7 @@ sudo nginx -T | grep -E 'server_name|app-gateway|project-app'
               <h2>只有首次部署才需要全新安装</h2>
               <p>生产环境使用 Linux x64、Java 21、MySQL 8 和 Docker。全新安装使用新目录与空 devops 数据库；已有 v0.0.1 及后续正式版本可在原目录累计升级。</p>
               <div className="requirements-grid"><div><ServerCog /><strong>Linux x64</strong><span>新的安装目录</span></div><div><Database /><strong>MySQL 8</strong><span>空 devops 数据库</span></div><div><HardDrive /><strong>Java 21</strong><span>宿主机运行平台服务</span></div><div><CloudCog /><strong>Docker</strong><span>运行专业 Agent</span></div></div>
+              <pre><code>{`docker load -i /tmp/${runtimeImageArchive}`}</code></pre>
               <pre><code>{`curl -fL -o ${releaseArchive} \\\n  https://mmmqaz.cn/releases/${releaseArchive}\n\ntar -xzf ${releaseArchive}\ncd devops-${releaseVersion}\nchmod +x devops.sh\n./devops.sh install`}</code></pre>
               <div className="callout"><MonitorCheck /><div><strong>安装向导逐项完成现场准备</strong><p>向导检查依赖、填写外置配置、准备 MySQL 与数据目录、生成 Nginx 站点并执行最终检查。每项系统修改都会先询问确认。</p></div></div>
             </section>
