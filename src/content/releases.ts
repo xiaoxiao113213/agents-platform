@@ -23,6 +23,23 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.29',
+    date: '2026-08-21',
+    status: 'stable',
+    title: '工作区文件更清晰，交付产物更可靠',
+    summary: '大型依赖目录不再挤占文件列表；默认和自定义忽略规则可按项目维护，Windows 与 Linux 产物路径统一识别。',
+    highlights: [
+      '常见语言与框架的依赖目录、缓存和构建中间文件默认隐藏，让源码与交付文件优先显示。',
+      '默认规则可以逐项停用和恢复，自定义忽略目录支持新增、修改、删除与目录行快捷操作。',
+      '文件树与搜索共享同一配置，保存后立即生效，交付目录默认保持可见。',
+      'Windows 与 Linux 项目产物按当前项目边界统一识别，减少文件存在但平台无法固化的情况。',
+      '升级不新增域名、Nginx、证书、端口或外部服务要求，并修复了已知问题。',
+    ],
+    metrics: ['12 类默认规则', '项目级自定义忽略', '跨平台产物路径'],
+    assetName: 'devops-v1.0.29-linux-x64.tar.gz',
+    guidedInstall: true,
+  },
+  {
     version: 'v1.0.28',
     date: '2026-08-21',
     status: 'stable',
