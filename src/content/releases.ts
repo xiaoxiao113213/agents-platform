@@ -23,6 +23,33 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.31',
+    date: '2026-08-23',
+    status: 'stable',
+    title: '登录、主题与项目协作体验完善',
+    summary: '全站统一登录与角色主题正式生效，对话、项目、Skill、MCP、应用和 Agent 配额形成更清晰可靠的日常工作体验。',
+    highlights: [
+      '平台首页、能力广场、Agent、项目、会话和系统管理统一在登录后使用，原目标地址会在登录后继续打开。',
+      '新增主题管理与角色主题选择，内置默认、律所、工业制造、编程研发等可编辑主题，多角色成员可以切换并保留偏好。',
+      '对话思考过程保持稳定，后台会话完成后会提醒并可直接查看结果；会话菜单和输入区同步精简。',
+      '最近项目支持搜索、显示所属 Agent 并恢复真实工作区，导航、对话列表和工具栏的折叠状态会跨项目保持。',
+      '所有 Agent 默认具备 skill-creator 与 find-skills，文件产物收集和远程 Agent 提交更加可靠。',
+      '达到 Agent 创建上限后不再显示创建入口，服务端仍会执行配额校验并返回明确提示。',
+      '项目服务统一以“应用”呈现，project 界面的 MCP 页面直接展示实例、Server、项目、Agent 与同步状态。',
+      '最高权限账号不再依赖固定账号编号，普通账号和角色维护页面也无法误改该系统属性。',
+      '两套登录页与主题编辑页完成视觉和响应式优化，并修复了已知问题。',
+    ],
+    metrics: ['8 套可编辑主题', '跨会话完成提醒', 'MCP 实例直达'],
+    assetName: 'devops-v1.0.31-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级后确认角色主题与工作区',
+      summary: '先导入本版本运行环境，再完成累计升级；登录后切换一次角色主题，并打开最近项目、MCP 和一个历史会话确认数据保持。',
+      guidePath: '/deploy#update',
+      action: '查看升级步骤',
+    },
+  },
+  {
     version: 'v1.0.30',
     date: '2026-08-22',
     status: 'stable',

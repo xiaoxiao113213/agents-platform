@@ -34,7 +34,7 @@
 </p>
 
 <p align="center">
-  <a href="https://mmmqaz.cn/releases/devops-v1.0.30-linux-x64.tar.gz"><strong>官网下载 v1.0.30</strong></a>
+  <a href="https://mmmqaz.cn/releases/devops-v1.0.31-linux-x64.tar.gz"><strong>官网下载 v1.0.31</strong></a>
 </p>
 
 ## Agent 是平台的工作入口
@@ -43,7 +43,7 @@ Agents Platform 不是另一个独立聊天页面。每个 Agent 都拥有项目
 
 - 每位成员都可以在权限和数量限制内创建 Agent 与项目。
 - Agent 可以添加共享成员，成员进入同一份 Agent，共享会话和项目现场。
-- 账号 ID 1 拥有完整管理权限，其他账号的功能由统一权限控制。
+- 最高权限账号由受控系统属性识别，日常账号页面不可修改；其他账号的功能由统一权限控制。
 - 一个 Agent 项目目录绑定一个 Issue 项目，绑定关系和当前项目持续展示。
 - 平台可选择 classic 或 project 两套功能一致的 Web，project 界面从一条需求直接创建真实 Agent 项目。
 
@@ -69,16 +69,16 @@ Agents Platform 不是另一个独立聊天页面。每个 Agent 都拥有项目
 
 更多完整案例见[官网能力与案例](https://mmmqaz.cn/#/capabilities)。
 
-## v1.0.30 安装与升级
+## v1.0.31 安装与升级
 
-`v1.0.30` 支持 Linux x64 全新安装，也支持从 `v0.0.1` 及后续正式版本在原安装目录直接累计升级，无需补装中间版本。跨较大版本升级前，请先在数据库备份副本上核对业务数据。
+`v1.0.31` 支持 Linux x64 全新安装，也支持从 `v0.0.1` 及后续正式版本在原安装目录直接累计升级，无需补装中间版本。跨较大版本升级前，请先在数据库备份副本上核对业务数据。
 
 ### 已有 v1 环境在线升级
 
 先备份 MySQL、`application.properties` 和 `nginx/devops.conf`，再进入当前安装目录执行：
 
 ```bash
-docker load -i /tmp/devops-runtime-images-v1.0.30-linux-amd64.tar
+docker load -i /tmp/devops-runtime-images-v1.0.31-linux-amd64.tar
 ./devops.sh images status
 ./devops.sh update --check
 ./devops.sh stop
@@ -100,16 +100,16 @@ curl -fsSL https://mmmqaz.cn/releases/update-launcher.sh | bash
 启动器更新会备份并只替换 `devops.sh`，不会停止服务，也不会修改程序、配置、Nginx、数据库或运行数据。Runtime 镜像由维护方按版本独立分发，导入后应先确认六个固定版本镜像全部就绪：
 
 ```bash
-docker load -i /tmp/devops-runtime-images-v1.0.30-linux-amd64.tar
+docker load -i /tmp/devops-runtime-images-v1.0.31-linux-amd64.tar
 ./devops.sh images status
 ```
 
 在线产品包下载中断后，再次执行 `./devops.sh update` 会断点续传；如果产品包已经完成而镜像阶段中断，会直接复用已下载的包，不会再次下载完整产品包。独立更新后的启动器也不会被较旧的产品包降级覆盖。服务器无法访问官网时，可以先下载 Linux 包，再执行：
 
 ```bash
-./devops.sh upgrade --check /tmp/devops-v1.0.30-linux-x64.tar.gz
+./devops.sh upgrade --check /tmp/devops-v1.0.31-linux-x64.tar.gz
 ./devops.sh stop
-./devops.sh upgrade /tmp/devops-v1.0.30-linux-x64.tar.gz
+./devops.sh upgrade /tmp/devops-v1.0.31-linux-x64.tar.gz
 ./devops.sh check
 ./devops.sh start
 ./devops.sh status
@@ -117,7 +117,7 @@ docker load -i /tmp/devops-runtime-images-v1.0.30-linux-amd64.tar
 
 升级会保留实际 `application.properties`、`nginx/devops.conf`、数据、日志和数据库；新版示例写入对应 `.example` 文件，由维护者按提示合并新增项。`rollback` 只回滚程序，不回滚数据库，恢复旧程序前必须确认数据库兼容或同时恢复升级前备份。
 
-`v1.0.30` 同时提供 classic 与 project 两套 Web。升级时保留现场 Nginx 的域名、证书、端口和代理配置，只把平台静态根目录合并为 `<安装目录>/web/current`。升级后可随时切换，无需迁移数据或重启后端：
+`v1.0.31` 同时提供 classic 与 project 两套 Web。升级时保留现场 Nginx 的域名、证书、端口和代理配置，只把平台静态根目录合并为 `<安装目录>/web/current`。升级后可随时切换，无需迁移数据或重启后端：
 
 ```bash
 ./devops.sh web status
@@ -140,13 +140,13 @@ docker load -i /tmp/devops-runtime-images-v1.0.30-linux-amd64.tar
 全新安装使用新目录和空 MySQL 8 `devops` 数据库：
 
 ```bash
-docker load -i /tmp/devops-runtime-images-v1.0.30-linux-amd64.tar
+docker load -i /tmp/devops-runtime-images-v1.0.31-linux-amd64.tar
 
-curl -fL -o devops-v1.0.30-linux-x64.tar.gz \
-  https://mmmqaz.cn/releases/devops-v1.0.30-linux-x64.tar.gz
+curl -fL -o devops-v1.0.31-linux-x64.tar.gz \
+  https://mmmqaz.cn/releases/devops-v1.0.31-linux-x64.tar.gz
 
-tar -xzf devops-v1.0.30-linux-x64.tar.gz
-cd devops-v1.0.30
+tar -xzf devops-v1.0.31-linux-x64.tar.gz
+cd devops-v1.0.31
 chmod +x devops.sh
 ./devops.sh images status
 ./devops.sh install --web classic
@@ -189,6 +189,6 @@ Agents Platform 是专有软件，不是开源软件。免费授权仅限自然�
 
 ## 版本
 
-当前正式版本：[`v1.0.30`](./docs/releases/v1.0.30.md)
+当前正式版本：[`v1.0.31`](./docs/releases/v1.0.31.md)
 
 正式安装包、版本说明和在线升级元数据统一由官网提供。
