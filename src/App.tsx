@@ -426,18 +426,15 @@ function DeployPage() {
             </section>
 
             <section id="web-mode">
-              <h2>选择客户看到的平台界面</h2>
-              <p>正式包同时携带经典界面 <code>classic</code> 和项目式界面 <code>project</code>。两者使用同一后端、账号、权限和业务数据；升级保留当前选择，切换不需要迁移数据库。</p>
-              <pre><code>{`# 从旧单 Web 版本升级时，只合并这一条静态根目录
+              <h2>平台统一使用 Project UI</h2>
+              <p>正式包只提供 Project UI。升级不会迁移或复制账号、权限、Agent、项目、会话和业务数据；旧启动器保留的 <code>classic</code> 参数也会进入同一份 Project UI。</p>
+              <pre><code>{`# 从旧版本升级时，只合并这一条静态根目录
 root /opt/devops/devops/web/current;
 
 diff -u nginx/devops.conf nginx/devops.conf.example
 sudo nginx -t
-./devops.sh web status
-./devops.sh web use project
-# 需要回到经典界面时
-./devops.sh web use classic`}</code></pre>
-              <div className="callout"><MonitorCheck /><div><strong>保留现场 Nginx 内容，只合并静态根目录</strong><p>不要覆盖 <code>listen</code>、<code>server_name</code>、证书、项目子域名和代理规则。本版本不要求新增 DNS、证书、端口或后端配置键。<code>web use</code> 会执行 <code>nginx -t</code> 与 reload，失败自动恢复原界面。</p></div></div>
+./devops.sh web status`}</code></pre>
+              <div className="callout"><MonitorCheck /><div><strong>保留现场 Nginx 内容，只合并静态根目录</strong><p>不要覆盖 <code>listen</code>、<code>server_name</code>、证书、项目子域名和代理规则。本版本不要求新增 DNS、证书、端口或后端配置键。</p></div></div>
             </section>
 
             <section id="runtime-software">
@@ -484,7 +481,7 @@ cd /opt/devops/devops
               <p>升级器把现场文件和版本程序分开处理，不要求用户重新填写全部配置。</p>
               <div className="upgrade-boundaries">
                 <div><strong>始终保留</strong><span>application.properties</span><span>nginx/devops.conf</span><span>数据、日志和数据库</span></div>
-                <div><strong>随版本更新</strong><span>服务端、classic/project 前端与 devops.sh</span><span>application.properties.example</span><span>nginx/devops.conf.example</span></div>
+                <div><strong>随版本更新</strong><span>服务端、Project 前端与 devops.sh</span><span>application.properties.example</span><span>nginx/devops.conf.example</span></div>
               </div>
               <p className="section-note">如果示例配置或 Nginx 模板发生变化，升级器会保留实际文件并给出差异提示。只合并新版本需要的配置项和路由，不要覆盖现场域名、端口、证书与密钥。</p>
               <pre><code>{`diff -u application.properties application.properties.example
@@ -494,7 +491,7 @@ sudo nginx -t
 ./devops.sh check
 ./devops.sh start
 ./devops.sh status`}</code></pre>
-              <div className="guide-checks"><div><Check />确认安装版本已更新</div><div><Check />确认平台健康检查通过</div><div><Check />确认 Nginx 配置有效</div><div><Check />确认两套 Web 与核心业务可用</div></div>
+              <div className="guide-checks"><div><Check />确认安装版本已更新</div><div><Check />确认平台健康检查通过</div><div><Check />确认 Nginx 配置有效</div><div><Check />确认 Project UI 与核心业务可用</div></div>
             </section>
             <section id="project-app">
               <h2>v1.0.18 项目服务：升级后必须完成</h2>
@@ -561,7 +558,7 @@ sudo nginx -T | grep -E 'server_name|app-gateway|project-app'
               <p>生产环境使用 Linux x64、Java 21、MySQL 8 和 Docker。全新安装使用新目录与空 devops 数据库；已有 v0.0.1 及后续正式版本可在原目录累计升级。</p>
               <div className="requirements-grid"><div><ServerCog /><strong>Linux x64</strong><span>新的安装目录</span></div><div><Database /><strong>MySQL 8</strong><span>空 devops 数据库</span></div><div><HardDrive /><strong>Java 21</strong><span>宿主机运行平台服务</span></div><div><CloudCog /><strong>Docker</strong><span>运行专业 Agent</span></div></div>
               <pre><code>{`docker load -i /tmp/${runtimeImageArchive}`}</code></pre>
-              <pre><code>{`curl -fL -o ${releaseArchive} \\\n  https://mmmqaz.cn/releases/${releaseArchive}\n\ntar -xzf ${releaseArchive}\ncd devops-${releaseVersion}\nchmod +x devops.sh\n./devops.sh install --web classic\n# 或选择项目式界面\n./devops.sh install --web project`}</code></pre>
+              <pre><code>{`curl -fL -o ${releaseArchive} \\\n  https://mmmqaz.cn/releases/${releaseArchive}\n\ntar -xzf ${releaseArchive}\ncd devops-${releaseVersion}\nchmod +x devops.sh\n./devops.sh install`}</code></pre>
               <div className="callout"><MonitorCheck /><div><strong>安装向导逐项完成现场准备</strong><p>向导检查依赖、填写外置配置、准备 MySQL 与数据目录、生成 Nginx 站点并执行最终检查。每项系统修改都会先询问确认。</p></div></div>
             </section>
             <section id="rollback">

@@ -23,6 +23,31 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.35',
+    date: '2026-08-23',
+    status: 'stable',
+    title: '输入保护与 Project 单界面升级',
+    summary: '版本更新不再强制打断当前工作，PC 平台统一为功能完整的 Project UI，同时保持既有环境累计升级兼容。',
+    highlights: [
+      '当前页面版本与服务端一致时保持静默，不再周期性刷新或清空正在输入的内容。',
+      '发现新版本时显示可延后的更新提示，由用户保存当前工作后主动刷新。',
+      '滚动升级窗口、服务端旧版本或异常版本响应不会误触发页面刷新。',
+      'PC 平台统一使用 Project UI，Agent、项目、会话、工作区、协作空间和系统管理能力完整保留。',
+      '本地开发与正式发布只构建一份 Project UI，避免两套界面出现行为差异。',
+      '旧启动器继续支持累计升级，不要求迁移账号、权限、项目、会话或业务数据。',
+      '本版本不新增域名、DNS、证书、公开端口或生产配置键，并修复了已知问题。',
+    ],
+    metrics: ['编辑内容不中断', 'Project 单界面', '旧版本累计升级兼容'],
+    assetName: 'devops-v1.0.35-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级后确认输入保护与 Project UI',
+      summary: '先导入本版本运行环境并完成累计升级，再保持一段未发送输入，确认页面不会后台自动刷新。',
+      guidePath: '/deploy#verify',
+      action: '查看升级验证步骤',
+    },
+  },
+  {
     version: 'v1.0.34',
     date: '2026-08-23',
     status: 'stable',
