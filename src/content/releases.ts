@@ -23,8 +23,30 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.40',
+    date: '2026-08-26',
+    status: 'stable',
+    title: '长任务状态清晰一致',
+    summary: '任务面板充分使用对话空间，会话状态和加载反馈在长任务期间保持同步。',
+    highlights: [
+      'Task 面板占满对话正文栏，任务步骤和结果更容易阅读。',
+      '运行中的会话持续显示明确状态，切换后仍能正确反映后台进度。',
+      '加载圆弧保持连续动态反馈，减少任务仍在执行却被误判为停止。',
+      '本版本不新增域名、DNS、证书、公开端口或生产配置键。',
+    ],
+    metrics: ['Task 全宽展示', '会话状态同步', '加载反馈连续'],
+    assetName: 'devops-v1.0.40-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级后复验一次长任务',
+      summary: '完成累计升级后发起长任务，核对 Task 宽度、加载动画和左侧会话状态。',
+      guidePath: '/deploy#verify',
+      action: '查看升级验证步骤',
+    },
+  },
+  {
     version: 'v1.0.39',
-    date: '2026-08-25',
+    date: '2026-08-26',
     status: 'stable',
     title: '真实文件交付更快更可靠',
     summary: 'Agent 会把用户要求的文件作为真实产物交付，大文件处理和下载也更加及时、稳定。',
@@ -35,6 +57,8 @@ export const releases: PlatformRelease[] = [
       '产物处理中持续更新状态，固化完成前也可按权限下载工作区原文件。',
       '中文和特殊字符文件名下载兼容性进一步完善。',
       '最近项目筛选、Issue 树形字段和 Skill 状态展示同步优化。',
+      '工作区工具会按可用空间自动收纳，运行中对话也可创建并切换到新项目。',
+      '升级遗留的文件产物会恢复处理，兼容模型不再以过程说明冒充任务完成。',
       '本版本不新增域名、DNS、证书、公开端口或生产配置键。',
     ],
     metrics: ['真实文件产物', '大文件快速下载', '交付状态可见'],
