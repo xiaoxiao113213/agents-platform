@@ -1,7 +1,7 @@
 {
   "name": "agents-platform-site",
   "private": true,
-  "version": "1.0.40",
+  "version": "1.0.42",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 5175",

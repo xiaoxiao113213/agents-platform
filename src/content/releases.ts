@@ -23,6 +23,51 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.42',
+    date: '2026-08-27',
+    status: 'stable',
+    title: '开发者权限治理与全量内存导出',
+    summary: '按角色控制开发者中心能力，并把服务机器全部内存进程导出为可分析的 Excel。',
+    highlights: [
+      '开发者中心页面、应用管理、API Key 管理和调用审计支持独立角色授权。',
+      '前端入口、页面操作和服务端接口使用一致权限，便于配置只读或最小管理角色。',
+      '运维看板可导出服务机器全部内存进程，不受 Top 10 / Top 20 页面排行限制。',
+      '导出内容保留脱敏启动命令，并尽可能关联 Docker 容器、Agent 和所属用户。',
+      '本版本不新增域名、DNS、证书、公开端口或生产配置键。',
+    ],
+    metrics: ['开发者中心 RBAC', '全部进程 Excel', '关联信息导出'],
+    assetName: 'devops-v1.0.42-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级后检查开发者角色与导出',
+      summary: '为目标角色勾选所需开发者中心权限，再从运维看板导出全部内存进程并确认关联信息。',
+      guidePath: '/deploy#verify',
+      action: '查看升级验证步骤',
+    },
+  },
+  {
+    version: 'v1.0.41',
+    date: '2026-08-26',
+    status: 'stable',
+    title: 'Agent 能力开放与运维定位升级',
+    summary: '用完整 SDK 把 Agent 接入业务系统，并从服务机器进程快速定位内存占用。',
+    highlights: [
+      '开发者应用可按需获得 Agent 完整权限，并独立维护凭据、来源校验、模型授权和调用审计。',
+      'TypeScript SDK、React 接入包、接口契约和 Node BFF + React 案例随平台离线交付。',
+      'Linux 服务机器内存进程排行支持 Top 10 / Top 20，并尽可能关联容器、Agent 和所属用户。',
+      '本版本不新增域名、DNS、证书、公开端口或生产配置键。',
+    ],
+    metrics: ['Agent 完整授权', 'SDK 与案例交付', '进程内存定位'],
+    assetName: 'devops-v1.0.41-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级后验证一次 SDK 对话',
+      summary: '创建开发应用并授权测试 Agent，使用业务工作台案例完成一次对话，再核对调用审计。',
+      guidePath: '/deploy#verify',
+      action: '查看升级验证步骤',
+    },
+  },
+  {
     version: 'v1.0.40',
     date: '2026-08-26',
     status: 'stable',
