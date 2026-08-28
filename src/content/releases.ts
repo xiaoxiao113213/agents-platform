@@ -23,6 +23,32 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.46',
+    date: '2026-08-28',
+    status: 'stable',
+    title: '开发者应用成为可登录的 SDK 身份',
+    summary: '用一个独立账号、一个长期 API Key 和平台原生权限体系构建 Agent 服务与业务工作台。',
+    highlights: [
+      '开发者应用可以使用账号密码登录平台，角色、菜单和资源权限与普通团队成员保持一致。',
+      '每个应用只保留一个有效 SDK API Key，可由超管创建和轮换，也可由应用账号在个人中心自助管理。',
+      'SDK 调用继续遵守 Agent、项目分享和资源归属边界，不会因为使用 API Key 自动获得额外权限。',
+      'TypeScript 与 Java SDK 支持调用应用账号已获授权的平台接口。',
+      '新增 Spring Boot + React Agent 管理控制台案例，覆盖 Agent、项目、会话和工作区主要能力。',
+      '客服服务案例与 Agent 管理案例均通过本地 BFF 保存长期 Key，浏览器业务请求不直接携带平台 Key。',
+      '对话历史继续聚焦用户输入和模型正文，进行中只保留最后一个工具状态。',
+      '六个内置 Agent 运行环境统一更新为 v1.0.46。',
+    ],
+    metrics: ['独立应用账号', '单一长期 Key', '平台原生权限'],
+    assetName: 'devops-v1.0.46-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级后重新创建开发者应用',
+      summary: '旧测试应用授权不再沿用。由超管创建应用账号、分配角色和资源分享后，再生成唯一 SDK Key。',
+      guidePath: '/deploy#developer-applications',
+      action: '查看开发者应用升级步骤',
+    },
+  },
+  {
     version: 'v1.0.45',
     date: '2026-08-28',
     status: 'stable',

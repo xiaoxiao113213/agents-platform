@@ -512,6 +512,23 @@ devops.launcher.jvm-heap-dump-enabled=true`}</code></pre>
 ./devops.sh check`}</code></pre>
               <div className="callout"><HardDrive /><div><strong>堆上限不等于进程内存上限</strong><p>元空间、直接内存、线程栈和本地库仍会额外占用内存，还要为 MySQL、Nginx、Docker Engine 与 Agent 容器预留容量。GC 日志最多保留 5 个、每个 20 MB；OOM 堆转储可能接近最大堆且包含敏感业务数据，必须预留磁盘、限制目录权限并在分析后安全清理。</p></div></div>
             </section>
+            <section id="developer-applications">
+              <h2>v1.0.46 开发者应用升级步骤</h2>
+              <p>开发者应用现在是可以独立登录的平台账号，并使用唯一长期 API Key 调用 SDK。旧版本中的测试应用授权和多个 Key 不再沿用，升级后需要由最高管理员重新建立生产应用身份。</p>
+              <div className="upgrade-boundaries">
+                <div><strong>身份与菜单</strong><span>创建独立账号密码</span><span>分配普通角色和可见菜单</span></div>
+                <div><strong>Agent 与项目</strong><span>按全部项目或指定项目分享</span><span>权限与平台页面保持一致</span></div>
+                <div><strong>SDK Key</strong><span>每个应用只有一个有效 Key</span><span>轮换后旧 Key 立即失效</span></div>
+              </div>
+              <ol>
+                <li>使用最高管理员账号进入“开发者中心”，创建新的开发者应用账号并设置登录密码。</li>
+                <li>分配角色、菜单、Agent 数量和项目数量配额，再按业务需要分享 Agent 的全部项目或指定项目。</li>
+                <li>创建并仅显示一次新的 SDK API Key，将它保存到可信服务端；不要写入 React 代码、浏览器存储或公开仓库。</li>
+                <li>应用账号登录平台，核对菜单和资源范围；再由服务端 SDK 调用授权接口，确认未授权资源返回拒绝。</li>
+                <li>需要换 Key 时在开发者中心或应用账号个人中心执行轮换，并同步更新调用方的加密配置。</li>
+              </ol>
+              <div className="callout"><LockKeyhole /><div><strong>API Key 不会扩大应用权限</strong><p>SDK 请求仍经过角色、菜单、资源归属和分享范围校验。长期 Key 等价于该应用账号的服务端身份，泄露后必须立即轮换。</p></div></div>
+            </section>
             <section id="project-app">
               <h2>v1.0.18 项目服务：升级后必须完成</h2>
               <p>项目应用让每个 Agent 项目拥有独立地址，统一访问静态网站、Java、Node.js、Python 和前后端一体服务。新安装可由向导填写；从旧版本升级时，现场配置会被保留，所以下列步骤不能省略。</p>
