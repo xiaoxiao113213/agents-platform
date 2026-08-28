@@ -388,7 +388,7 @@ function DeployPage() {
         <div className="page-shell deploy-layout">
           <aside className="page-toc">
             <strong>安装与升级</strong>
-            <Link to="/deploy#choose">选择路径</Link><Link to="/deploy#runtime-images">运行时镜像包</Link><Link to="/deploy#upgrade">累计升级</Link><Link to="/deploy#web-mode">选择平台界面</Link><Link to="/deploy#runtime-software">Agent 软件离线包</Link><Link to="/deploy#launcher">升级启动器</Link><Link to="/deploy#offline">离线升级</Link><Link to="/deploy#verify">配置与验证</Link><Link to="/deploy#project-app">v1.0.18 项目服务</Link><Link to="/deploy#install">全新安装</Link><Link to="/deploy#rollback">回滚边界</Link>
+            <Link to="/deploy#choose">选择路径</Link><Link to="/deploy#runtime-images">运行时镜像包</Link><Link to="/deploy#upgrade">累计升级</Link><Link to="/deploy#web-mode">选择平台界面</Link><Link to="/deploy#runtime-software">Agent 软件离线包</Link><Link to="/deploy#launcher">升级启动器</Link><Link to="/deploy#offline">离线升级</Link><Link to="/deploy#verify">配置与验证</Link><Link to="/deploy#jvm-memory">JVM 内存</Link><Link to="/deploy#project-app">v1.0.18 项目服务</Link><Link to="/deploy#install">全新安装</Link><Link to="/deploy#rollback">回滚边界</Link>
           </aside>
           <div className="guide-content">
             <section id="choose">
@@ -492,6 +492,25 @@ sudo nginx -t
 ./devops.sh start
 ./devops.sh status`}</code></pre>
               <div className="guide-checks"><div><Check />确认安装版本已更新</div><div><Check />确认平台健康检查通过</div><div><Check />确认 Nginx 配置有效</div><div><Check />确认 Project UI 与核心业务可用</div></div>
+
+              <h3 id="jvm-memory">v1.0.45 主服务 JVM 内存与诊断</h3>
+              <p>升级器会保留现场 <code>application.properties</code>，新版 <code>devops.sh</code> 在配置键缺失时使用安全默认值。建议对比新版示例，将下面四个键和对应中文注释合并到现场文件，便于后续显式调优和审计。</p>
+              <pre><code>{`devops.launcher.jvm-xms-mb=1024
+devops.launcher.jvm-xmx-mb=4096
+devops.launcher.jvm-gc-log-enabled=true
+devops.launcher.jvm-heap-dump-enabled=true`}</code></pre>
+              <p className="section-note">内存单位为 MB。任一内存值设为 <code>0</code> 时，仅该项交由 Java 21 自动决定；两个值均非 0 时，初始堆不得大于最大堆。<code>start</code>、<code>restart</code> 与 <code>foreground</code> 使用同一组参数，非法数字、范围或布尔值会在启动前被拒绝。</p>
+              <div className="upgrade-boundaries">
+                <div><strong>8 GB 主机</strong><span>Xms 512 MB / Xmx 2048 MB</span><span>通常仅保留 1 个 2 GB Agent 并发空间</span></div>
+                <div><strong>16 GB 主机</strong><span>Xms 1024 MB / Xmx 4096 MB</span><span>默认值，仍需按 Agent 并发观察</span></div>
+                <div><strong>32 GB 主机</strong><span>Xms 2048 MB / Xmx 8192 MB</span><span>为项目服务和文件缓存保留容量</span></div>
+              </div>
+              <pre><code>{`./devops.sh config set devops.launcher.jvm-xms-mb 512
+./devops.sh config set devops.launcher.jvm-xmx-mb 2048
+./devops.sh restart
+./devops.sh status
+./devops.sh check`}</code></pre>
+              <div className="callout"><HardDrive /><div><strong>堆上限不等于进程内存上限</strong><p>元空间、直接内存、线程栈和本地库仍会额外占用内存，还要为 MySQL、Nginx、Docker Engine 与 Agent 容器预留容量。GC 日志最多保留 5 个、每个 20 MB；OOM 堆转储可能接近最大堆且包含敏感业务数据，必须预留磁盘、限制目录权限并在分析后安全清理。</p></div></div>
             </section>
             <section id="project-app">
               <h2>v1.0.18 项目服务：升级后必须完成</h2>
