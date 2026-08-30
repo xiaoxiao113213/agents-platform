@@ -23,6 +23,31 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.47',
+    date: '2026-08-30',
+    status: 'stable',
+    title: '双引擎工作区与开发者 Console 完整统一',
+    summary: '在主平台和 SDK Agent Console 中使用一致的项目、会话、历史对话与完整工具能力。',
+    highlights: [
+      '协作引擎与开发引擎统一支持项目规则、Skill、MCP、产物、文件、终端和运行详情。',
+      '会话切换、页面刷新和服务重启后继续恢复历史正文、模型设置与进行中状态。',
+      '主对话聚焦用户输入和模型正文，完整思考与工具过程保留在运行详情中。',
+      'Spring Boot + React Agent Console 复制主平台工作区和主要项目能力。',
+      'Java SDK 增强排队消息、任务控制、审批、会话状态与项目 Skill 能力。',
+      '开发者应用的 SDK 操作继续受角色、资源归属和 Agent 分享范围约束。',
+      '六个内置 Agent 运行环境统一更新为 v1.0.47。',
+    ],
+    metrics: ['双引擎完整适配', 'Console 工作区统一', '历史与长任务恢复'],
+    assetName: 'devops-v1.0.47-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级后核对双引擎与 Agent Console',
+      summary: '打开已有长会话核对正文和运行详情，再使用开发者应用账号检查同一项目的 Console 工作区。',
+      guidePath: '/deploy#verify',
+      action: '查看升级验证步骤',
+    },
+  },
+  {
     version: 'v1.0.46',
     date: '2026-08-28',
     status: 'stable',
