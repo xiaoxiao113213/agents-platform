@@ -23,6 +23,30 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.48',
+    date: '2026-08-31',
+    status: 'stable',
+    title: '新建会话直接选择执行引擎',
+    summary: '在工作区新建对话时直接确定执行引擎、API Key 和模型，并让两种引擎都能定时执行。',
+    highlights: [
+      '新建空白对话直接显示执行引擎、API Key 和模型，无需进入 Agent 配置页反复切换。',
+      '切换执行引擎后自动展示对应 Key 和模型，未绑定 Key 的引擎会给出明确不可选状态。',
+      '首条消息发送后立即固定会话引擎，已有会话继续保持创建时的运行配置。',
+      '协作引擎和开发引擎会话都可以创建定时任务，并按原会话配置继续执行。',
+      '修复长任务完成或共享会话恢复时用户输入偶尔重复显示的问题。',
+      '六个内置 Agent 运行环境统一更新为 v1.0.48。',
+    ],
+    metrics: ['新建会话配置直达', '双引擎定时执行', '长任务消息稳定'],
+    assetName: 'devops-v1.0.48-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级后核对新建会话和定时任务',
+      summary: '分别用两种执行引擎新建会话并发送首条消息，再从会话菜单检查定时执行入口。',
+      guidePath: '/deploy#verify',
+      action: '查看升级验证步骤',
+    },
+  },
+  {
     version: 'v1.0.47',
     date: '2026-08-30',
     status: 'stable',
