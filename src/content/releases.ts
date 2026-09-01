@@ -23,6 +23,31 @@ export const officialSiteUrl = 'https://mmmqaz.cn'
 
 export const releases: PlatformRelease[] = [
   {
+    version: 'v1.0.49',
+    date: '2026-09-01',
+    status: 'stable',
+    title: 'SDK 交付完善与项目服务对话恢复',
+    summary: '完整交付 SDK 与三个可独立部署案例，并让 Agent 能在一次对话中检查和恢复异常项目服务。',
+    highlights: [
+      '开发者中心统一提供 TypeScript、React、Java SDK、OpenAPI、对话 UI 标准和三个完整案例的下载、预览与源码搜索。',
+      '案例加入本地用户、首次初始化和持久配置流程，复制到项目业务目录后即可独立部署和继续开发。',
+      '智能客服案例按客户隔离 Agent 项目，并可为 Agent 选择执行引擎、对应 API Key 和模型。',
+      '对话正文、运行过程、发送即显、终态和历史恢复使用统一规则，减少重复消息、持续等待和刷新后变化。',
+      'Windows 远程 Agent 的项目服务状态异常时，升级后可通过一次 Agent 对话执行标准检查与恢复。',
+      '项目服务恢复会核对进程身份、端口、监听、健康状态、日志和公开地址，遇到未知进程或端口冲突会明确停止并提示处理。',
+      '六个内置 Agent 运行环境统一更新为 v1.0.49。',
+    ],
+    metrics: ['三套完整 SDK 案例', '对话状态统一', '项目服务对话恢复'],
+    assetName: 'devops-v1.0.49-linux-x64.tar.gz',
+    guidedInstall: true,
+    upgradeNotice: {
+      title: '升级后用一次对话恢复项目服务',
+      summary: '等待远程 Agent 重新在线后，在故障项目中发送“检查并恢复当前项目服务”，再核对服务状态和访问地址。',
+      guidePath: '/deploy#verify',
+      action: '查看升级验证步骤',
+    },
+  },
+  {
     version: 'v1.0.48',
     date: '2026-08-31',
     status: 'stable',
